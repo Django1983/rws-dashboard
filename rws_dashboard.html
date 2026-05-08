@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RWS Optimum — Производство ЖБ Шпал</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f1923; color: #e0e6ed; min-height: 100vh; }
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 24px; background: #121e2b;
+    border-bottom: 1px solid #1e3048; position: sticky; top: 0; z-index: 100;
+  }
+  .logo-text { font-size: 15px; font-weight: 700; color: #fff; letter-spacing: 0.08em; }
+  .logo-sub { font-size: 11px; color: #4a7fa5; letter-spacing: 0.1em; text-transform: uppercase; }
+  .header-time { font-size: 20px; font-weight: 300; color: #7aacc8; font-variant-numeric: tabular-nums; }
+  .header-controls { display: flex; gap: 8px; }
+  .btn {
+    padding: 6px 14px; font-size: 12px; border-radius: 6px; cursor: pointer;
+    border: 1px solid #2a4a66; background: #1a2f42; color: #8bb8d4;
+    display: inline-flex; align-items: center; gap: 6px; transition: background 0.15s;
+  }
+  .btn:hover { background: #1e3a52; color: #c0d8eb; }
+  .btn-primary { background: #1a5c8a; border-color: #2277aa; color: #fff; }
+  .btn-primary:hover { background: #1f6fa0; }
+  .status-bar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 5px 24px; background: #0d1820;
+    border-bottom: 1px solid #1a2e40; font-size: 11px; color: #4a7fa5;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; flex-shrink: 0; }
+  .dot.loading { background: #f59e0b; animation: pulse 1.2s infinite; }
+  .dot.error { background: #ef4444; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .content { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; }
+  .section { background: #121e2b; border: 1px solid #1e3048; border-radius: 10px; overflow: hidden; }
+  .section-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 16px; background: #0f1923; border-bottom: 1px solid #1a2e40;
+    font-size: 13px; font-weight: 500; color: #8bb8d4;
+  }
+  .section-badge {
+    margin-left: auto; font-size: 10px; padding: 2px 10px;
+    border-radius: 20px; background: #0d2a40; color: #4a9acc;
+    border: 1px solid #1a4060; white-space: nowrap;
+  }
+  .settings-body { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .form-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .form-row label { font-size: 12px; color: #6a9ab8; min-width: 110px; }
+  .form-row input {
+    flex: 1; min-width: 200px; padding: 7px 10px;
+    background: #0d1820; border: 1px solid #1e3a52; border-radius: 6px;
+    color: #c0d8eb; font-size: 12px; outline: none;
+  }
+  .form-row input:focus { border-color: #2a6a9a; }
+  .narrow { flex: 0 !important; width: 80px !important; min-width: 0 !important; }
+  .config-note {
+    font-size: 11px; color: #3d6a8a; padding: 8px 16px 10px;
+    border-top: 1px solid #1a2e40; background: #0d1820;
+  }
+  .config-note b { color: #5a9ac0; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 10px; padding: 14px; border-bottom: 1px solid #1a2e40; }
+  .card { background: #0d1820; border: 1px solid #1a3050; border-radius: 8px; padding: 10px 14px; }
+  .card-label { font-size: 10px; color: #3d6a8a; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .card-value { font-size: 22px; font-weight: 300; color: #5ab4e0; }
+  .card-unit { font-size: 11px; color: #2a5070; margin-left: 2px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    padding: 8px 14px; text-align: left; font-size: 10px; font-weight: 600;
+    color: #3d6a8a; border-bottom: 1px solid #1a2e40;
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  td { padding: 9px 14px; border-bottom: 1px solid #121e2b; color: #c0d8eb; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #0f1a24; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .n-num { color: #8bb8d4; font-weight: 500; }
+  .plus { color: #22c55e; }
+  .minus { color: #f87171; }
+  .neutral { color: #345870; }
+  .row-num { color: #2a5070; font-size: 11px; }
+  .empty { padding: 24px; text-align: center; color: #2a5070; font-size: 13px; }
+  .footer { text-align: center; padding: 16px; font-size: 11px; color: #1e3a52; }
+  @media print {
+    body { background: #fff; color: #000; }
+    .header-controls, .status-bar, .settings-panel { display: none !important; }
+    .section { border: 1px solid #ccc; }
+    td, th { color: #000; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="logo-text">RWS OPTIMUM</div>
+    <div class="logo-sub">Производство ЖБ Шпал</div>
+  </div>
+  <div class="header-time" id="headerTime">--:--:--</div>
+  <div class="header-controls">
+    <button class="btn" onclick="toggleSettings()">⚙ Настройки</button>
+    <button class="btn" onclick="loadData()">↻ Обновить</button>
+    <button class="btn" onclick="exportCSV()">↓ CSV</button>
+    <button class="btn btn-primary" onclick="window.print()">⎙ Печать</button>
+  </div>
+</div>
+
+<div class="status-bar">
+  <span class="dot loading" id="statusDot"></span>
+  <span id="statusText">Инициализация...</span>
+  <span style="margin-left:auto;" id="lastUpdate"></span>
+</div>
+
+<div class="content">
+
+  <!-- НАСТРОЙКИ -->
+  <div class="section settings-panel" id="settingsSection" style="display:none;">
+    <div class="section-header">⚙ Настройки подключения к Google Sheets</div>
+    <div class="settings-body">
+      <div class="form-row">
+        <label>Sheet ID</label>
+        <input type="text" id="sheetId" placeholder="ID из URL таблицы — между /d/ и /edit" />
+      </div>
+      <div class="form-row">
+        <label>Google API Key</label>
+        <input type="password" id="apiKey" placeholder="Ваш Google Sheets API ключ" />
+      </div>
+      <div class="form-row">
+        <label>Лист ПЦ</label>
+        <input type="text" id="sheetPC" class="narrow" value="ПЦ" />
+        <label style="min-width:auto; margin-left:16px;">Лист БСУ</label>
+        <input type="text" id="sheetBSU" class="narrow" value="БСУ" />
+      </div>
+      <div class="form-row">
+        <button class="btn btn-primary" onclick="saveAndLoad()">💾 Сохранить и загрузить</button>
+        <button class="btn" onclick="loadDemo()">▶ Демо-данные</button>
+      </div>
+    </div>
+    <div class="config-note">
+      Sheet ID находится в URL: docs.google.com/spreadsheets/d/<b>ВОТ_ЭТО</b>/edit &nbsp;·&nbsp; Настройки сохраняются в браузере
+    </div>
+  </div>
+
+  <!-- ПЦ -->
+  <div class="section">
+    <div class="section-header">
+      🏭 Производственный цех — остаток шпал
+      <span class="section-badge" id="pcDate">ПЦ</span>
+    </div>
+    <div class="cards" id="pcCards" style="display:none;">
+      <div class="card">
+        <div class="card-label">Итого шпал</div>
+        <div class="card-value" id="pcTotal">0 <span class="card-unit">шт.</span></div>
+      </div>
+      <div class="card">
+        <div class="card-label">Видов шпал</div>
+        <div class="card-value" id="pcTypes">0 <span class="card-unit">типов</span></div>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:36px;">№</th>
+          <th>Наименование сырья</th>
+          <th class="num">Остаток, шт.</th>
+        </tr>
+      </thead>
+      <tbody id="pcBody">
+        <tr><td colspan="3" class="empty">Нажмите «Демо-данные» или настройте Google Sheets</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- БСУ -->
+  <div class="section">
+    <div class="section-header">
+      📦 БСУ — остатки сырья
+      <span class="section-badge" id="bsuDate">БСУ</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:36px;">№</th>
+          <th>Наименование сырья</th>
+          <th class="num">Остаток</th>
+          <th class="num">Приход</th>
+          <th class="num">Расход</th>
+        </tr>
+      </thead>
+      <tbody id="bsuBody">
+        <tr><td colspan="5" class="empty">Нажмите «Демо-данные» или настройте Google Sheets</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+<div class="footer">RWS Optimum · Данные сохраняются в браузере · <span id="footerDate"></span></div>
+
+<script>
+const KEY = 'rws_v3';
+
+setInterval(() => {
+  document.getElementById('headerTime').textContent = new Date().toLocaleTimeString('ru-RU');
+}, 1000);
+document.getElementById('headerTime').textContent = new Date().toLocaleTimeString('ru-RU');
+document.getElementById('footerDate').textContent = new Date().toLocaleDateString('ru-RU', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+
+function getS() { try { return JSON.parse(localStorage.getItem(KEY)||'{}'); } catch(e) { return {}; } }
+function setS(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch(e) {} }
+
+function toggleSettings() {
+  const el = document.getElementById('settingsSection');
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function saveAndLoad() {
+  setS({
+    sheetId: document.getElementById('sheetId').value.trim(),
+    apiKey: document.getElementById('apiKey').value.trim(),
+    sheetPC: document.getElementById('sheetPC').value.trim() || 'ПЦ',
+    sheetBSU: document.getElementById('sheetBSU').value.trim() || 'БСУ'
+  });
+  document.getElementById('settingsSection').style.display = 'none';
+  loadData();
+}
+
+function status(msg, state) {
+  document.getElementById('statusText').textContent = msg;
+  document.getElementById('statusDot').className = 'dot ' + (state||'loading');
+}
+
+function pNum(v) {
+  if (!v || v === '-') return null;
+  return parseFloat(String(v).replace(/[\s ]/g,'').replace(',','.')) || null;
+}
+
+function fNum(v) {
+  const n = pNum(v);
+  if (n === null) return '<span class="neutral">—</span>';
+  return '<span class="n-num">' + n.toLocaleString('ru-RU') + '</span>';
+}
+
+function fMinus(v) {
+  const n = pNum(v);
+  if (n === null) return '<span class="neutral">—</span>';
+  return '<span class="minus">−' + n.toLocaleString('ru-RU') + '</span>';
+}
+
+function fPlus(v) {
+  if (!v || v === '-') return '<span class="neutral">—</span>';
+  const n = pNum(v);
+  if (n === null) return '<span class="neutral">—</span>';
+  return '<span class="plus">+' + n.toLocaleString('ru-RU') + '</span>';
+}
+
+async function fetchSheet(id, key, name) {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${id}/values/${encodeURIComponent(name+'!A1:Z50')}?key=${key}`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return (await r.json()).values || [];
+}
+
+function renderPC(rows) {
+  const body = document.getElementById('pcBody');
+  if (!rows || rows.length < 3) { body.innerHTML = '<tr><td colspan="3" class="empty">Нет данных</td></tr>'; return; }
+  document.getElementById('pcDate').textContent = (rows[1]||[])[2] || 'ПЦ';
+  let html = '', total = 0, cnt = 0;
+  for (let i = 2; i < rows.length; i++) {
+    const r = rows[i];
+    if (!r || !r[0] || !r[1]) continue;
+    const n = pNum(r[2]);
+    if (n) { total += n; cnt++; }
+    html += `<tr><td class="row-num">${r[0]}</td><td>${r[1]}</td><td class="num">${fNum(r[2])}</td></tr>`;
+  }
+  body.innerHTML = html || '<tr><td colspan="3" class="empty">Нет строк</td></tr>';
+  document.getElementById('pcTotal').innerHTML = total.toLocaleString('ru-RU') + ' <span class="card-unit">шт.</span>';
+  document.getElementById('pcTypes').innerHTML = cnt + ' <span class="card-unit">типов</span>';
+  document.getElementById('pcCards').style.display = 'grid';
+}
+
+function renderBSU(rows) {
+  const body = document.getElementById('bsuBody');
+  if (!rows || rows.length < 3) { body.innerHTML = '<tr><td colspan="5" class="empty">Нет данных</td></tr>'; return; }
+  document.getElementById('bsuDate').textContent = (rows[1]||[])[2] || 'БСУ';
+  let html = '';
+  for (let i = 2; i < rows.length; i++) {
+    const r = rows[i];
+    if (!r || !r[0] || !r[1]) continue;
+    html += `<tr>
+      <td class="row-num">${r[0]}</td>
+      <td>${r[1]}</td>
+      <td class="num">${fNum(r[2])}</td>
+      <td class="num">${fPlus(r[3])}</td>
+      <td class="num">${fMinus(r[4])}</td>
+    </tr>`;
+  }
+  body.innerHTML = html || '<tr><td colspan="5" class="empty">Нет строк</td></tr>';
+}
+
+async function loadData() {
+  const s = getS();
+  if (!s.sheetId || !s.apiKey) {
+    status('Укажите настройки Google Sheets', 'error');
+    document.getElementById('settingsSection').style.display = 'block';
+    return;
+  }
+  status('Загрузка...', 'loading');
+  try {
+    const [pc, bsu] = await Promise.all([
+      fetchSheet(s.sheetId, s.apiKey, s.sheetPC || 'ПЦ'),
+      fetchSheet(s.sheetId, s.apiKey, s.sheetBSU || 'БСУ')
+    ]);
+    renderPC(pc); renderBSU(bsu);
+    status('Данные загружены из Google Sheets', 'ok');
+    document.getElementById('lastUpdate').textContent = 'Обновлено: ' + new Date().toLocaleString('ru-RU');
+  } catch(e) {
+    status('Ошибка: ' + e.message, 'error');
+  }
+}
+
+function loadDemo() {
+  document.getElementById('settingsSection').style.display = 'none';
+  renderPC([
+    ['Производственный цех'],
+    ['№','Наименование сырья','27.04.2026 остаток шт.'],
+    ['1','шпала BF70 FC "1520"','16754'],
+    ['2','шпала BF70 FC "1520" с стыковыми скреплениями','68'],
+    ['3','шпала BF70E FC "1520" (облегчённая)','12540'],
+    ['4','шпала BF70E FC "1530" (облегчённая)','664'],
+  ]);
+  renderBSU([
+    ['БСУ'],
+    ['№','Наименование сырья','25.04.2026 остаток','25.04.2026 приход','25.04.2026 расход'],
+    ['1','цемент','118935','-','39943'],
+    ['2','песок','170008','-','33388'],
+    ['3','щебень','277013','-','70274'],
+    ['4','пластификатор','6260.96','-','453.966'],
+  ]);
+  status('Демо-данные загружены', 'ok');
+  document.getElementById('lastUpdate').textContent = 'Демо · ' + new Date().toLocaleString('ru-RU');
+}
+
+function exportCSV() {
+  let csv = '\uFEFF';
+  csv += 'ПРОИЗВОДСТВЕННЫЙ ЦЕХ\n№,Наименование,Остаток шт.\n';
+  document.querySelectorAll('#pcBody tr').forEach(tr => {
+    const c = [...tr.querySelectorAll('td')].map(td => '"'+td.textContent.trim()+'"');
+    if (c.length > 1) csv += c.join(',') + '\n';
+  });
+  csv += '\nБСУ\n№,Наименование,Остаток,Приход,Расход\n';
+  document.querySelectorAll('#bsuBody tr').forEach(tr => {
+    const c = [...tr.querySelectorAll('td')].map(td => '"'+td.textContent.trim()+'"');
+    if (c.length > 1) csv += c.join(',') + '\n';
+  });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8;'}));
+  a.download = 'RWS_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+
+// Init
+(function() {
+  const s = getS();
+  if (s.sheetId) {
+    document.getElementById('sheetId').value = s.sheetId;
+    document.getElementById('apiKey').value = s.apiKey || '';
+    document.getElementById('sheetPC').value = s.sheetPC || 'ПЦ';
+    document.getElementById('sheetBSU').value = s.sheetBSU || 'БСУ';
+    loadData();
+  } else {
+    loadDemo();
+  }
+})();
+</script>
+</body>
+</html>
