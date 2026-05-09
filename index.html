@@ -137,37 +137,6 @@
 
 <div class="content">
 
-  <!-- URL редактор -->
-  <div class="section">
-    <div class="section-header">
-      ⚙ Настройка URL Google Sheets
-    </div>
-    <div class="url-editor visible" id="urlEditor">
-      <label>Apps Script URL:</label>
-      <input type="text" id="scriptUrl" placeholder="https://script.google.com/macros/s/.../exec">
-      <label>Название листа ПЦ (точно как в таблице):</label>
-      <input type="text" id="urlPC" placeholder="ПЦ">
-      <label>Название листа БСУ (точно как в таблице):</label>
-      <input type="text" id="urlBSU" placeholder="БСУ">
-      <div style="display:flex; gap:8px; margin-top:4px;">
-        <button class="btn btn-primary" onclick="saveUrls()">✔ Сохранить и загрузить</button>
-        <button class="btn" onclick="resetUrls()">↺ Сбросить на исходные</button>
-      </div>
-      <div style="margin-top:10px; font-size:11px; color:#3d6a8a; line-height:1.6;">
-        💡 Укажите точные названия листов из вашей Google Таблицы (регистр важен).
-      </div>
-    </div>
-  </div>
-
-  <!-- Debug -->
-  <div class="section">
-    <div class="section-header" onclick="toggleDebug()" style="cursor:pointer;">
-      🔍 Журнал диагностики
-      <span class="section-badge" id="debugBadge">скрыт</span>
-    </div>
-    <div class="debug-panel" id="debugPanel"></div>
-  </div>
-
   <!-- ПЦ + БСУ две колонки -->
   <div class="two-col">
 
@@ -235,6 +204,38 @@
 
   </div>
 
+  <!-- URL редактор -->
+  <div class="section">
+    <div class="section-header" onclick="toggleUrlEditor()" style="cursor:pointer;">
+      ⚙ Настройка URL Google Sheets
+      <span class="section-badge" id="urlBadge">скрыт</span>
+    </div>
+    <div class="url-editor" id="urlEditor">
+      <label>Apps Script URL:</label>
+      <input type="text" id="scriptUrl" placeholder="https://script.google.com/macros/s/.../exec">
+      <label>Название листа ПЦ (точно как в таблице):</label>
+      <input type="text" id="urlPC" placeholder="ПЦ">
+      <label>Название листа БСУ (точно как в таблице):</label>
+      <input type="text" id="urlBSU" placeholder="БСУ">
+      <div style="display:flex; gap:8px; margin-top:4px;">
+        <button class="btn btn-primary" onclick="saveUrls()">✔ Сохранить и загрузить</button>
+        <button class="btn" onclick="resetUrls()">↺ Сбросить на исходные</button>
+      </div>
+      <div style="margin-top:10px; font-size:11px; color:#5a8aaa; line-height:1.6;">
+        💡 Укажите точные названия листов из вашей Google Таблицы (регистр важен).
+      </div>
+    </div>
+  </div>
+
+  <!-- Debug -->
+  <div class="section">
+    <div class="section-header" onclick="toggleDebug()" style="cursor:pointer;">
+      🔍 Журнал диагностики
+      <span class="section-badge" id="debugBadge">скрыт</span>
+    </div>
+    <div class="debug-panel" id="debugPanel"></div>
+  </div>
+
 </div>
 <div class="footer">RWS Optimum · Данные из Google Sheets · <span id="footerDate"></span></div>
 
@@ -281,7 +282,10 @@ function resetUrls() {
 }
 
 function toggleUrlEditor() {
-  document.getElementById('urlEditor').classList.toggle('visible');
+  const ed = document.getElementById('urlEditor');
+  ed.classList.toggle('visible');
+  const badge = document.getElementById('urlBadge');
+  if (badge) badge.textContent = ed.classList.contains('visible') ? 'открыт' : 'скрыт';
 }
 
 // ── ЧАСЫ ─────────────────────────────────────────────────────────────────────
