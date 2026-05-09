@@ -210,6 +210,41 @@
 
   </div>
 
+  <!-- Отгрузка -->
+  <div class="section">
+    <div class="section-header">
+      🚛 ПЦ — Отгрузка шпал
+      <span class="auto-badge">● Авто</span>
+      <span class="section-badge" id="otgDate">Отгрузка</span>
+    </div>
+    <div class="error-block" id="otgError">
+      <h4>⚠ Не удалось загрузить данные Отгрузки</h4>
+      <ul id="otgErrorList"></ul>
+    </div>
+    <div class="cards" id="otgCards" style="display:none;">
+      <div class="card">
+        <div class="card-label">Итого отгружено</div>
+        <div class="card-value" id="otgTotal">0 <span class="card-unit">шт.</span></div>
+      </div>
+      <div class="card">
+        <div class="card-label">Видов шпал</div>
+        <div class="card-value" id="otgTypes">0 <span class="card-unit">типов</span></div>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:30px;">№</th>
+          <th>Наименование</th>
+          <th class="num">Остаток, шт.</th>
+        </tr>
+      </thead>
+      <tbody id="otgBody">
+        <tr><td colspan="3" class="empty">Загрузка...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
   <!-- URL редактор -->
   <div class="section">
     <div class="section-header" onclick="toggleUrlEditor()" style="cursor:pointer;">
@@ -223,6 +258,8 @@
       <input type="text" id="urlPC" placeholder="ПЦ">
       <label>Название листа БСУ (точно как в таблице):</label>
       <input type="text" id="urlBSU" placeholder="БСУ">
+      <label>Название листа Отгрузка (точно как в таблице):</label>
+      <input type="text" id="urlOTG" placeholder="ПЦ Отгурзка">
       <div style="display:flex; gap:8px; margin-top:4px;">
         <button class="btn btn-primary" onclick="saveUrls()">✔ Сохранить и загрузить</button>
         <button class="btn" onclick="resetUrls()">↺ Сбросить на исходные</button>
@@ -250,12 +287,14 @@
 const DEFAULT_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymYCBoPrkF-l8JM5Qm52u0A5gMWqMbNT_F_Tqr-6kq6Go1HtXpcY6BGmS9KMQE3oWA/exec';
 const DEFAULT_SHEET_PC  = 'ПЦ';
 const DEFAULT_SHEET_BSU = 'БСУ';
+const DEFAULT_SHEET_OTG = 'ПЦ Отгурзка';
 
 function getConfig() {
   return {
     url: localStorage.getItem('rws_script_url') || DEFAULT_APPS_SCRIPT_URL,
     pc:  localStorage.getItem('rws_sheet_pc')   || DEFAULT_SHEET_PC,
     bsu: localStorage.getItem('rws_sheet_bsu')  || DEFAULT_SHEET_BSU,
+    otg: localStorage.getItem('rws_sheet_otg')  || DEFAULT_SHEET_OTG,
   };
 }
 
@@ -263,6 +302,8 @@ function initUrlEditor() {
   const c = getConfig();
   document.getElementById('urlPC').value  = c.pc;
   document.getElementById('urlBSU').value = c.bsu;
+  const oi = document.getElementById('urlOTG');
+  if (oi) oi.value = c.otg;
   const si = document.getElementById('scriptUrl');
   if (si) si.value = c.url;
 }
@@ -274,6 +315,8 @@ function saveUrls() {
   if (si && si.value.trim()) localStorage.setItem('rws_script_url', si.value.trim());
   if (pc)  localStorage.setItem('rws_sheet_pc',  pc);
   if (bsu) localStorage.setItem('rws_sheet_bsu', bsu);
+  const otg = document.getElementById('urlOTG').value.trim();
+  if (otg) localStorage.setItem('rws_sheet_otg', otg);
   dbg('✔ Настройки сохранены', 'ok');
   loadData();
 }
@@ -282,6 +325,7 @@ function resetUrls() {
   localStorage.removeItem('rws_script_url');
   localStorage.removeItem('rws_sheet_pc');
   localStorage.removeItem('rws_sheet_bsu');
+  localStorage.removeItem('rws_sheet_otg');
   initUrlEditor();
   dbg('↺ Сброшено на исходные настройки', 'warn');
   loadData();
@@ -444,6 +488,56 @@ function showBSUError(hints) {
   el.classList.add('visible');
 }
 
+// ── RENDER ОТГРУЗКА ──────────────────────────────────────────────────────────
+function renderOTG(rows) {
+  const body = document.getElementById('otgBody');
+  const cards = document.getElementById('otgCards');
+  const dateEl = document.getElementById('otgDate');
+  const errEl = document.getElementById('otgError');
+  if (errEl) errEl.classList.remove('visible');
+
+  if (!rows || rows.length < 2) {
+    body.innerHTML = '<tr><td colspan="3" class="empty">Нет данных</td></tr>';
+    return;
+  }
+
+  // Find date in header row (row index 1)
+  const headerRow = rows[1] || [];
+  const dateCell = headerRow[2] || '';
+  const dateMatch = String(dateCell).match(/\d{2}\.\d{2}\.\d{4}/);
+  if (dateMatch && dateEl) dateEl.textContent = dateMatch[0] + ' отгрузка шт.';
+
+  // Data starts from row 2
+  const dataRows = rows.slice(2).filter(r => r[0] && String(r[0]).trim() !== '');
+  let total = 0;
+  let html = '';
+  dataRows.forEach((r, i) => {
+    const name = r[1] || '';
+    const val = parseFloat(String(r[2]).replace(/\s/g,'').replace(',','.')) || 0;
+    total += val;
+    html += `<tr>
+      <td class="row-num">${i+1}</td>
+      <td>${name}</td>
+      <td class="num n-num">${val.toLocaleString('ru-RU')}</td>
+    </tr>`;
+  });
+  body.innerHTML = html || '<tr><td colspan="3" class="empty">Нет данных</td></tr>';
+
+  if (cards) {
+    document.getElementById('otgTotal').innerHTML = total.toLocaleString('ru-RU') + ' <span class="card-unit">шт.</span>';
+    document.getElementById('otgTypes').innerHTML = dataRows.length + ' <span class="card-unit">типов</span>';
+    cards.style.display = 'grid';
+  }
+}
+
+function showOTGError(msgs) {
+  const el = document.getElementById('otgError');
+  const ul = document.getElementById('otgErrorList');
+  if (!el || !ul) return;
+  ul.innerHTML = msgs.map(m => `<li>${m}</li>`).join('');
+  el.classList.add('visible');
+}
+
 // ── FETCH через Apps Script ───────────────────────────────────────────────────
 async function fetchSheet(sheetName, label) {
   const { url } = getConfig();
@@ -506,14 +600,25 @@ async function loadData() {
     ]);
   }
 
-  if (pcOk && bsuOk) {
+  // Отгрузка
+  let otgOk = false;
+  try {
+    const otg = await fetchSheet(cfg.otg, 'Отгрузка');
+    renderOTG(otg);
+    otgOk = true;
+  } catch(e) {
+    document.getElementById('otgBody').innerHTML = '<tr><td colspan="3" class="empty">Ошибка загрузки</td></tr>';
+    showOTGError([e.message, 'Проверьте название листа Отгрузка в настройках']);
+  }
+
+  if (pcOk && bsuOk && otgOk) {
     status('Данные успешно загружены через Apps Script', 'ok');
-  } else if (!pcOk && !bsuOk) {
+  } else if (!pcOk && !bsuOk && !otgOk) {
     status('Ошибка загрузки — проверьте настройки Apps Script', 'error');
     document.getElementById('debugPanel').classList.add('visible');
     document.getElementById('debugBadge').textContent = 'открыт';
   } else {
-    status(`Частичная загрузка: ${pcOk ? 'ПЦ ✔' : 'ПЦ ✗'} | ${bsuOk ? 'БСУ ✔' : 'БСУ ✗'}`, 'loading');
+    status(`Загрузка: ${pcOk ? 'ПЦ ✔' : 'ПЦ ✗'} | ${bsuOk ? 'БСУ ✔' : 'БСУ ✗'} | ${otgOk ? 'Отгрузка ✔' : 'Отгрузка ✗'}`, 'loading');
   }
 
   document.getElementById('lastUpdate').textContent = 'Обновлено: ' + new Date().toLocaleString('ru-RU');
