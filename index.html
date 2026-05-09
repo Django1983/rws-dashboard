@@ -528,29 +528,30 @@ function renderOTG(rows) {
     if (!num && !name) { i++; continue; }
 
     if (num && name) {
-      // Main product row
+      // Main product row — остаток в колонке L (индекс 11)
       rowNum++;
-      const ostatok = String(r[11] || '').trim();
-      const ostn = parseFloat(ostatok.replace(/\s/g,'').replace(',','.')) || 0;
+      const ostn = parseFloat(String(r[11] || '').replace(/\s/g,'').replace(',','.')) || 0;
       result += `<tr style="background:#f0f6fb; font-weight:500;">
         <td class="row-num">${num}</td>
         <td colspan="10">${name}</td>
-        <td class="num n-num">${ostn ? ostn.toLocaleString('ru-RU') : '<span style=color:#bbb>—</span>'}</td>
+        <td class="num n-num">${ostn ? ostn.toLocaleString('ru-RU') : '<span style="color:#bbb">—</span>'}</td>
       </tr>`;
     } else if (!num && name) {
-      // Sub-row: ГАЖК / JMAR
+      // Sub-row ГАЖК/JMAR: C=2(день_ваг), D=3(день_маш), E=4(день_шт),
+      // F=5(мес_ваг), G=6(мес_маш), H=7(мес_шт),
+      // I=8(год_ваг), J=9(год_маш), K=10(год_шт)
       result += `<tr>
         <td></td>
         <td style="color:#5a8aaa; padding-left:20px;">${name}</td>
+        <td class="num">${fmt(r[2])}</td>
         <td class="num">${fmt(r[3])}</td>
         <td class="num">${fmt(r[4])}</td>
-        <td class="num">${fmt(r[5])}</td>
-        <td class="num" style="border-left:1px solid #eaf2f8;">${fmt(r[6])}</td>
+        <td class="num" style="border-left:1px solid #eaf2f8;">${fmt(r[5])}</td>
+        <td class="num">${fmt(r[6])}</td>
         <td class="num">${fmt(r[7])}</td>
-        <td class="num">${fmt(r[8])}</td>
-        <td class="num" style="border-left:1px solid #eaf2f8;">${fmt(r[9])}</td>
+        <td class="num" style="border-left:1px solid #eaf2f8;">${fmt(r[8])}</td>
+        <td class="num">${fmt(r[9])}</td>
         <td class="num">${fmt(r[10])}</td>
-        <td class="num">${fmt(r[11])}</td>
         <td class="num"></td>
       </tr>`;
     }
