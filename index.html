@@ -221,28 +221,34 @@
       <h4>⚠ Не удалось загрузить данные Отгрузки</h4>
       <ul id="otgErrorList"></ul>
     </div>
-    <div class="cards" id="otgCards" style="display:none;">
-      <div class="card">
-        <div class="card-label">Итого отгружено</div>
-        <div class="card-value" id="otgTotal">0 <span class="card-unit">шт.</span></div>
-      </div>
-      <div class="card">
-        <div class="card-label">Видов шпал</div>
-        <div class="card-value" id="otgTypes">0 <span class="card-unit">типов</span></div>
-      </div>
-    </div>
-    <table>
+    <div style="overflow-x:auto;">
+    <table style="min-width:700px;">
       <thead>
         <tr>
-          <th style="width:30px;">№</th>
-          <th>Наименование</th>
-          <th class="num">Остаток, шт.</th>
+          <th rowspan="2" style="width:30px;">№</th>
+          <th rowspan="2">Наименование</th>
+          <th colspan="3" class="num" style="text-align:center; border-left:1px solid #d0e4f0;">За день</th>
+          <th colspan="3" class="num" style="text-align:center; border-left:1px solid #d0e4f0;">За месяц</th>
+          <th colspan="3" class="num" style="text-align:center; border-left:1px solid #d0e4f0;">За год</th>
+          <th rowspan="2" class="num" style="border-left:1px solid #d0e4f0;">Остаток, шт.</th>
+        </tr>
+        <tr>
+          <th class="num" style="border-left:1px solid #d0e4f0;">Вагоны</th>
+          <th class="num">Машины</th>
+          <th class="num">Шт.</th>
+          <th class="num" style="border-left:1px solid #d0e4f0;">Вагоны</th>
+          <th class="num">Машины</th>
+          <th class="num">Шт.</th>
+          <th class="num" style="border-left:1px solid #d0e4f0;">Вагоны</th>
+          <th class="num">Машины</th>
+          <th class="num">Шт.</th>
         </tr>
       </thead>
       <tbody id="otgBody">
-        <tr><td colspan="3" class="empty">Загрузка...</td></tr>
+        <tr><td colspan="12" class="empty">Загрузка...</td></tr>
       </tbody>
     </table>
+    </div>
   </div>
 
   <!-- URL редактор -->
@@ -259,7 +265,7 @@
       <label>Название листа БСУ (точно как в таблице):</label>
       <input type="text" id="urlBSU" placeholder="БСУ">
       <label>Название листа Отгрузка (точно как в таблице):</label>
-      <input type="text" id="urlOTG" placeholder="ПЦ Отгурзка">
+      <input type="text" id="urlOTG" placeholder="Отгрузка">
       <div style="display:flex; gap:8px; margin-top:4px;">
         <button class="btn btn-primary" onclick="saveUrls()">✔ Сохранить и загрузить</button>
         <button class="btn" onclick="resetUrls()">↺ Сбросить на исходные</button>
@@ -287,7 +293,7 @@
 const DEFAULT_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymYCBoPrkF-l8JM5Qm52u0A5gMWqMbNT_F_Tqr-6kq6Go1HtXpcY6BGmS9KMQE3oWA/exec';
 const DEFAULT_SHEET_PC  = 'ПЦ';
 const DEFAULT_SHEET_BSU = 'БСУ';
-const DEFAULT_SHEET_OTG = 'ПЦ Отгурзка';
+const DEFAULT_SHEET_OTG = 'Отгрузка';
 
 function getConfig() {
   return {
@@ -491,43 +497,67 @@ function showBSUError(hints) {
 // ── RENDER ОТГРУЗКА ──────────────────────────────────────────────────────────
 function renderOTG(rows) {
   const body = document.getElementById('otgBody');
-  const cards = document.getElementById('otgCards');
   const dateEl = document.getElementById('otgDate');
   const errEl = document.getElementById('otgError');
   if (errEl) errEl.classList.remove('visible');
 
-  if (!rows || rows.length < 2) {
-    body.innerHTML = '<tr><td colspan="3" class="empty">Нет данных</td></tr>';
+  if (!rows || rows.length < 4) {
+    body.innerHTML = '<tr><td colspan="12" class="empty">Нет данных</td></tr>';
     return;
   }
 
-  // Find date in header row (row index 1)
-  const headerRow = rows[1] || [];
-  const dateCell = headerRow[2] || '';
-  const dateMatch = String(dateCell).match(/\d{2}\.\d{2}\.\d{4}/);
-  if (dateMatch && dateEl) dateEl.textContent = dateMatch[0] + ' отгрузка шт.';
+  // Row 3 (index 2) has group headers, row 4 (index 3) has date in col L (index 11)
+  const hrow = rows[2] || [];
+  const dateCell = String(hrow[11] || '');
+  const dateMatch = dateCell.match(/\d{2}\.\d{2}\.\d{4}/);
+  if (dateMatch && dateEl) dateEl.textContent = dateMatch[0] + ' остаток';
 
-  // Data starts from row 2
-  const dataRows = rows.slice(2).filter(r => r[0] && String(r[0]).trim() !== '');
-  let total = 0;
-  let html = '';
-  dataRows.forEach((r, i) => {
-    const name = r[1] || '';
-    const val = parseFloat(String(r[2]).replace(/\s/g,'').replace(',','.')) || 0;
-    total += val;
-    html += `<tr>
-      <td class="row-num">${i+1}</td>
-      <td>${name}</td>
-      <td class="num n-num">${val.toLocaleString('ru-RU')}</td>
-    </tr>`;
-  });
-  body.innerHTML = html || '<tr><td colspan="3" class="empty">Нет данных</td></tr>';
-
-  if (cards) {
-    document.getElementById('otgTotal').innerHTML = total.toLocaleString('ru-RU') + ' <span class="card-unit">шт.</span>';
-    document.getElementById('otgTypes').innerHTML = dataRows.length + ' <span class="card-unit">типов</span>';
-    cards.style.display = 'grid';
+  function fmt(v) {
+    const n = parseFloat(String(v).replace(/\s/g,'').replace(',','.'));
+    return isNaN(n) || n === 0 ? '<span style="color:#bbb">—</span>' : n.toLocaleString('ru-RU');
   }
+
+  // Parse from row 5 (index 4): main rows have number in col A, sub-rows have name in col B
+  let result = '';
+  let i = 4;
+  let rowNum = 0;
+  while (i < rows.length) {
+    const r = rows[i];
+    const num = String(r[0] || '').trim();
+    const name = String(r[1] || '').trim();
+    if (!num && !name) { i++; continue; }
+
+    if (num && name) {
+      // Main product row
+      rowNum++;
+      const ostatok = String(r[11] || '').trim();
+      const ostn = parseFloat(ostatok.replace(/\s/g,'').replace(',','.')) || 0;
+      result += `<tr style="background:#f0f6fb; font-weight:500;">
+        <td class="row-num">${num}</td>
+        <td colspan="10">${name}</td>
+        <td class="num n-num">${ostn ? ostn.toLocaleString('ru-RU') : '<span style=color:#bbb>—</span>'}</td>
+      </tr>`;
+    } else if (!num && name) {
+      // Sub-row: ГАЖК / JMAR
+      result += `<tr>
+        <td></td>
+        <td style="color:#5a8aaa; padding-left:20px;">${name}</td>
+        <td class="num">${fmt(r[3])}</td>
+        <td class="num">${fmt(r[4])}</td>
+        <td class="num">${fmt(r[5])}</td>
+        <td class="num" style="border-left:1px solid #eaf2f8;">${fmt(r[6])}</td>
+        <td class="num">${fmt(r[7])}</td>
+        <td class="num">${fmt(r[8])}</td>
+        <td class="num" style="border-left:1px solid #eaf2f8;">${fmt(r[9])}</td>
+        <td class="num">${fmt(r[10])}</td>
+        <td class="num">${fmt(r[11])}</td>
+        <td class="num"></td>
+      </tr>`;
+    }
+    i++;
+  }
+
+  body.innerHTML = result || '<tr><td colspan="12" class="empty">Нет данных</td></tr>';
 }
 
 function showOTGError(msgs) {
