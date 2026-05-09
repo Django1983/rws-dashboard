@@ -11,11 +11,14 @@
     display: flex; align-items: center; justify-content: space-between;
     padding: 10px 24px; background: #1a3a52;
     border-bottom: 1px solid #15304a; position: sticky; top: 0; z-index: 100;
+    gap: 16px;
   }
-  .logo-text { font-size: 15px; font-weight: 700; color: #fff; letter-spacing: 0.08em; }
-  .logo-sub { font-size: 11px; color: #7aacc8; letter-spacing: 0.1em; text-transform: uppercase; }
-  .header-time { font-size: 20px; font-weight: 300; color: #b0d4ea; font-variant-numeric: tabular-nums; }
-  .header-controls { display: flex; gap: 8px; flex-wrap: wrap; }
+  .header-logo { flex-shrink: 0; }
+  .header-center { flex: 1; text-align: center; }
+  .logo-text { font-size: 20px; font-weight: 700; color: #fff; letter-spacing: 0.08em; }
+  .logo-sub { font-size: 12px; color: #7aacc8; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 2px; }
+  .header-time { font-size: 18px; font-weight: 300; color: #b0d4ea; font-variant-numeric: tabular-nums; }
+  .header-controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; flex-shrink: 0; }
   .btn {
     padding: 6px 14px; font-size: 12px; border-radius: 6px; cursor: pointer;
     border: 1px solid #2e5c7a; background: #244a62; color: #b0d4ea;
@@ -115,12 +118,15 @@
 <body>
 
 <div class="header">
-  <div>
+  <div class="header-logo">
+    <img src="data:image/png;base64,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" alt="RWS Optimum" style="height:38px; display:block; filter: brightness(0) invert(1);">
+  </div>
+  <div class="header-center">
     <div class="logo-text">RWS OPTIMUM</div>
     <div class="logo-sub">Производство ЖБ Шпал</div>
   </div>
-  <div class="header-time" id="headerTime">--:--:--</div>
   <div class="header-controls">
+    <div class="header-time" id="headerTime">--:--:--</div>
     <button class="btn" onclick="loadData()">↻ Обновить</button>
     <button class="btn" onclick="toggleDebug()">🔍 Диагностика</button>
     <button class="btn" onclick="toggleUrlEditor()">⚙ URL таблицы</button>
