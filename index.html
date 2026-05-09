@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RWS Optimum — Производство ЖБ Шпал</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f1923; color: #e0e6ed; min-height: 100vh; }
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 24px; background: #121e2b;
+    border-bottom: 1px solid #1e3048; position: sticky; top: 0; z-index: 100;
+  }
+  .logo-text { font-size: 15px; font-weight: 700; color: #fff; letter-spacing: 0.08em; }
+  .logo-sub { font-size: 11px; color: #4a7fa5; letter-spacing: 0.1em; text-transform: uppercase; }
+  .header-time { font-size: 20px; font-weight: 300; color: #7aacc8; font-variant-numeric: tabular-nums; }
+  .header-controls { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    padding: 6px 14px; font-size: 12px; border-radius: 6px; cursor: pointer;
+    border: 1px solid #2a4a66; background: #1a2f42; color: #8bb8d4;
+    display: inline-flex; align-items: center; gap: 6px; transition: background 0.15s;
+  }
+  .btn:hover { background: #1e3a52; color: #c0d8eb; }
+  .btn-primary { background: #1a5c8a; border-color: #2277aa; color: #fff; }
+  .btn-primary:hover { background: #1f6fa0; }
+  .status-bar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 5px 24px; background: #0d1820;
+    border-bottom: 1px solid #1a2e40; font-size: 11px; color: #4a7fa5;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; flex-shrink: 0; }
+  .dot.loading { background: #f59e0b; animation: pulse 1.2s infinite; }
+  .dot.error { background: #ef4444; }
+  .dot.ok { background: #22c55e; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .content { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; }
+  .section { background: #121e2b; border: 1px solid #1e3048; border-radius: 10px; overflow: hidden; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+  @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+  .section-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 16px; background: #0f1923; border-bottom: 1px solid #1a2e40;
+    font-size: 13px; font-weight: 500; color: #8bb8d4;
+  }
+  .section-badge {
+    margin-left: auto; font-size: 10px; padding: 2px 10px;
+    border-radius: 20px; background: #0d2a40; color: #4a9acc;
+    border: 1px solid #1a4060; white-space: nowrap;
+  }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 10px; padding: 14px; border-bottom: 1px solid #1a2e40; }
+  .card { background: #0d1820; border: 1px solid #1a3050; border-radius: 8px; padding: 10px 14px; }
+  .card-label { font-size: 10px; color: #3d6a8a; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .card-value { font-size: 22px; font-weight: 300; color: #5ab4e0; }
+  .card-unit { font-size: 11px; color: #2a5070; margin-left: 2px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    padding: 8px 14px; text-align: left; font-size: 10px; font-weight: 600;
+    color: #3d6a8a; border-bottom: 1px solid #1a2e40;
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  td { padding: 9px 14px; border-bottom: 1px solid #121e2b; color: #c0d8eb; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #0f1a24; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .n-num { color: #8bb8d4; font-weight: 500; }
+  .plus { color: #22c55e; }
+  .minus { color: #f87171; }
+  .neutral { color: #345870; }
+  .row-num { color: #2a5070; font-size: 11px; }
+  .empty { padding: 24px; text-align: center; color: #2a5070; font-size: 13px; }
+  .footer { text-align: center; padding: 16px; font-size: 11px; color: #1e3a52; }
+  .auto-badge { font-size: 10px; padding: 2px 8px; border-radius: 20px; background: #0d3020; color: #22c55e; border: 1px solid #1a5030; margin-left: 8px; }
+
+  /* Debug panel */
+  .debug-panel {
+    display: none;
+    background: #0a1520; border: 1px solid #1e3048; border-radius: 10px;
+    padding: 16px; font-family: monospace; font-size: 11px; color: #4a9acc;
+    max-height: 300px; overflow-y: auto;
+  }
+  .debug-panel.visible { display: block; }
+  .debug-line { padding: 2px 0; border-bottom: 1px solid #111d28; }
+  .debug-line.err { color: #f87171; }
+  .debug-line.ok { color: #22c55e; }
+  .debug-line.warn { color: #f59e0b; }
+
+  /* Error block */
+  .error-block {
+    background: #1a0d0d; border: 1px solid #4a1a1a; border-radius: 8px;
+    padding: 16px; margin: 10px 14px; font-size: 12px; color: #f87171;
+    display: none;
+  }
+  .error-block.visible { display: block; }
+  .error-block h4 { margin-bottom: 8px; color: #ff8080; }
+  .error-block ul { padding-left: 16px; line-height: 1.8; }
+  .error-block a { color: #5ab4e0; }
+
+  /* URL editor */
+  .url-editor {
+    background: #0d1820; border: 1px solid #1a3050; border-radius: 8px;
+    padding: 12px 14px; margin: 0 14px 14px;
+    display: none;
+  }
+  .url-editor.visible { display: block; }
+  .url-editor label { font-size: 10px; color: #3d6a8a; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 4px; }
+  .url-editor input {
+    width: 100%; background: #0a1018; border: 1px solid #1e3048; border-radius: 4px;
+    padding: 6px 10px; color: #8bb8d4; font-size: 11px; font-family: monospace;
+    margin-bottom: 8px;
+  }
+  .url-editor input:focus { outline: none; border-color: #2277aa; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="logo-text">RWS OPTIMUM</div>
+    <div class="logo-sub">Производство ЖБ Шпал</div>
+  </div>
+  <div class="header-time" id="headerTime">--:--:--</div>
+  <div class="header-controls">
+    <button class="btn" onclick="loadData()">↻ Обновить</button>
+    <button class="btn" onclick="toggleDebug()">🔍 Диагностика</button>
+    <button class="btn" onclick="toggleUrlEditor()">⚙ URL таблицы</button>
+    <button class="btn" onclick="exportCSV()">↓ CSV</button>
+    <button class="btn btn-primary" onclick="window.print()">⎙ Печать</button>
+  </div>
+</div>
+
+<div class="status-bar">
+  <span class="dot loading" id="statusDot"></span>
+  <span id="statusText">Загрузка данных...</span>
+  <span style="margin-left:auto;" id="lastUpdate"></span>
+</div>
+
+<div class="content">
+
+  <!-- URL редактор -->
+  <div class="section">
+    <div class="section-header">
+      ⚙ Настройка URL Google Sheets
+    </div>
+    <div class="url-editor visible" id="urlEditor">
+      <label>Apps Script URL:</label>
+      <input type="text" id="scriptUrl" placeholder="https://script.google.com/macros/s/.../exec">
+      <label>Название листа ПЦ (точно как в таблице):</label>
+      <input type="text" id="urlPC" placeholder="ПЦ">
+      <label>Название листа БСУ (точно как в таблице):</label>
+      <input type="text" id="urlBSU" placeholder="БСУ">
+      <div style="display:flex; gap:8px; margin-top:4px;">
+        <button class="btn btn-primary" onclick="saveUrls()">✔ Сохранить и загрузить</button>
+        <button class="btn" onclick="resetUrls()">↺ Сбросить на исходные</button>
+      </div>
+      <div style="margin-top:10px; font-size:11px; color:#3d6a8a; line-height:1.6;">
+        💡 Укажите точные названия листов из вашей Google Таблицы (регистр важен).
+      </div>
+    </div>
+  </div>
+
+  <!-- Debug -->
+  <div class="section">
+    <div class="section-header" onclick="toggleDebug()" style="cursor:pointer;">
+      🔍 Журнал диагностики
+      <span class="section-badge" id="debugBadge">скрыт</span>
+    </div>
+    <div class="debug-panel" id="debugPanel"></div>
+  </div>
+
+  <!-- ПЦ + БСУ две колонки -->
+  <div class="two-col">
+
+    <!-- ПЦ слева -->
+    <div class="section">
+      <div class="section-header">
+        🏭 Производственный цех — шпалы
+        <span class="auto-badge">● Авто</span>
+        <span class="section-badge" id="pcDate">ПЦ</span>
+      </div>
+      <div class="error-block" id="pcError">
+        <h4>⚠ Не удалось загрузить данные ПЦ</h4>
+        <ul id="pcErrorList"></ul>
+      </div>
+      <div class="cards" id="pcCards" style="display:none;">
+        <div class="card">
+          <div class="card-label">Итого шпал</div>
+          <div class="card-value" id="pcTotal">0 <span class="card-unit">шт.</span></div>
+        </div>
+        <div class="card">
+          <div class="card-label">Видов шпал</div>
+          <div class="card-value" id="pcTypes">0 <span class="card-unit">типов</span></div>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:30px;">№</th>
+            <th>Наименование</th>
+            <th class="num">Остаток, шт.</th>
+          </tr>
+        </thead>
+        <tbody id="pcBody">
+          <tr><td colspan="3" class="empty">Загрузка...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- БСУ справа -->
+    <div class="section">
+      <div class="section-header">
+        📦 БСУ — остатки сырья
+        <span class="auto-badge">● Авто</span>
+        <span class="section-badge" id="bsuDate">БСУ</span>
+      </div>
+      <div class="error-block" id="bsuError">
+        <h4>⚠ Не удалось загрузить данные БСУ</h4>
+        <ul id="bsuErrorList"></ul>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:30px;">№</th>
+            <th>Наименование</th>
+            <th class="num">Остаток</th>
+            <th class="num">Приход</th>
+            <th class="num">Расход</th>
+          </tr>
+        </thead>
+        <tbody id="bsuBody">
+          <tr><td colspan="5" class="empty">Загрузка...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+</div>
+<div class="footer">RWS Optimum · Данные из Google Sheets · <span id="footerDate"></span></div>
+
+<script>
+// ── APPS SCRIPT CONFIG ────────────────────────────────────────────────────────
+const DEFAULT_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymYCBoPrkF-l8JM5Qm52u0A5gMWqMbNT_F_Tqr-6kq6Go1HtXpcY6BGmS9KMQE3oWA/exec';
+const DEFAULT_SHEET_PC  = 'ПЦ';
+const DEFAULT_SHEET_BSU = 'БСУ';
+
+function getConfig() {
+  return {
+    url: localStorage.getItem('rws_script_url') || DEFAULT_APPS_SCRIPT_URL,
+    pc:  localStorage.getItem('rws_sheet_pc')   || DEFAULT_SHEET_PC,
+    bsu: localStorage.getItem('rws_sheet_bsu')  || DEFAULT_SHEET_BSU,
+  };
+}
+
+function initUrlEditor() {
+  const c = getConfig();
+  document.getElementById('urlPC').value  = c.pc;
+  document.getElementById('urlBSU').value = c.bsu;
+  const si = document.getElementById('scriptUrl');
+  if (si) si.value = c.url;
+}
+
+function saveUrls() {
+  const pc  = document.getElementById('urlPC').value.trim();
+  const bsu = document.getElementById('urlBSU').value.trim();
+  const si  = document.getElementById('scriptUrl');
+  if (si && si.value.trim()) localStorage.setItem('rws_script_url', si.value.trim());
+  if (pc)  localStorage.setItem('rws_sheet_pc',  pc);
+  if (bsu) localStorage.setItem('rws_sheet_bsu', bsu);
+  dbg('✔ Настройки сохранены', 'ok');
+  loadData();
+}
+
+function resetUrls() {
+  localStorage.removeItem('rws_script_url');
+  localStorage.removeItem('rws_sheet_pc');
+  localStorage.removeItem('rws_sheet_bsu');
+  initUrlEditor();
+  dbg('↺ Сброшено на исходные настройки', 'warn');
+  loadData();
+}
+
+function toggleUrlEditor() {
+  document.getElementById('urlEditor').classList.toggle('visible');
+}
+
+// ── ЧАСЫ ─────────────────────────────────────────────────────────────────────
+setInterval(() => {
+  document.getElementById('headerTime').textContent = new Date().toLocaleTimeString('ru-RU');
+}, 1000);
+document.getElementById('headerTime').textContent = new Date().toLocaleTimeString('ru-RU');
+document.getElementById('footerDate').textContent = new Date().toLocaleDateString('ru-RU', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+
+// ── ДИАГНОСТИКА ───────────────────────────────────────────────────────────────
+const debugLines = [];
+function dbg(msg, cls) {
+  const now = new Date().toLocaleTimeString('ru-RU');
+  debugLines.push({ t: now, msg, cls: cls || '' });
+  const panel = document.getElementById('debugPanel');
+  panel.innerHTML = debugLines.slice(-80).reverse().map(l =>
+    `<div class="debug-line ${l.cls}">[${l.t}] ${l.msg}</div>`
+  ).join('');
+}
+
+function toggleDebug() {
+  const p = document.getElementById('debugPanel');
+  const b = document.getElementById('debugBadge');
+  p.classList.toggle('visible');
+  b.textContent = p.classList.contains('visible') ? 'открыт' : 'скрыт';
+}
+
+// ── СТАТУС ────────────────────────────────────────────────────────────────────
+function status(msg, state) {
+  document.getElementById('statusText').textContent = msg;
+  document.getElementById('statusDot').className = 'dot ' + (state || 'loading');
+}
+
+// ── CSV ПАРСЕР ────────────────────────────────────────────────────────────────
+function parseCSV(text) {
+  return text.trim().split('\n').map(line => {
+    const cols = [];
+    let cur = '', inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"') { inQ = !inQ; }
+      else if (c === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
+      else { cur += c; }
+    }
+    cols.push(cur.trim());
+    return cols;
+  });
+}
+
+function pNum(v) {
+  if (!v || v === '-') return null;
+  return parseFloat(String(v).replace(/[\s\u00a0 ]/g,'').replace(',','.')) || null;
+}
+function fNum(v) {
+  const n = pNum(v);
+  if (n === null) return '<span class="neutral">—</span>';
+  return '<span class="n-num">' + n.toLocaleString('ru-RU') + '</span>';
+}
+function fMinus(v) {
+  const n = pNum(v);
+  if (n === null) return '<span class="neutral">—</span>';
+  return '<span class="minus">−' + n.toLocaleString('ru-RU') + '</span>';
+}
+function fPlus(v) {
+  if (!v || v === '-') return '<span class="neutral">—</span>';
+  const n = pNum(v);
+  if (n === null) return '<span class="neutral">—</span>';
+  return '<span class="plus">+' + n.toLocaleString('ru-RU') + '</span>';
+}
+
+// ── РЕНДЕР ПЦ ────────────────────────────────────────────────────────────────
+function renderPC(rows) {
+  const body = document.getElementById('pcBody');
+  document.getElementById('pcError').classList.remove('visible');
+  dbg(`ПЦ: получено ${rows.length} строк`, 'ok');
+
+  if (!rows || rows.length < 2) {
+    body.innerHTML = '<tr><td colspan="3" class="empty">Нет данных (таблица пустая или неверная структура)</td></tr>';
+    showPCError(['Таблица пустая или содержит меньше 2 строк', 'Проверьте, что таблица опубликована в CSV формате']);
+    return;
+  }
+
+  // Попытка найти строку-заголовок с датой
+  let dataStartRow = 2; // по умолчанию с 3-й строки (индекс 2)
+  const hdr = rows[1];
+  if (hdr && hdr[2]) document.getElementById('pcDate').textContent = hdr[2];
+
+  dbg(`ПЦ: заголовок строки 2: [${rows[1].join(' | ')}]`);
+  if (rows[2]) dbg(`ПЦ: первая строка данных: [${rows[2].join(' | ')}]`);
+
+  let html = '', total = 0, cnt = 0;
+  for (let i = dataStartRow; i < rows.length; i++) {
+    const r = rows[i];
+    if (!r || !r[1]) continue; // пропуск пустых строк
+    const n = pNum(r[2]);
+    if (n) { total += n; cnt++; }
+    const num = r[0] || (i - dataStartRow + 1);
+    html += `<tr><td class="row-num">${num}</td><td>${r[1]}</td><td class="num">${fNum(r[2])}</td></tr>`;
+  }
+  body.innerHTML = html || '<tr><td colspan="3" class="empty">Нет строк с данными</td></tr>';
+  document.getElementById('pcTotal').innerHTML = total.toLocaleString('ru-RU') + ' <span class="card-unit">шт.</span>';
+  document.getElementById('pcTypes').innerHTML = cnt + ' <span class="card-unit">типов</span>';
+  document.getElementById('pcCards').style.display = 'grid';
+  dbg(`ПЦ: отображено ${cnt} позиций, итого ${total.toLocaleString('ru-RU')} шт.`, 'ok');
+}
+
+// ── РЕНДЕР БСУ ───────────────────────────────────────────────────────────────
+function renderBSU(rows) {
+  const body = document.getElementById('bsuBody');
+  document.getElementById('bsuError').classList.remove('visible');
+  dbg(`БСУ: получено ${rows.length} строк`, 'ok');
+
+  if (!rows || rows.length < 2) {
+    body.innerHTML = '<tr><td colspan="5" class="empty">Нет данных</td></tr>';
+    showBSUError(['Таблица БСУ пустая', 'Проверьте gid листа в URL']);
+    return;
+  }
+
+  const hdr = rows[1];
+  if (hdr && hdr[2]) document.getElementById('bsuDate').textContent = hdr[2];
+  dbg(`БСУ: заголовок строки 2: [${rows[1].join(' | ')}]`);
+
+  let html = '';
+  for (let i = 2; i < rows.length; i++) {
+    const r = rows[i];
+    if (!r || !r[1]) continue;
+    const num = r[0] || (i - 1);
+    html += `<tr>
+      <td class="row-num">${num}</td>
+      <td>${r[1]}</td>
+      <td class="num">${fNum(r[2])}</td>
+      <td class="num">${fPlus(r[3])}</td>
+      <td class="num">${fMinus(r[4])}</td>
+    </tr>`;
+  }
+  body.innerHTML = html || '<tr><td colspan="5" class="empty">Нет строк с данными</td></tr>';
+  dbg(`БСУ: отображено успешно`, 'ok');
+}
+
+function showPCError(hints) {
+  const el = document.getElementById('pcError');
+  const ul = document.getElementById('pcErrorList');
+  ul.innerHTML = hints.map(h => `<li>${h}</li>`).join('');
+  el.classList.add('visible');
+}
+function showBSUError(hints) {
+  const el = document.getElementById('bsuError');
+  const ul = document.getElementById('bsuErrorList');
+  ul.innerHTML = hints.map(h => `<li>${h}</li>`).join('');
+  el.classList.add('visible');
+}
+
+// ── FETCH через Apps Script ───────────────────────────────────────────────────
+async function fetchSheet(sheetName, label) {
+  const { url } = getConfig();
+  const fetchUrl = url + '?sheet=' + encodeURIComponent(sheetName) + '&t=' + Date.now();
+  dbg(`${label}: запрос листа "${sheetName}" → ${fetchUrl.substring(0, 80)}...`);
+  try {
+    const r = await fetch(fetchUrl);
+    dbg(`${label}: HTTP ${r.status}`, r.ok ? 'ok' : 'err');
+    if (!r.ok) throw new Error(`HTTP ${r.status} — Apps Script недоступен`);
+    const text = await r.text();
+    if (text.trim().startsWith('<!DOCTYPE') || text.trim().startsWith('<html')) {
+      throw new Error('Получен HTML — проверьте, что скрипт развёрнут с доступом "Все"');
+    }
+    const data = JSON.parse(text);
+    if (data.error) throw new Error('Apps Script: ' + data.error);
+    dbg(`${label}: получено ${data.length} строк`, 'ok');
+    return data;
+  } catch(e) {
+    dbg(`${label}: ОШИБКА — ${e.message}`, 'err');
+    throw e;
+  }
+}
+
+// ── ЗАГРУЗКА ДАННЫХ ───────────────────────────────────────────────────────────
+async function loadData() {
+  const cfg = getConfig();
+  status('Загрузка данных через Apps Script...', 'loading');
+  dbg('══ Начало загрузки ══');
+  dbg(`Скрипт: ${cfg.url.substring(0, 60)}...`);
+  dbg(`Листы: ПЦ="${cfg.pc}", БСУ="${cfg.bsu}"`);
+
+  let pcOk = false, bsuOk = false;
+
+  // ПЦ
+  try {
+    const pc = await fetchSheet(cfg.pc, 'ПЦ');
+    renderPC(pc);
+    pcOk = true;
+  } catch(e) {
+    document.getElementById('pcBody').innerHTML = '<tr><td colspan="3" class="empty">Ошибка загрузки</td></tr>';
+    showPCError([
+      e.message,
+      'Проверьте название листа ПЦ в настройках (регистр важен)',
+      'Убедитесь что Apps Script развёрнут с доступом "Все"',
+      'Откройте журнал диагностики для подробностей'
+    ]);
+  }
+
+  // БСУ
+  try {
+    const bsu = await fetchSheet(cfg.bsu, 'БСУ');
+    renderBSU(bsu);
+    bsuOk = true;
+  } catch(e) {
+    document.getElementById('bsuBody').innerHTML = '<tr><td colspan="5" class="empty">Ошибка загрузки</td></tr>';
+    showBSUError([
+      e.message,
+      'Проверьте название листа БСУ в настройках (регистр важен)',
+      'Откройте журнал диагностики для подробностей'
+    ]);
+  }
+
+  if (pcOk && bsuOk) {
+    status('Данные успешно загружены через Apps Script', 'ok');
+  } else if (!pcOk && !bsuOk) {
+    status('Ошибка загрузки — проверьте настройки Apps Script', 'error');
+    document.getElementById('debugPanel').classList.add('visible');
+    document.getElementById('debugBadge').textContent = 'открыт';
+  } else {
+    status(`Частичная загрузка: ${pcOk ? 'ПЦ ✔' : 'ПЦ ✗'} | ${bsuOk ? 'БСУ ✔' : 'БСУ ✗'}`, 'loading');
+  }
+
+  document.getElementById('lastUpdate').textContent = 'Обновлено: ' + new Date().toLocaleString('ru-RU');
+}
+
+function exportCSV() {
+  let csv = '\uFEFF';
+  csv += 'ПРОИЗВОДСТВЕННЫЙ ЦЕХ\n№,Наименование,Остаток шт.\n';
+  document.querySelectorAll('#pcBody tr').forEach(tr => {
+    const c = [...tr.querySelectorAll('td')].map(td => '"'+td.textContent.trim()+'"');
+    if (c.length > 1) csv += c.join(',') + '\n';
+  });
+  csv += '\nБСУ\n№,Наименование,Остаток,Приход,Расход\n';
+  document.querySelectorAll('#bsuBody tr').forEach(tr => {
+    const c = [...tr.querySelectorAll('td')].map(td => '"'+td.textContent.trim()+'"');
+    if (c.length > 1) csv += c.join(',') + '\n';
+  });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8;'}));
+  a.download = 'RWS_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+
+// ── СТАРТ ─────────────────────────────────────────────────────────────────────
+initUrlEditor();
+loadData();
+setInterval(loadData, 5 * 60 * 1000);
+</script>
+</body>
+</html>
