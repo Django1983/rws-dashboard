@@ -63,10 +63,11 @@
     text-transform: uppercase; letter-spacing: 0.06em; background: #f8fbfd;
   }
   td { padding: 9px 14px; border-bottom: 1px solid #eaf2f8; color: #1a2e3b; text-align: center; }
+  td.name-col { text-align: left; }
   tr:last-child td { border-bottom: none; }
   tr:hover td { background: #f4f9fd; }
-  .num { text-align: right; font-variant-numeric: tabular-nums; }
-  .n-num { color: #1a5c8a; font-weight: 500; }
+  .num { text-align: center; font-variant-numeric: tabular-nums; font-size: 14px; font-weight: 600; }
+  .n-num { color: #1a5c8a; font-weight: 700; font-size: 15px; }
   .plus { color: #16a34a; font-weight: 500; }
   .minus { color: #dc2626; font-weight: 500; }
   .neutral { color: #9ab4c4; }
@@ -439,7 +440,7 @@ function renderPC(rows) {
     const n = pNum(r[2]);
     if (n) { total += n; cnt++; }
     const num = r[0] || (i - dataStartRow + 1);
-    html += `<tr><td class="row-num">${num}</td><td>${r[1]}</td><td class="num">${fNum(r[2])}</td></tr>`;
+    html += `<tr><td class="row-num">${num}</td><td style="text-align:left">${r[1]}</td><td class="num">${fNum(r[2])}</td></tr>`;
   }
   body.innerHTML = html || '<tr><td colspan="3" class="empty">Нет строк с данными</td></tr>';
   document.getElementById('pcTotal').innerHTML = total.toLocaleString('ru-RU') + ' <span class="card-unit">шт.</span>';
@@ -471,7 +472,7 @@ function renderBSU(rows) {
     const num = r[0] || (i - 1);
     html += `<tr>
       <td class="row-num">${num}</td>
-      <td>${r[1]}</td>
+      <td style="text-align:left">${r[1]}</td>
       <td class="num">${fNum(r[2])}</td>
       <td class="num">${fPlus(r[3])}</td>
       <td class="num">${fMinus(r[4])}</td>
@@ -533,7 +534,7 @@ function renderOTG(rows) {
       const ostn = parseFloat(String(r[11] || '').replace(/\s/g,'').replace(',','.')) || 0;
       result += `<tr style="background:#f0f6fb; font-weight:500;">
         <td class="row-num">${num}</td>
-        <td colspan="10">${name}</td>
+        <td colspan="10" style="text-align:left">${name}</td>
         <td class="num n-num">${ostn ? ostn.toLocaleString('ru-RU') : '<span style="color:#bbb">—</span>'}</td>
       </tr>`;
     } else if (!num && name) {
@@ -542,7 +543,7 @@ function renderOTG(rows) {
       // I=8(год_ваг), J=9(год_маш), K=10(год_шт)
       result += `<tr>
         <td></td>
-        <td style="color:#5a8aaa; padding-left:20px;">${name}</td>
+        <td style="color:#5a8aaa; text-align:left; padding-left:20px;">${name}</td>
         <td class="num">${fmt(r[2])}</td>
         <td class="num">${fmt(r[3])}</td>
         <td class="num">${fmt(r[4])}</td>
