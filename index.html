@@ -197,14 +197,15 @@
         <thead>
           <tr>
             <th style="width:30px;">№</th>
-            <th>Наименование</th>
-            <th class="num">Остаток</th>
-            <th class="num">Приход</th>
-            <th class="num">Расход</th>
+            <th id="bsuHeadName">Наименование сырья</th>
+            <th class="num" id="bsuHeadOst1">11.05.2026 остаток</th>
+            <th class="num" id="bsuHeadPrihod">11.05.2026 приход</th>
+            <th class="num" id="bsuHeadRashod">11.05.2026 расход</th>
+            <th class="num" id="bsuHeadOst2">12.05.2026 остаток</th>
           </tr>
         </thead>
         <tbody id="bsuBody">
-          <tr><td colspan="5" class="empty">Загрузка...</td></tr>
+          <tr><td colspan="6" class="empty">Загрузка...</td></tr>
         </tbody>
       </table>
     </div>
@@ -396,21 +397,26 @@ function pNum(v) {
   if (!v || v === '-') return null;
   return parseFloat(String(v).replace(/[\s\u00a0 ]/g,'').replace(',','.')) || null;
 }
+function rawSheetNum(v) {
+  if (v === null || v === undefined) return null;
+  const s = String(v).trim();
+  if (!s || s === '-') return null;
+  return s.replace(/[\s\u00a0 ]/g, '').replace('.', ',');
+}
 function fNum(v) {
-  const n = pNum(v);
-  if (n === null) return '<span class="neutral">—</span>';
-  return '<span class="n-num">' + n.toLocaleString('ru-RU') + '</span>';
+  const raw = rawSheetNum(v);
+  if (raw === null) return '<span class="neutral">—</span>';
+  return '<span class="n-num">' + raw + '</span>';
 }
 function fMinus(v) {
-  const n = pNum(v);
-  if (n === null) return '<span class="neutral">—</span>';
-  return '<span class="minus">−' + n.toLocaleString('ru-RU') + '</span>';
+  const raw = rawSheetNum(v);
+  if (raw === null) return '<span class="neutral">—</span>';
+  return '<span class="n-num">' + raw + '</span>';
 }
 function fPlus(v) {
-  if (!v || v === '-') return '<span class="neutral">—</span>';
-  const n = pNum(v);
-  if (n === null) return '<span class="neutral">—</span>';
-  return '<span class="plus">+' + n.toLocaleString('ru-RU') + '</span>';
+  const raw = rawSheetNum(v);
+  if (raw === null) return '<span class="neutral">—</span>';
+  return '<span class="n-num">' + raw + '</span>';
 }
 
 // ── РЕНДЕР ПЦ ────────────────────────────────────────────────────────────────
@@ -456,13 +462,18 @@ function renderBSU(rows) {
   dbg(`БСУ: получено ${rows.length} строк`, 'ok');
 
   if (!rows || rows.length < 2) {
-    body.innerHTML = '<tr><td colspan="5" class="empty">Нет данных</td></tr>';
+    body.innerHTML = '<tr><td colspan="6" class="empty">Нет данных</td></tr>';
     showBSUError(['Таблица БСУ пустая', 'Проверьте gid листа в URL']);
     return;
   }
 
-  const hdr = rows[1];
-  if (hdr && hdr[2]) document.getElementById('bsuDate').textContent = hdr[2];
+  const hdr = rows[1] || [];
+  document.getElementById('bsuHeadName').textContent   = hdr[1] || 'Наименование сырья';
+  document.getElementById('bsuHeadOst1').textContent   = hdr[2] || 'Остаток';
+  document.getElementById('bsuHeadPrihod').textContent = hdr[3] || 'Приход';
+  document.getElementById('bsuHeadRashod').textContent = hdr[4] || 'Расход';
+  document.getElementById('bsuHeadOst2').textContent   = hdr[5] || 'Следующий остаток';
+  document.getElementById('bsuDate').textContent = hdr[5] || hdr[2] || 'БСУ';
   dbg(`БСУ: заголовок строки 2: [${rows[1].join(' | ')}]`);
 
   let html = '';
@@ -476,9 +487,10 @@ function renderBSU(rows) {
       <td class="num">${fNum(r[2])}</td>
       <td class="num">${fPlus(r[3])}</td>
       <td class="num">${fMinus(r[4])}</td>
+      <td class="num">${fNum(r[5])}</td>
     </tr>`;
   }
-  body.innerHTML = html || '<tr><td colspan="5" class="empty">Нет строк с данными</td></tr>';
+  body.innerHTML = html || '<tr><td colspan="6" class="empty">Нет строк с данными</td></tr>';
   dbg(`БСУ: отображено успешно`, 'ok');
 }
 
@@ -624,7 +636,7 @@ async function loadData() {
     renderBSU(bsu);
     bsuOk = true;
   } catch(e) {
-    document.getElementById('bsuBody').innerHTML = '<tr><td colspan="5" class="empty">Ошибка загрузки</td></tr>';
+    document.getElementById('bsuBody').innerHTML = '<tr><td colspan="6" class="empty">Ошибка загрузки</td></tr>';
     showBSUError([
       e.message,
       'Проверьте название листа БСУ в настройках (регистр важен)',
@@ -679,5 +691,6 @@ initUrlEditor();
 loadData();
 setInterval(loadData, 5 * 60 * 1000);
 </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
