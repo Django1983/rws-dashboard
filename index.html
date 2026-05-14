@@ -6,114 +6,148 @@
 <title>RWS Optimum — Производство ЖБ Шпал</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f4f8; color: #1a2e3b; min-height: 100vh; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f4f8; color: #1a2e3b; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
   .header {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 24px; background: #1a3a52;
-    border-bottom: 1px solid #15304a; position: sticky; top: 0; z-index: 100;
-    gap: 16px;
+    padding: 7px 18px; background: #1a3a52;
+    border-bottom: 1px solid #15304a; flex-shrink: 0;
+    gap: 12px;
   }
   .header-logo { flex-shrink: 0; }
   .header-center { flex: 1; text-align: center; }
-  .logo-text { font-size: 20px; font-weight: 700; color: #fff; letter-spacing: 0.08em; }
-  .logo-sub { font-size: 12px; color: #7aacc8; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 2px; }
-  .header-time { font-size: 18px; font-weight: 300; color: #b0d4ea; font-variant-numeric: tabular-nums; }
-  .header-controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; flex-shrink: 0; }
+  .logo-text { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: 0.08em; }
+  .logo-sub { font-size: 10px; color: #7aacc8; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 1px; }
+  .header-time { font-size: 16px; font-weight: 300; color: #b0d4ea; font-variant-numeric: tabular-nums; }
+  .header-controls { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; flex-shrink: 0; }
   .btn {
-    padding: 6px 14px; font-size: 12px; border-radius: 6px; cursor: pointer;
+    padding: 4px 11px; font-size: 11px; border-radius: 5px; cursor: pointer;
     border: 1px solid #2e5c7a; background: #244a62; color: #b0d4ea;
-    display: inline-flex; align-items: center; gap: 6px; transition: background 0.15s;
+    display: inline-flex; align-items: center; gap: 5px; transition: background 0.15s;
   }
   .btn:hover { background: #2a5a78; color: #d8edf8; }
   .btn-primary { background: #2277aa; border-color: #2a90cc; color: #fff; }
   .btn-primary:hover { background: #278ac0; }
   .status-bar {
     display: flex; align-items: center; gap: 10px;
-    padding: 5px 24px; background: #e2ecf4;
-    border-bottom: 1px solid #c8dce8; font-size: 11px; color: #4a7fa5;
+    padding: 3px 18px; background: #e2ecf4;
+    border-bottom: 1px solid #c8dce8; font-size: 10px; color: #4a7fa5; flex-shrink: 0;
   }
-  .dot { width: 7px; height: 7px; border-radius: 50%; background: #16a34a; flex-shrink: 0; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: #16a34a; flex-shrink: 0; }
   .dot.loading { background: #d97706; animation: pulse 1.2s infinite; }
   .dot.error { background: #dc2626; }
   .dot.ok { background: #16a34a; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-  .content { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; }
-  .section { background: #fff; border: 1px solid #c8dce8; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
-  @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* ── ГЛАВНАЯ СЕТКА ── */
+  .content {
+    flex: 1;
+    display: grid;
+    grid-template-columns: minmax(0,1fr) minmax(0,1.5fr) minmax(0,1fr);
+    grid-template-rows: minmax(0,1fr) minmax(0,1fr);
+    gap: 8px;
+    padding: 8px;
+    overflow: hidden;
+  }
+
+  /* Отгрузка занимает 2 строки в центре */
+  .section-otg  { grid-column: 2; grid-row: 1 / 3; }
+  /* ОК занимает 2 строки справа */
+  .section-ok   { grid-column: 3; grid-row: 1 / 3; }
+  /* ПЦ вверху слева */
+  .section-pc   { grid-column: 1; grid-row: 1; }
+  /* БСУ внизу слева */
+  .section-bsu  { grid-column: 1; grid-row: 2; }
+
+  .section {
+    background: #fff; border: 1px solid #c8dce8; border-radius: 8px;
+    overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    display: flex; flex-direction: column; min-height: 0;
+  }
   .section-header {
-    display: flex; align-items: center; gap: 10px;
-    padding: 10px 16px; background: #f0f6fb; border-bottom: 1px solid #d0e4f0;
-    font-size: 13px; font-weight: 600; color: #1a3a52;
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 12px; background: #f0f6fb; border-bottom: 1px solid #d0e4f0;
+    font-size: 12px; font-weight: 600; color: #1a3a52; flex-shrink: 0;
   }
   .section-badge {
-    margin-left: auto; font-size: 10px; padding: 2px 10px;
+    margin-left: auto; font-size: 10px; padding: 1px 8px;
     border-radius: 20px; background: #ddeef8; color: #2277aa;
     border: 1px solid #b0cfe0; white-space: nowrap;
   }
-  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px,1fr)); gap: 10px; padding: 14px; border-bottom: 1px solid #d8eaf4; }
-  .card { background: #f0f6fb; border: 1px solid #c8dce8; border-radius: 8px; padding: 10px 14px; }
-  .card-label { font-size: 10px; color: #5a8aaa; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
-  .card-value { font-size: 22px; font-weight: 500; color: #1a5c8a; }
-  .card-unit { font-size: 11px; color: #7aacc8; margin-left: 2px; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th {
-    padding: 8px 14px; text-align: center; font-size: 10px; font-weight: 700;
-    color: #5a8aaa; border-bottom: 1px solid #d0e4f0;
-    text-transform: uppercase; letter-spacing: 0.06em; background: #f8fbfd;
+  .cards {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(100px,1fr));
+    gap: 6px; padding: 8px; border-bottom: 1px solid #d8eaf4; flex-shrink: 0;
   }
-  td { padding: 9px 14px; border-bottom: 1px solid #eaf2f8; color: #1a2e3b; text-align: center; }
+  .card { background: #f0f6fb; border: 1px solid #c8dce8; border-radius: 6px; padding: 6px 10px; }
+  .card-label { font-size: 9px; color: #5a8aaa; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
+  .card-value { font-size: 18px; font-weight: 500; color: #1a5c8a; }
+  .card-unit { font-size: 10px; color: #7aacc8; margin-left: 2px; }
+
+  .table-wrap { overflow: auto; flex: 1; min-height: 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  th {
+    padding: 5px 8px; text-align: center; font-size: 9px; font-weight: 700;
+    color: #5a8aaa; border-bottom: 1px solid #d0e4f0;
+    text-transform: uppercase; letter-spacing: 0.05em; background: #f8fbfd;
+    position: sticky; top: 0; z-index: 1;
+  }
+  td { padding: 5px 8px; border-bottom: 1px solid #eaf2f8; color: #1a2e3b; text-align: center; }
   td.name-col { text-align: left; }
   tr:last-child td { border-bottom: none; }
   tr:hover td { background: #f4f9fd; }
-  .num { text-align: center; font-variant-numeric: tabular-nums; font-size: 14px; font-weight: 600; }
-  .n-num { color: #1a5c8a; font-weight: 700; font-size: 15px; }
+  .num { text-align: center; font-variant-numeric: tabular-nums; font-size: 12px; font-weight: 600; }
+  .n-num { color: #1a5c8a; font-weight: 700; font-size: 12px; }
   .plus { color: #16a34a; font-weight: 500; }
   .minus { color: #dc2626; font-weight: 500; }
   .neutral { color: #9ab4c4; }
-  .row-num { color: #9ab4c4; font-size: 11px; }
-  .empty { padding: 24px; text-align: center; color: #9ab4c4; font-size: 13px; }
-  .footer { text-align: center; padding: 16px; font-size: 11px; color: #9ab4c4; }
-  .auto-badge { font-size: 10px; padding: 2px 8px; border-radius: 20px; background: #dcfce7; color: #16a34a; border: 1px solid #86efac; margin-left: 8px; }
+  .row-num { color: #9ab4c4; font-size: 10px; }
+  .empty { padding: 16px; text-align: center; color: #9ab4c4; font-size: 12px; }
+  .auto-badge { font-size: 9px; padding: 1px 7px; border-radius: 20px; background: #dcfce7; color: #16a34a; border: 1px solid #86efac; }
 
   /* Debug panel */
   .debug-panel {
-    display: none;
-    background: #f8fbfd; border: 1px solid #c8dce8; border-radius: 10px;
-    padding: 16px; font-family: monospace; font-size: 11px; color: #2277aa;
-    max-height: 300px; overflow-y: auto;
+    display: none; background: #f8fbfd; border: 1px solid #c8dce8; border-radius: 8px;
+    padding: 12px; font-family: monospace; font-size: 10px; color: #2277aa;
+    max-height: 200px; overflow-y: auto; margin: 8px;
   }
   .debug-panel.visible { display: block; }
-  .debug-line { padding: 2px 0; border-bottom: 1px solid #e8f2f8; }
+  .debug-line { padding: 1px 0; border-bottom: 1px solid #e8f2f8; }
   .debug-line.err { color: #dc2626; }
   .debug-line.ok { color: #16a34a; }
   .debug-line.warn { color: #d97706; }
 
   /* Error block */
   .error-block {
-    background: #fef2f2; border: 1px solid #fca5a5; border-radius: 8px;
-    padding: 16px; margin: 10px 14px; font-size: 12px; color: #dc2626;
-    display: none;
+    background: #fef2f2; border: 1px solid #fca5a5; border-radius: 6px;
+    padding: 10px; margin: 6px 10px; font-size: 11px; color: #dc2626; display: none;
   }
   .error-block.visible { display: block; }
-  .error-block h4 { margin-bottom: 8px; color: #b91c1c; }
-  .error-block ul { padding-left: 16px; line-height: 1.8; }
+  .error-block h4 { margin-bottom: 6px; color: #b91c1c; }
+  .error-block ul { padding-left: 14px; line-height: 1.7; }
   .error-block a { color: #2277aa; }
 
   /* URL editor */
   .url-editor {
-    background: #f8fbfd; border: 1px solid #c8dce8; border-radius: 8px;
-    padding: 12px 14px; margin: 0 14px 14px;
-    display: none;
+    background: #f8fbfd; border: 1px solid #c8dce8; border-radius: 6px;
+    padding: 10px 12px; margin: 0 10px 10px; display: none;
   }
   .url-editor.visible { display: block; }
-  .url-editor label { font-size: 10px; color: #5a8aaa; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 4px; }
+  .url-editor label { font-size: 9px; color: #5a8aaa; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 3px; }
   .url-editor input {
     width: 100%; background: #fff; border: 1px solid #c8dce8; border-radius: 4px;
-    padding: 6px 10px; color: #1a2e3b; font-size: 11px; font-family: monospace;
-    margin-bottom: 8px;
+    padding: 5px 8px; color: #1a2e3b; font-size: 10px; font-family: monospace; margin-bottom: 6px;
   }
   .url-editor input:focus { outline: none; border-color: #2277aa; }
+
+  /* Панели настроек и диагностики — в попап поверх */
+  .overlay-panels { position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; padding: 0 8px 8px; pointer-events: none; }
+  .overlay-panels .section { pointer-events: all; }
+
+  @media print {
+    body { overflow: visible; height: auto; }
+    .content { display: block; overflow: visible; }
+    .table-wrap { overflow: visible; }
+    .header-controls { display: none; }
+  }
 </style>
 </head>
 <body>
@@ -190,76 +224,75 @@
 
 <div class="content">
 
-  <!-- ПЦ + БСУ две колонки -->
-  <div class="two-col">
-
-    <!-- ПЦ слева -->
-    <div class="section">
-      <div class="section-header">
-        🏭 Производственный цех — шпалы
-        <span class="auto-badge">● Авто</span>
-        <span class="section-badge" id="pcDate">ПЦ</span>
-      </div>
-      <div class="error-block" id="pcError">
-        <h4>⚠ Не удалось загрузить данные ПЦ</h4>
-        <ul id="pcErrorList"></ul>
-      </div>
-      <div class="cards" id="pcCards" style="display:none;">
-        <div class="card">
-          <div class="card-label">Итого шпал</div>
-          <div class="card-value" id="pcTotal">0 <span class="card-unit">шт.</span></div>
-        </div>
-        <div class="card">
-          <div class="card-label">Видов шпал</div>
-          <div class="card-value" id="pcTypes">0 <span class="card-unit">типов</span></div>
-        </div>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th style="width:30px;">№</th>
-            <th>Наименование</th>
-            <th class="num">Остаток, шт.</th>
-          </tr>
-        </thead>
-        <tbody id="pcBody">
-          <tr><td colspan="3" class="empty">Загрузка...</td></tr>
-        </tbody>
-      </table>
+  <!-- ПЦ — верх слева -->
+  <div class="section section-pc">
+    <div class="section-header">
+      🏭 Производственный цех — шпалы
+      <span class="auto-badge">● Авто</span>
+      <span class="section-badge" id="pcDate">ПЦ</span>
     </div>
-
-    <!-- БСУ справа -->
-    <div class="section">
-      <div class="section-header">
-        📦 БСУ — остатки сырья
-        <span class="auto-badge">● Авто</span>
-        <span class="section-badge" id="bsuDate">БСУ</span>
-      </div>
-      <div class="error-block" id="bsuError">
-        <h4>⚠ Не удалось загрузить данные БСУ</h4>
-        <ul id="bsuErrorList"></ul>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th style="width:30px;">№</th>
-            <th id="bsuHeadName">Наименование сырья</th>
-            <th class="num" id="bsuHeadOst1">11.05.2026 остаток</th>
-            <th class="num" id="bsuHeadPrihod">11.05.2026 приход</th>
-            <th class="num" id="bsuHeadRashod">11.05.2026 расход</th>
-            <th class="num" id="bsuHeadOst2">12.05.2026 остаток</th>
-          </tr>
-        </thead>
-        <tbody id="bsuBody">
-          <tr><td colspan="6" class="empty">Загрузка...</td></tr>
-        </tbody>
-      </table>
+    <div class="error-block" id="pcError">
+      <h4>⚠ Не удалось загрузить данные ПЦ</h4>
+      <ul id="pcErrorList"></ul>
     </div>
-
+    <div class="cards" id="pcCards" style="display:none;">
+      <div class="card">
+        <div class="card-label">Итого шпал</div>
+        <div class="card-value" id="pcTotal">0 <span class="card-unit">шт.</span></div>
+      </div>
+      <div class="card">
+        <div class="card-label">Видов шпал</div>
+        <div class="card-value" id="pcTypes">0 <span class="card-unit">типов</span></div>
+      </div>
+    </div>
+    <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:30px;">№</th>
+          <th style="text-align:left;">Наименование</th>
+          <th class="num">Остаток, шт.</th>
+        </tr>
+      </thead>
+      <tbody id="pcBody">
+        <tr><td colspan="3" class="empty">Загрузка...</td></tr>
+      </tbody>
+    </table>
+    </div>
   </div>
 
-  <!-- Отгрузка -->
-  <div class="section">
+  <!-- БСУ — низ слева -->
+  <div class="section section-bsu">
+    <div class="section-header">
+      📦 БСУ — остатки сырья
+      <span class="auto-badge">● Авто</span>
+      <span class="section-badge" id="bsuDate">БСУ</span>
+    </div>
+    <div class="error-block" id="bsuError">
+      <h4>⚠ Не удалось загрузить данные БСУ</h4>
+      <ul id="bsuErrorList"></ul>
+    </div>
+    <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:28px;">№</th>
+          <th id="bsuHeadName" style="text-align:left;">Наименование сырья</th>
+          <th class="num" id="bsuHeadOst1">Остаток</th>
+          <th class="num" id="bsuHeadPrihod">Приход</th>
+          <th class="num" id="bsuHeadRashod">Расход</th>
+          <th class="num" id="bsuHeadOst2">Остаток</th>
+        </tr>
+      </thead>
+      <tbody id="bsuBody">
+        <tr><td colspan="6" class="empty">Загрузка...</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- Отгрузка — центр, 2 строки -->
+  <div class="section section-otg">
     <div class="section-header">
       🚛 ПЦ — Отгрузка шпал
       <span class="auto-badge">● Авто</span>
@@ -269,26 +302,26 @@
       <h4>⚠ Не удалось загрузить данные Отгрузки</h4>
       <ul id="otgErrorList"></ul>
     </div>
-    <div style="overflow-x:auto;">
-    <table style="min-width:700px;">
+    <div class="table-wrap">
+    <table style="min-width:500px;">
       <thead>
         <tr>
-          <th rowspan="2" style="width:30px;">№</th>
-          <th rowspan="2">Наименование</th>
+          <th rowspan="2" style="width:28px;">№</th>
+          <th rowspan="2" style="text-align:left;">Наименование</th>
           <th colspan="3" class="num" style="text-align:center; border-left:1px solid #d0e4f0;">За день</th>
           <th colspan="3" class="num" style="text-align:center; border-left:1px solid #d0e4f0;">За месяц</th>
           <th colspan="3" class="num" style="text-align:center; border-left:1px solid #d0e4f0;">За год</th>
-          <th rowspan="2" class="num" style="border-left:1px solid #d0e4f0;">Остаток, шт.</th>
+          <th rowspan="2" class="num" style="border-left:1px solid #d0e4f0;">Остаток</th>
         </tr>
         <tr>
-          <th class="num" style="border-left:1px solid #d0e4f0;">Вагоны</th>
-          <th class="num">Машины</th>
+          <th class="num" style="border-left:1px solid #d0e4f0;">Ваг.</th>
+          <th class="num">Маш.</th>
           <th class="num">Шт.</th>
-          <th class="num" style="border-left:1px solid #d0e4f0;">Вагоны</th>
-          <th class="num">Машины</th>
+          <th class="num" style="border-left:1px solid #d0e4f0;">Ваг.</th>
+          <th class="num">Маш.</th>
           <th class="num">Шт.</th>
-          <th class="num" style="border-left:1px solid #d0e4f0;">Вагоны</th>
-          <th class="num">Машины</th>
+          <th class="num" style="border-left:1px solid #d0e4f0;">Ваг.</th>
+          <th class="num">Маш.</th>
           <th class="num">Шт.</th>
         </tr>
       </thead>
@@ -299,8 +332,8 @@
     </div>
   </div>
 
-  <!-- ОК — Численность работников -->
-  <div class="section">
+  <!-- ОК — право, 2 строки -->
+  <div class="section section-ok">
     <div class="section-header">
       👷 ОК — Численность работников
       <span class="auto-badge">● Авто</span>
@@ -312,7 +345,7 @@
     </div>
     <div class="cards" id="okCards" style="display:none;">
       <div class="card">
-        <div class="card-label">Всего сотрудников</div>
+        <div class="card-label">Всего</div>
         <div class="card-value" id="okTotal">0 <span class="card-unit">чел.</span></div>
       </div>
       <div class="card">
@@ -320,20 +353,20 @@
         <div class="card-value" id="okWorkers">0 <span class="card-unit">чел.</span></div>
       </div>
       <div class="card">
-        <div class="card-label">Подразделений</div>
+        <div class="card-label">Подразд.</div>
         <div class="card-value" id="okDepts">0 <span class="card-unit">ед.</span></div>
       </div>
     </div>
-    <div style="overflow-x:auto;">
+    <div class="table-wrap">
     <table>
       <thead>
         <tr>
-          <th style="width:30px;">№</th>
+          <th style="width:28px;">№</th>
           <th style="text-align:left;">Подразделение</th>
-          <th class="num">Рабочих</th>
-          <th class="num">нач./зам./мастера</th>
-          <th class="num">Женщин</th>
-          <th class="num">Совмест.</th>
+          <th class="num">Раб.</th>
+          <th class="num">нач./мастера</th>
+          <th class="num">Жен.</th>
+          <th class="num">Совм.</th>
           <th class="num">Всего</th>
         </tr>
       </thead>
@@ -343,6 +376,11 @@
     </table>
     </div>
   </div>
+
+</div>
+
+<!-- Панели настроек поверх контента -->
+<div class="overlay-panels" id="overlayPanels">
 
   <!-- URL редактор -->
   <div class="section">
@@ -381,7 +419,6 @@
   </div>
 
 </div>
-<div class="footer">RWS Optimum · Данные из Google Sheets · <span id="footerDate"></span></div>
 
 <script>
 // ── APPS SCRIPT CONFIG ────────────────────────────────────────────────────────
@@ -451,7 +488,6 @@ setInterval(() => {
   document.getElementById('headerTime').textContent = new Date().toLocaleTimeString('ru-RU');
 }, 1000);
 document.getElementById('headerTime').textContent = new Date().toLocaleTimeString('ru-RU');
-document.getElementById('footerDate').textContent = new Date().toLocaleDateString('ru-RU', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
 
 // ── ДИАГНОСТИКА ───────────────────────────────────────────────────────────────
 const debugLines = [];
