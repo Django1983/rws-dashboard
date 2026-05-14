@@ -300,31 +300,17 @@
   </div>
 
   <!-- ОК — Численность работников -->
-  <div class="section" id="okSection">
+  <div class="section">
     <div class="section-header">
       👷 ОК — Численность работников
-      <span class="auto-badge" id="okAutobadge" style="display:none;">● Загружено</span>
+      <span class="auto-badge">● Авто</span>
       <span class="section-badge" id="okDate">ОК</span>
-      <label style="margin-left:auto; cursor:pointer;">
-        <input type="file" id="okFileInput" accept=".xlsx,.xls" style="display:none;" onchange="loadOKFile(this)">
-        <span class="btn" onclick="document.getElementById('okFileInput').click()" style="margin-left:0;">📂 Загрузить Excel</span>
-      </label>
     </div>
-    <div id="okDropZone" style="
-      margin:14px; border:2px dashed #c8dce8; border-radius:8px;
-      padding:28px; text-align:center; color:#7aacc8; font-size:13px;
-      cursor:pointer; transition: border-color 0.2s, background 0.2s;
-    "
-    onclick="document.getElementById('okFileInput').click()"
-    ondragover="event.preventDefault(); this.style.borderColor='#2277aa'; this.style.background='#f0f6fb';"
-    ondragleave="this.style.borderColor='#c8dce8'; this.style.background='';"
-    ondrop="event.preventDefault(); this.style.borderColor='#c8dce8'; this.style.background=''; loadOKFile({files: event.dataTransfer.files})"
-    >
-      <div style="font-size:28px; margin-bottom:8px;">📊</div>
-      <div>Перетащите файл Excel сюда или нажмите <b>Загрузить Excel</b></div>
-      <div style="margin-top:6px; font-size:11px; color:#9ab4c4;">Поддерживаются файлы .xlsx и .xls</div>
+    <div class="error-block" id="okError">
+      <h4>⚠ Не удалось загрузить данные ОК</h4>
+      <ul id="okErrorList"></ul>
     </div>
-    <div id="okCards" style="display:none;" class="cards">
+    <div class="cards" id="okCards" style="display:none;">
       <div class="card">
         <div class="card-label">Всего сотрудников</div>
         <div class="card-value" id="okTotal">0 <span class="card-unit">чел.</span></div>
@@ -338,23 +324,23 @@
         <div class="card-value" id="okDepts">0 <span class="card-unit">ед.</span></div>
       </div>
     </div>
-    <div id="okTableWrap" style="display:none; overflow-x:auto;">
-      <table>
-        <thead>
-          <tr>
-            <th style="width:30px;">№</th>
-            <th style="text-align:left;">Подразделение</th>
-            <th class="num">Рабочих</th>
-            <th class="num">нач./зам./мастера</th>
-            <th class="num">Женщин</th>
-            <th class="num">Совмест.</th>
-            <th class="num">Всего</th>
-          </tr>
-        </thead>
-        <tbody id="okBody">
-          <tr><td colspan="7" class="empty">Файл не загружен</td></tr>
-        </tbody>
-      </table>
+    <div style="overflow-x:auto;">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:30px;">№</th>
+          <th style="text-align:left;">Подразделение</th>
+          <th class="num">Рабочих</th>
+          <th class="num">нач./зам./мастера</th>
+          <th class="num">Женщин</th>
+          <th class="num">Совмест.</th>
+          <th class="num">Всего</th>
+        </tr>
+      </thead>
+      <tbody id="okBody">
+        <tr><td colspan="7" class="empty">Загрузка...</td></tr>
+      </tbody>
+    </table>
     </div>
   </div>
 
@@ -373,6 +359,8 @@
       <input type="text" id="urlBSU" placeholder="БСУ">
       <label>Название листа Отгрузка (точно как в таблице):</label>
       <input type="text" id="urlOTG" placeholder="Отгрузка">
+      <label>Название листа ОК (точно как в таблице):</label>
+      <input type="text" id="urlOK" placeholder="ОК">
       <div style="display:flex; gap:8px; margin-top:4px;">
         <button class="btn btn-primary" onclick="saveUrls()">✔ Сохранить и загрузить</button>
         <button class="btn" onclick="resetUrls()">↺ Сбросить на исходные</button>
@@ -401,6 +389,7 @@ const DEFAULT_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymYCBo
 const DEFAULT_SHEET_PC  = 'ПЦ';
 const DEFAULT_SHEET_BSU = 'БСУ';
 const DEFAULT_SHEET_OTG = 'Отгрузка';
+const DEFAULT_SHEET_OK  = 'ОК';
 
 function getConfig() {
   return {
@@ -408,6 +397,7 @@ function getConfig() {
     pc:  localStorage.getItem('rws_sheet_pc')   || DEFAULT_SHEET_PC,
     bsu: localStorage.getItem('rws_sheet_bsu')  || DEFAULT_SHEET_BSU,
     otg: localStorage.getItem('rws_sheet_otg')  || DEFAULT_SHEET_OTG,
+    ok:  localStorage.getItem('rws_sheet_ok')   || DEFAULT_SHEET_OK,
   };
 }
 
@@ -416,6 +406,8 @@ function initUrlEditor() {
   document.getElementById('urlPC').value  = c.pc;
   document.getElementById('urlBSU').value = c.bsu;
   const oi = document.getElementById('urlOTG');
+  const oki = document.getElementById('urlOK');
+  if (oki) oki.value = c.ok;
   if (oi) oi.value = c.otg;
   const si = document.getElementById('scriptUrl');
   if (si) si.value = c.url;
@@ -430,6 +422,8 @@ function saveUrls() {
   if (bsu) localStorage.setItem('rws_sheet_bsu', bsu);
   const otg = document.getElementById('urlOTG').value.trim();
   if (otg) localStorage.setItem('rws_sheet_otg', otg);
+  const ok = document.getElementById('urlOK').value.trim();
+  if (ok) localStorage.setItem('rws_sheet_ok', ok);
   dbg('✔ Настройки сохранены', 'ok');
   loadData();
 }
@@ -439,6 +433,7 @@ function resetUrls() {
   localStorage.removeItem('rws_sheet_pc');
   localStorage.removeItem('rws_sheet_bsu');
   localStorage.removeItem('rws_sheet_otg');
+  localStorage.removeItem('rws_sheet_ok');
   initUrlEditor();
   dbg('↺ Сброшено на исходные настройки', 'warn');
   loadData();
@@ -695,6 +690,86 @@ function showOTGError(msgs) {
   el.classList.add('visible');
 }
 
+// ── RENDER ОК ────────────────────────────────────────────────────────────────
+function renderOK(rows) {
+  const body = document.getElementById('okBody');
+  document.getElementById('okError').classList.remove('visible');
+  dbg(`ОК: получено ${rows.length} строк`, 'ok');
+
+  if (!rows || rows.length < 2) {
+    body.innerHTML = '<tr><td colspan="7" class="empty">Нет данных</td></tr>';
+    showOKError(['Таблица ОК пустая', 'Проверьте название листа в настройках']);
+    return;
+  }
+
+  // Ищем строку заголовка с датой (обычно 1-я строка)
+  const firstRow = rows[0] || [];
+  const dateMatch = firstRow.join(' ').match(/\d{2}\.\d{2}\.\d{4}/);
+  if (dateMatch) document.getElementById('okDate').textContent = dateMatch[0];
+
+  // Ищем строку с "Подразделение" — с неё начинаются данные
+  let dataStart = 2;
+  for (let i = 0; i < rows.length; i++) {
+    const line = (rows[i] || []).join(' ').toLowerCase();
+    if (line.includes('подразделение') || line.includes('наименование')) {
+      dataStart = i + 1; break;
+    }
+  }
+
+  const fv = v => {
+    const n = parseFloat(String(v || '').replace(/[\s\u00a0]/g,'').replace(',','.'));
+    return (!isNaN(n) && n > 0) ? `<span class="n-num">${n.toLocaleString('ru-RU')}</span>` : '<span class="neutral">—</span>';
+  };
+
+  let html = '', totalAll = 0, totalWorkers = 0, deptCount = 0;
+
+  for (let i = dataStart; i < rows.length; i++) {
+    const r = rows[i];
+    if (!r) continue;
+    const num  = String(r[0] || '').trim();
+    const name = String(r[1] || '').trim();
+    if (!name) continue;
+
+    const isTotal = name.toLowerCase().startsWith('всего');
+    const workers  = parseFloat(String(r[2] || '').replace(/[\s\u00a0]/g,'').replace(',','.')) || 0;
+    const masters  = parseFloat(String(r[3] || '').replace(/[\s\u00a0]/g,'').replace(',','.')) || 0;
+    const women    = parseFloat(String(r[4] || '').replace(/[\s\u00a0]/g,'').replace(',','.')) || 0;
+    const combined = parseFloat(String(r[5] || '').replace(/[\s\u00a0]/g,'').replace(',','.')) || 0;
+    const total    = parseFloat(String(r[6] || '').replace(/[\s\u00a0]/g,'').replace(',','.')) || 0;
+
+    if (!isTotal && num) {
+      deptCount++;
+      totalWorkers += workers;
+      totalAll += total || (workers + masters);
+    }
+
+    const rowStyle = isTotal ? ' style="background:#f0f6fb; font-weight:700; border-top:2px solid #c8dce8;"' : '';
+    html += `<tr${rowStyle}>
+      <td class="row-num">${isTotal ? '' : num}</td>
+      <td style="text-align:left; ${isTotal ? 'font-weight:700;' : ''}">${name}</td>
+      <td class="num">${fv(workers)}</td>
+      <td class="num">${fv(masters)}</td>
+      <td class="num">${fv(women)}</td>
+      <td class="num">${fv(combined)}</td>
+      <td class="num">${fv(total || (workers + masters))}</td>
+    </tr>`;
+  }
+
+  body.innerHTML = html || '<tr><td colspan="7" class="empty">Нет строк с данными</td></tr>';
+  document.getElementById('okTotal').innerHTML   = totalAll.toLocaleString('ru-RU') + ' <span class="card-unit">чел.</span>';
+  document.getElementById('okWorkers').innerHTML = totalWorkers.toLocaleString('ru-RU') + ' <span class="card-unit">чел.</span>';
+  document.getElementById('okDepts').innerHTML   = deptCount + ' <span class="card-unit">ед.</span>';
+  document.getElementById('okCards').style.display = 'grid';
+  dbg(`ОК: отображено ${deptCount} подразделений, всего ${totalAll} чел.`, 'ok');
+}
+
+function showOKError(hints) {
+  const el = document.getElementById('okError');
+  const ul = document.getElementById('okErrorList');
+  ul.innerHTML = hints.map(h => `<li>${h}</li>`).join('');
+  el.classList.add('visible');
+}
+
 // ── FETCH через Apps Script ───────────────────────────────────────────────────
 async function fetchSheet(sheetName, label) {
   const { url } = getConfig();
@@ -724,7 +799,7 @@ async function loadData() {
   status('Загрузка данных через Apps Script...', 'loading');
   dbg('══ Начало загрузки ══');
   dbg(`Скрипт: ${cfg.url.substring(0, 60)}...`);
-  dbg(`Листы: ПЦ="${cfg.pc}", БСУ="${cfg.bsu}"`);
+  dbg(`Листы: ПЦ="${cfg.pc}", БСУ="${cfg.bsu}", ОК="${cfg.ok}"`);
 
   let pcOk = false, bsuOk = false;
 
@@ -768,14 +843,25 @@ async function loadData() {
     showOTGError([e.message, 'Проверьте название листа Отгрузка в настройках']);
   }
 
-  if (pcOk && bsuOk && otgOk) {
+  // ОК
+  let okOk = false;
+  try {
+    const ok = await fetchSheet(cfg.ok, 'ОК');
+    renderOK(ok);
+    okOk = true;
+  } catch(e) {
+    document.getElementById('okBody').innerHTML = '<tr><td colspan="7" class="empty">Ошибка загрузки</td></tr>';
+    showOKError([e.message, 'Проверьте название листа ОК в настройках (регистр важен)']);
+  }
+
+  if (pcOk && bsuOk && otgOk && okOk) {
     status('Данные успешно загружены через Apps Script', 'ok');
-  } else if (!pcOk && !bsuOk && !otgOk) {
+  } else if (!pcOk && !bsuOk && !otgOk && !okOk) {
     status('Ошибка загрузки — проверьте настройки Apps Script', 'error');
     document.getElementById('debugPanel').classList.add('visible');
     document.getElementById('debugBadge').textContent = 'открыт';
   } else {
-    status(`Загрузка: ${pcOk ? 'ПЦ ✔' : 'ПЦ ✗'} | ${bsuOk ? 'БСУ ✔' : 'БСУ ✗'} | ${otgOk ? 'Отгрузка ✔' : 'Отгрузка ✗'}`, 'loading');
+    status(`Загрузка: ${pcOk ? 'ПЦ ✔' : 'ПЦ ✗'} | ${bsuOk ? 'БСУ ✔' : 'БСУ ✗'} | ${otgOk ? 'Отгрузка ✔' : 'Отгрузка ✗'} | ${okOk ? 'ОК ✔' : 'ОК ✗'}`, 'loading');
   }
 
   document.getElementById('lastUpdate').textContent = 'Обновлено: ' + new Date().toLocaleString('ru-RU');
@@ -821,102 +907,6 @@ function checkPassword() {
     document.getElementById("pwInput").value = "";
     document.getElementById("pwInput").focus();
   }
-}
-
-// ── ОК — Численность работников (Excel загрузка) ─────────────────────────────
-async function loadOKFile(input) {
-  const file = input.files && input.files[0];
-  if (!file) return;
-  dbg(`ОК: загружается файл "${file.name}"`, 'ok');
-
-  // Загружаем SheetJS если ещё нет
-  if (!window.XLSX) {
-    await new Promise((res, rej) => {
-      const s = document.createElement('script');
-      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
-      s.onload = res; s.onerror = rej;
-      document.head.appendChild(s);
-    });
-  }
-
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      const wb = XLSX.read(e.target.result, { type: 'array' });
-      // Берём первый лист
-      const ws = wb.Sheets[wb.SheetNames[0]];
-      const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
-      renderOK(rows, file.name);
-    } catch(err) {
-      dbg('ОК: ошибка чтения файла — ' + err.message, 'err');
-    }
-  };
-  reader.readAsArrayBuffer(file);
-}
-
-function renderOK(rows, filename) {
-  // Ищем строку с заголовком (содержит "Подразделение")
-  let headerRow = -1;
-  for (let i = 0; i < rows.length; i++) {
-    const line = rows[i].join(' ').toLowerCase();
-    if (line.includes('подразделение') || line.includes('наименование')) {
-      headerRow = i; break;
-    }
-  }
-  const dataStart = headerRow >= 0 ? headerRow + 1 : 4;
-
-  // Ищем строку с датой в заголовке файла
-  let dateStr = '';
-  for (let i = 0; i < Math.min(3, rows.length); i++) {
-    const m = rows[i].join(' ').match(/\d{2}\.\d{2}\.\d{4}/);
-    if (m) { dateStr = m[0]; break; }
-  }
-  if (dateStr) document.getElementById('okDate').textContent = dateStr;
-  else document.getElementById('okDate').textContent = filename;
-
-  let html = '', totalAll = 0, totalWorkers = 0, deptCount = 0;
-
-  for (let i = dataStart; i < rows.length; i++) {
-    const r = rows[i];
-    const num  = String(r[0] || '').trim();
-    const name = String(r[1] || '').trim();
-    if (!name) continue;
-    // Строка "Всего" — итоговая, выделяем жирным
-    const isTotal = name.toLowerCase().startsWith('всего');
-    const workers  = parseFloat(String(r[2]).replace(/\s/g,'').replace(',','.')) || 0;
-    const masters  = parseFloat(String(r[3]).replace(/\s/g,'').replace(',','.')) || 0;
-    const women    = parseFloat(String(r[4]).replace(/\s/g,'').replace(',','.')) || 0;
-    const combined = parseFloat(String(r[5]).replace(/\s/g,'').replace(',','.')) || 0;
-    const total    = parseFloat(String(r[6]).replace(/\s/g,'').replace(',','.')) || 0;
-
-    if (!isTotal && num) {
-      deptCount++;
-      totalWorkers += workers;
-      totalAll += total || (workers + masters);
-    }
-
-    const fv = v => v ? `<span class="n-num">${v.toLocaleString('ru-RU')}</span>` : '<span class="neutral">—</span>';
-    const style = isTotal ? ' style="background:#f0f6fb; font-weight:700; border-top:2px solid #c8dce8;"' : '';
-    html += `<tr${style}>
-      <td class="row-num">${isTotal ? '' : num}</td>
-      <td style="text-align:left; ${isTotal ? 'font-weight:700;' : ''}">${name}</td>
-      <td class="num">${fv(workers)}</td>
-      <td class="num">${fv(masters)}</td>
-      <td class="num">${fv(women)}</td>
-      <td class="num">${fv(combined)}</td>
-      <td class="num">${fv(total || (workers + masters))}</td>
-    </tr>`;
-  }
-
-  document.getElementById('okBody').innerHTML = html || '<tr><td colspan="7" class="empty">Нет данных — проверьте структуру файла</td></tr>';
-  document.getElementById('okTotal').innerHTML = totalAll.toLocaleString('ru-RU') + ' <span class="card-unit">чел.</span>';
-  document.getElementById('okWorkers').innerHTML = totalWorkers.toLocaleString('ru-RU') + ' <span class="card-unit">чел.</span>';
-  document.getElementById('okDepts').innerHTML = deptCount + ' <span class="card-unit">ед.</span>';
-  document.getElementById('okCards').style.display = 'grid';
-  document.getElementById('okTableWrap').style.display = 'block';
-  document.getElementById('okDropZone').style.display = 'none';
-  document.getElementById('okAutobadge').style.display = '';
-  dbg(`ОК: загружено ${deptCount} подразделений, всего ${totalAll} чел.`, 'ok');
 }
 
 // ── СТАРТ ─────────────────────────────────────────────────────────────────────
