@@ -884,54 +884,29 @@ async function fetchSheet(sheetName, label) {
 }
 
 // ── РАСХОД — расчёт шпал ──────────────────────────────────────────────────────
-// Нормы расхода на 1 шпалу (из технологической карты)
-const RASHOD_NORMS = [
-  { name: 'Цемент',        unit: 'кг',  norm: 63.84  },
-  { name: 'Щебень',        unit: 'м³',  norm: 0.112  },
-  { name: 'Песок',         unit: 'м³',  norm: 0.056  },
-  { name: 'Пластификатор', unit: 'кг',  norm: 0.73   },
-];
-
 function renderRashod(rows) {
   const inner = document.getElementById('rashodInner');
-  if (!rows || rows.length < 2) { inner.innerHTML = '<div style="margin:auto;color:#9ab4c4;font-size:12px;">Нет данных</div>'; return; }
+  if (!rows || rows.length < 3) { inner.innerHTML = '<div style="margin:auto;color:#9ab4c4;font-size:12px;">Нет данных</div>'; return; }
 
-  // Парсим число: убираем пробелы, заменяем запятую на точку, затем умножаем если нужно
+  // Структура БСУ (точно как в renderBSU):
+  // rows[0] = общий заголовок
+  // rows[1] = col0=№, col1=Название, col2=Остаток(дата1), col3=Приход, col4=Расход, col5=Остаток(дата2)
+  // rows[2+] = строки сырья
+
   function parseNum(v) {
     if (v === null || v === undefined || v === '') return null;
-    const s = String(v).replace(/\s/g, '').replace(',', '.');
-    const n = parseFloat(s);
+    const n = parseFloat(String(v).replace(/\s/g, '').replace(',', '.'));
     return isNaN(n) ? null : n;
   }
 
-  // Ищем заголовок — строку где есть слово "остаток" (последнее вхождение = свежий остаток)
-  // Структура БСУ: col0=Наименование, col1=дата1_остаток, col2=дата1_приход, col3=дата1_расход, col4=дата2_остаток
-  // Берём col4 (последний остаток = 15.05.2026)
-  const header = rows[0];
-
-  // Найдём индекс колонки "последний остаток" — последняя колонка с "остаток" в заголовке
-  let ostCol = -1;
-  for (let i = header.length - 1; i >= 0; i--) {
-    if (String(header[i] || '').toLowerCase().includes('остаток')) {
-      ostCol = i; break;
-    }
-  }
-  // Если не нашли по слову — берём последнюю колонку
-  if (ostCol === -1) ostCol = header.length - 1;
-
-  // Дата из заголовка последнего остатка
+  // Дата из заголовка col5 (свежий остаток)
+  const hdr = rows[1] || [];
   const badge = document.getElementById('rashodDate');
-  const dateMatch = String(header[ostCol] || '').match(/\d{2}\.\d{2}\.\d{4}/);
-  badge.textContent = dateMatch ? dateMatch[0] + ' остаток' : 'Расход';
+  badge.textContent = String(hdr[5] || hdr[2] || 'Расход');
 
-  // Ищем строки сырья по ключевым словам в col0
-  const keywords = ['цемент','песок','щебень','пластификатор'];
-  const dataRows = rows.slice(1).filter(r => {
-    const n = String(r[0] || '').toLowerCase();
-    return keywords.some(k => n.includes(k));
-  });
+  // Строки данных: название в col1, свежий остаток в col5
+  const dataRows = rows.slice(2).filter(r => r && r[1]);
 
-  // Нормы расхода на 1 шпалу
   const norms = [
     { name: 'Цемент',        unit: 'кг', norm: 63.84  },
     { name: 'Щебень',        unit: 'м³', norm: 0.112  },
@@ -940,24 +915,21 @@ function renderRashod(rows) {
   ];
 
   const items = norms.map(norm => {
-    const row = dataRows.find(r => String(r[0]).toLowerCase().includes(norm.name.toLowerCase()));
-    let ost = row ? parseNum(row[ostCol]) : null;
-    // Если единица кг а значение маленькое (< 1000) — возможно в тоннах, умножаем
-    // Эвристика: цемент и пластификатор в кг, щебень и песок в м³
-    // Данные в БСУ хранятся как есть — доверяем значению
+    const row = dataRows.find(r => String(r[1]).toLowerCase().includes(norm.name.toLowerCase()));
+    const ost = row ? parseNum(row[5]) : null;
     const count = (ost !== null && norm.norm > 0) ? Math.floor(ost / norm.norm) : null;
+    dbg(`Расход: ${norm.name} → col5="${row ? row[5] : 'не найдено'}" ost=${ost} count=${count}`);
     return { ...norm, ost, count };
   });
 
   const validCounts = items.map(i => i.count).filter(c => c !== null && c >= 0);
   const minCount = validCounts.length ? Math.min(...validCounts) : null;
 
-  // Отображение: Наименование | Ед.изм. | Норма/шпалу | Остаток | Хватит шпал
   let html = `
-    <div style="display:grid; grid-template-columns:1fr 60px 120px 120px 100px;
+    <div style="display:grid; grid-template-columns:1fr 60px 120px 130px 110px;
       font-size:9px; font-weight:700; color:#5a8aaa; text-transform:uppercase;
       letter-spacing:0.05em; padding:4px 10px; border-bottom:1px solid #d0e4f0;
-      flex-shrink:0;">
+      flex-shrink:0; background:#f8fbfd;">
       <div>Наименование сырья</div>
       <div style="text-align:center;">Ед. изм.</div>
       <div style="text-align:right;">Норма на 1 шпалу</div>
@@ -984,7 +956,7 @@ function renderRashod(rows) {
   </div>`;
 
   inner.innerHTML = html;
-  dbg(`Расход: остаток из col${ostCol}, min=${minCount}`, 'ok');
+  dbg(`Расход: min=${minCount}`, 'ok');
 }
 
 // ── ЗАГРУЗКА ДАННЫХ ───────────────────────────────────────────────────────────
