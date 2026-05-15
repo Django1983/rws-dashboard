@@ -73,7 +73,9 @@
     border: 1px solid #d0e4f0; background: #f8fbfd;
     min-height: 0; gap: 8px;
   }
-  .rashod-item.is-limit { background: #fff7ed; border-color: #fb923c; }
+  .rashod-item.is-limit { background: #fff3cd; border-color: #ffc107; border-left: 4px solid #f59e0b; }
+  .rashod-item.is-limit .rashod-label { color: #92400e; font-weight: 700; }
+  .rashod-item.is-limit .rashod-ost   { color: #b45309; }
   .rashod-label { font-size: 11px; font-weight: 600; color: #1a3a52; }
   .rashod-norm  { font-size: 10px; color: #7aacc8; text-align:right; white-space:nowrap; }
   .rashod-ost   { font-size: 11px; font-weight: 600; color: #2277aa; text-align:right; white-space:nowrap; }
@@ -942,7 +944,7 @@ function renderRashod(rows) {
     const countStr = item.count !== null ? item.count.toLocaleString('ru-RU') : '—';
     const isMin = item.count !== null && item.count === minCount;
     html += `<div class="rashod-item${isMin ? ' is-limit' : ''}">
-      <div class="rashod-label">${item.name}${isMin ? ' ⚠' : ''}</div>
+      <div class="rashod-label">${item.name}</div>
       <div style="text-align:center; font-size:11px; color:#5a8aaa;">${item.unit}</div>
       <div class="rashod-norm" style="text-align:right;">${item.norm} ${item.unit}</div>
       <div class="rashod-ost" style="text-align:right;">${ostStr}</div>
