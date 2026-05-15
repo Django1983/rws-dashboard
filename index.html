@@ -120,10 +120,11 @@
   table { width: 100%; border-collapse: collapse; font-size: 11px; }
   th {
     padding: 5px 8px; text-align: center; font-size: 9px; font-weight: 700;
-    color: #ffffff; border-bottom: 1px solid #1a5c8a;
+    color: #ffffff; border-bottom: 2px solid #154e78; border-right: 1px solid #2a7ab0;
     text-transform: uppercase; letter-spacing: 0.05em; background: #1a5c8a;
     position: sticky; top: 0; z-index: 1;
   }
+  th:last-child { border-right: none; }
   td { padding: 5px 8px; border-bottom: 1px solid #eaf2f8; color: #1a2e3b; text-align: center; }
   td.name-col { text-align: left; }
   tr:last-child td { border-bottom: none; }
