@@ -98,19 +98,20 @@
   }
   .section-header {
     display: flex; align-items: center; gap: 8px;
-    padding: 6px 12px; background: #f0f6fb; border-bottom: 1px solid #d0e4f0;
-    font-size: 12px; font-weight: 600; color: #1a3a52; flex-shrink: 0;
+    padding: 6px 12px; background: #1a5c8a; border-bottom: 1px solid #154e78;
+    font-size: 12px; font-weight: 600; color: #ffffff; flex-shrink: 0;
   }
   .section-badge {
     margin-left: auto; font-size: 10px; padding: 1px 8px;
-    border-radius: 20px; background: #ddeef8; color: #2277aa;
-    border: 1px solid #b0cfe0; white-space: nowrap;
+    border-radius: 20px; background: rgba(255,255,255,0.15); color: #ffffff;
+    border: 1px solid rgba(255,255,255,0.3); white-space: nowrap;
   }
   .cards {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(100px,1fr));
-    gap: 6px; padding: 8px; border-bottom: 1px solid #d8eaf4; flex-shrink: 0;
+    gap: 6px; padding: 8px; border-bottom: 1px solid #d0e4f0; flex-shrink: 0;
+    background: #f0f6fb;
   }
-  .card { background: #f0f6fb; border: 1px solid #c8dce8; border-radius: 6px; padding: 6px 10px; }
+  .card { background: #ffffff; border: 1px solid #c8dce8; border-radius: 6px; padding: 6px 10px; }
   .card-label { font-size: 9px; color: #5a8aaa; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
   .card-value { font-size: 18px; font-weight: 500; color: #1a5c8a; }
   .card-unit { font-size: 10px; color: #7aacc8; margin-left: 2px; }
@@ -119,8 +120,8 @@
   table { width: 100%; border-collapse: collapse; font-size: 11px; }
   th {
     padding: 5px 8px; text-align: center; font-size: 9px; font-weight: 700;
-    color: #ffffff; border-bottom: 1px solid #1557a0;
-    text-transform: uppercase; letter-spacing: 0.05em; background: #1a6bb5;
+    color: #ffffff; border-bottom: 1px solid #1a5c8a;
+    text-transform: uppercase; letter-spacing: 0.05em; background: #1a5c8a;
     position: sticky; top: 0; z-index: 1;
   }
   td { padding: 5px 8px; border-bottom: 1px solid #eaf2f8; color: #1a2e3b; text-align: center; }
@@ -134,7 +135,7 @@
   .neutral { color: #9ab4c4; }
   .row-num { color: #9ab4c4; font-size: 10px; }
   .empty { padding: 16px; text-align: center; color: #9ab4c4; font-size: 12px; }
-  .auto-badge { font-size: 9px; padding: 1px 7px; border-radius: 20px; background: #dcfce7; color: #16a34a; border: 1px solid #86efac; }
+  .auto-badge { font-size: 9px; padding: 1px 7px; border-radius: 20px; background: rgba(255,255,255,0.15); color: #ffffff; border: 1px solid rgba(134,239,172,0.6); }
 
   /* Debug panel */
   .debug-panel {
@@ -930,8 +931,8 @@ function renderRashod(rows) {
   let html = `
     <div style="display:grid; grid-template-columns:1fr 60px 120px 130px 110px;
       font-size:9px; font-weight:700; color:#ffffff; text-transform:uppercase;
-      letter-spacing:0.05em; padding:5px 10px; border-bottom:1px solid #1557a0;
-      flex-shrink:0; background:#1a6bb5;">
+      letter-spacing:0.05em; padding:5px 10px; border-bottom:1px solid #1a5c8a;
+      flex-shrink:0; background:#1a5c8a;">
       <div>Наименование сырья</div>
       <div style="text-align:center;">Ед. изм.</div>
       <div style="text-align:right;">Норма на 1 шпалу</div>
