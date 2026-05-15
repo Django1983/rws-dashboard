@@ -108,20 +108,19 @@
   }
   .cards {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(100px,1fr));
-    gap: 6px; padding: 8px; border-bottom: 1px solid #1a5c8a; flex-shrink: 0;
-    background: #1a5c8a;
+    gap: 6px; padding: 8px; border-bottom: 1px solid #d8eaf4; flex-shrink: 0;
   }
-  .card { background: #1e6fa3; border: 1px solid #2a85c0; border-radius: 6px; padding: 6px 10px; }
-  .card-label { font-size: 9px; color: #a8d4ee; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
-  .card-value { font-size: 18px; font-weight: 500; color: #ffffff; }
-  .card-unit { font-size: 10px; color: #7ec8eb; margin-left: 2px; }
+  .card { background: #f0f6fb; border: 1px solid #c8dce8; border-radius: 6px; padding: 6px 10px; }
+  .card-label { font-size: 9px; color: #5a8aaa; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
+  .card-value { font-size: 18px; font-weight: 500; color: #1a5c8a; }
+  .card-unit { font-size: 10px; color: #7aacc8; margin-left: 2px; }
 
   .table-wrap { overflow: auto; flex: 1; min-height: 0; }
   table { width: 100%; border-collapse: collapse; font-size: 11px; }
   th {
     padding: 5px 8px; text-align: center; font-size: 9px; font-weight: 700;
-    color: #ffffff; border-bottom: 1px solid #1a5c8a;
-    text-transform: uppercase; letter-spacing: 0.05em; background: #1a5c8a;
+    color: #ffffff; border-bottom: 1px solid #1557a0;
+    text-transform: uppercase; letter-spacing: 0.05em; background: #1a6bb5;
     position: sticky; top: 0; z-index: 1;
   }
   td { padding: 5px 8px; border-bottom: 1px solid #eaf2f8; color: #1a2e3b; text-align: center; }
@@ -931,8 +930,8 @@ function renderRashod(rows) {
   let html = `
     <div style="display:grid; grid-template-columns:1fr 60px 120px 130px 110px;
       font-size:9px; font-weight:700; color:#ffffff; text-transform:uppercase;
-      letter-spacing:0.05em; padding:5px 10px; border-bottom:1px solid #1a5c8a;
-      flex-shrink:0; background:#1a5c8a;">
+      letter-spacing:0.05em; padding:5px 10px; border-bottom:1px solid #1557a0;
+      flex-shrink:0; background:#1a6bb5;">
       <div>Наименование сырья</div>
       <div style="text-align:center;">Ед. изм.</div>
       <div style="text-align:right;">Норма на 1 шпалу</div>
