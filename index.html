@@ -985,9 +985,10 @@ async function loadData() {
   }
 
   // БСУ
+  let bsuData = null;
   try {
-    const bsu = await fetchSheet(cfg.bsu, 'БСУ');
-    renderBSU(bsu);
+    bsuData = await fetchSheet(cfg.bsu, 'БСУ');
+    renderBSU(bsuData);
     bsuOk = true;
   } catch(e) {
     document.getElementById('bsuBody').innerHTML = '<tr><td colspan="6" class="empty">Ошибка загрузки</td></tr>';
@@ -1020,19 +1021,12 @@ async function loadData() {
     showOKError([e.message, 'Проверьте название листа ОК в настройках (регистр важен)']);
   }
 
-  // Расход
-  try {
-    const rashod = await fetchSheet(cfg.rashod, 'Расход');
-    renderRashod(rashod);
-  } catch(e) {
-    // Если листа нет — пробуем использовать данные БСУ напрямую
-    try {
-      const bsuFallback = await fetchSheet(cfg.bsu, 'БСУ-расход');
-      renderRashod(bsuFallback);
-    } catch(e2) {
-      document.getElementById('rashodInner').innerHTML = '<div style="margin:auto;color:#dc2626;font-size:11px;">Ошибка загрузки данных расхода</div>';
-      dbg(`Расход: ОШИБКА — ${e.message}`, 'err');
-    }
+  // Расход — используем данные БСУ напрямую (уже загружены)
+  if (bsuData) {
+    renderRashod(bsuData);
+    dbg('Расход: данные взяты из БСУ', 'ok');
+  } else {
+    document.getElementById('rashodInner').innerHTML = '<div style="margin:auto;color:#dc2626;font-size:11px;">Нет данных БСУ для расчёта</div>';
   }
 
   if (pcOk && bsuOk && otgOk && okOk) {
