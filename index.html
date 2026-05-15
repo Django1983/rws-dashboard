@@ -67,7 +67,7 @@
   }
   .rashod-item {
     flex: 1; display: grid;
-    grid-template-columns: 1fr auto auto auto;
+    grid-template-columns: 1fr 60px 120px 120px 100px;
     align-items: center;
     padding: 4px 8px; border-radius: 5px;
     border: 1px solid #d0e4f0; background: #f8fbfd;
@@ -896,23 +896,55 @@ function renderRashod(rows) {
   const inner = document.getElementById('rashodInner');
   if (!rows || rows.length < 2) { inner.innerHTML = '<div style="margin:auto;color:#9ab4c4;font-size:12px;">Нет данных</div>'; return; }
 
-  // Читаем заголовок (строка 0) и данные
-  // Ожидаем колонки: Наименование | ... | Остаток (последняя числовая колонка)
-  const header = rows[0];
-  const lastCol = header.length - 1;
+  // Парсим число: убираем пробелы, заменяем запятую на точку, затем умножаем если нужно
+  function parseNum(v) {
+    if (v === null || v === undefined || v === '') return null;
+    const s = String(v).replace(/\s/g, '').replace(',', '.');
+    const n = parseFloat(s);
+    return isNaN(n) ? null : n;
+  }
 
-  // Ищем нужные строки по ключевым словам
+  // Ищем заголовок — строку где есть слово "остаток" (последнее вхождение = свежий остаток)
+  // Структура БСУ: col0=Наименование, col1=дата1_остаток, col2=дата1_приход, col3=дата1_расход, col4=дата2_остаток
+  // Берём col4 (последний остаток = 15.05.2026)
+  const header = rows[0];
+
+  // Найдём индекс колонки "последний остаток" — последняя колонка с "остаток" в заголовке
+  let ostCol = -1;
+  for (let i = header.length - 1; i >= 0; i--) {
+    if (String(header[i] || '').toLowerCase().includes('остаток')) {
+      ostCol = i; break;
+    }
+  }
+  // Если не нашли по слову — берём последнюю колонку
+  if (ostCol === -1) ostCol = header.length - 1;
+
+  // Дата из заголовка последнего остатка
+  const badge = document.getElementById('rashodDate');
+  const dateMatch = String(header[ostCol] || '').match(/\d{2}\.\d{2}\.\d{4}/);
+  badge.textContent = dateMatch ? dateMatch[0] + ' остаток' : 'Расход';
+
+  // Ищем строки сырья по ключевым словам в col0
   const keywords = ['цемент','песок','щебень','пластификатор'];
   const dataRows = rows.slice(1).filter(r => {
-    const n = (r[0] || '').toString().toLowerCase();
+    const n = String(r[0] || '').toLowerCase();
     return keywords.some(k => n.includes(k));
   });
 
-  // Сопоставляем с нормами
-  const items = RASHOD_NORMS.map(norm => {
-    const row = dataRows.find(r => r[0].toString().toLowerCase().includes(norm.name.toLowerCase()));
-    const rawVal = row ? row[lastCol] : null;
-    const ost = rawVal !== null && rawVal !== '' ? parseFloat(String(rawVal).replace(',','.')) : null;
+  // Нормы расхода на 1 шпалу
+  const norms = [
+    { name: 'Цемент',        unit: 'кг', norm: 63.84  },
+    { name: 'Щебень',        unit: 'м³', norm: 0.112  },
+    { name: 'Песок',         unit: 'м³', norm: 0.056  },
+    { name: 'Пластификатор', unit: 'кг', norm: 0.73   },
+  ];
+
+  const items = norms.map(norm => {
+    const row = dataRows.find(r => String(r[0]).toLowerCase().includes(norm.name.toLowerCase()));
+    let ost = row ? parseNum(row[ostCol]) : null;
+    // Если единица кг а значение маленькое (< 1000) — возможно в тоннах, умножаем
+    // Эвристика: цемент и пластификатор в кг, щебень и песок в м³
+    // Данные в БСУ хранятся как есть — доверяем значению
     const count = (ost !== null && norm.norm > 0) ? Math.floor(ost / norm.norm) : null;
     return { ...norm, ost, count };
   });
@@ -920,30 +952,39 @@ function renderRashod(rows) {
   const validCounts = items.map(i => i.count).filter(c => c !== null && c >= 0);
   const minCount = validCounts.length ? Math.min(...validCounts) : null;
 
-  // Находим дату из данных (badge)
-  const badge = document.getElementById('rashodDate');
-  if (rows[0] && rows[0].length > 1) badge.textContent = rows[0][lastCol] || 'Расход';
+  // Отображение: Наименование | Ед.изм. | Норма/шпалу | Остаток | Хватит шпал
+  let html = `
+    <div style="display:grid; grid-template-columns:1fr 60px 120px 120px 100px;
+      font-size:9px; font-weight:700; color:#5a8aaa; text-transform:uppercase;
+      letter-spacing:0.05em; padding:4px 10px; border-bottom:1px solid #d0e4f0;
+      flex-shrink:0;">
+      <div>Наименование сырья</div>
+      <div style="text-align:center;">Ед. изм.</div>
+      <div style="text-align:right;">Норма на 1 шпалу</div>
+      <div style="text-align:right;">Остаток на складе</div>
+      <div style="text-align:right;">Хватит шпал</div>
+    </div>`;
 
-  let html = '';
   items.forEach(item => {
     const ostStr = item.ost !== null ? item.ost.toLocaleString('ru-RU') : '—';
     const countStr = item.count !== null ? item.count.toLocaleString('ru-RU') : '—';
     const isMin = item.count !== null && item.count === minCount;
     html += `<div class="rashod-item${isMin ? ' is-limit' : ''}">
       <div class="rashod-label">${item.name}${isMin ? ' ⚠' : ''}</div>
-      <div class="rashod-norm">норма: ${item.norm} ${item.unit}</div>
-      <div class="rashod-ost">${ostStr} <span class="rashod-unit">${item.unit}</span></div>
-      <div class="rashod-count">${countStr} <span class="rashod-unit">шт.</span></div>
+      <div style="text-align:center; font-size:11px; color:#5a8aaa;">${item.unit}</div>
+      <div class="rashod-norm" style="text-align:right;">${item.norm} ${item.unit}</div>
+      <div class="rashod-ost" style="text-align:right;">${ostStr}</div>
+      <div class="rashod-count" style="text-align:right;">${countStr} <span class="rashod-unit">шт.</span></div>
     </div>`;
   });
 
   html += `<div class="rashod-min">
     <div class="rashod-min-label">🧮 Хватит шпал (лимит по сырью):</div>
-    <div><span class="rashod-min-val">${minCount !== null ? minCount.toLocaleString('ru-RU') : '—'}</span><span class="rashod-min-unit">шт.</span></div>
+    <div><span class="rashod-min-val">${minCount !== null ? minCount.toLocaleString('ru-RU') : '—'}</span><span class="rashod-min-unit"> шт.</span></div>
   </div>`;
 
   inner.innerHTML = html;
-  dbg(`Расход: рассчитано, min=${minCount}`, 'ok');
+  dbg(`Расход: остаток из col${ostCol}, min=${minCount}`, 'ok');
 }
 
 // ── ЗАГРУЗКА ДАННЫХ ───────────────────────────────────────────────────────────
