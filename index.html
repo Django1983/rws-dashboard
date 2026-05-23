@@ -916,20 +916,16 @@ function renderRashod(rows) {
   // Решение: передаём unit, умножаем только для кг (не м³)
   function parseBSUOst(v, unit) {
     if (v === null || v === undefined || v === '') return null;
-    if (typeof v === 'number') {
-      if (unit === 'кг') {
-        const s = v.toString();
-        const dot = s.indexOf('.');
-        // Умножаем только если целая часть <= 3 цифр (до 999)
-        // 96.887 → целая часть "96" (2 цифры) → это тысячи → 96887
-        // 5421.763 → целая часть "5421" (4 цифры) → это реальное число кг → не трогаем
-        if (dot > 0 && s.length - dot - 1 === 3 && dot <= 3) {
-          return Math.round(v * 1000);
-        }
-      }
-      return v;
-    }
+    if (typeof v === 'number') return v;
     return parseNum(v);
+  }
+
+  // Расчёт как в Google Sheets: =ЦЕЛОЕ((остаток*1000)/норма_в_граммах_или_мл)
+  // Норма в кг → умножаем на 1000 чтобы работать в граммах
+  // Норма в м³ → умножаем на 1000 чтобы работать в литрах
+  function calcCount(ost, norm) {
+    if (ost === null || ost === undefined || !norm) return null;
+    return Math.floor((ost * 1000) / (norm * 1000));
   }
 
   // Дата из заголовка col5 (свежий остаток)
@@ -950,7 +946,7 @@ function renderRashod(rows) {
   const items = norms.map(norm => {
     const row = dataRows.find(r => String(r[1]).toLowerCase().includes(norm.name.toLowerCase()));
     const ost = row ? parseBSUOst(row[5], norm.unit) : null;
-    const count = (ost !== null && norm.norm > 0) ? Math.floor(ost / norm.norm) : null;
+    const count = calcCount(ost, norm.norm);
     dbg(`Расход: ${norm.name} → col5="${row ? row[5] : 'не найдено'}" ost=${ost} count=${count}`);
     return { ...norm, ost, count };
   });
