@@ -917,12 +917,12 @@ function renderRashod(rows) {
   function parseBSUOst(v, unit) {
     if (v === null || v === undefined || v === '') return null;
     if (typeof v === 'number') {
-      // Только для кг: 96.887 → 96887, 5421.763 → 5421763
       if (unit === 'кг') {
         const s = v.toString();
         const dot = s.indexOf('.');
+        // X.XXX формат → тысячи через запятую в русской локали
         if (dot > 0 && s.length - dot - 1 === 3) {
-          return Math.round(v * 1000);
+          return Math.round(v * 1000); // 96.887→96887, 5421.763→5421763
         }
       }
       return v;
@@ -942,7 +942,7 @@ function renderRashod(rows) {
     { name: 'Цемент',        display: 'Цемент',        unit: 'кг', norm: 63.84  },
     { name: 'Щебень',        display: 'Щебень',        unit: 'м³', norm: 0.112  },
     { name: 'Песок',         display: 'Песок',         unit: 'м³', norm: 0.056  },
-    { name: 'Пласификатор',  display: 'Пластификатор', unit: 'кг', norm: 0.73   },
+    { name: 'пластификатор',  display: 'Пластификатор', unit: 'кг', norm: 0.73   },
   ];
 
   const items = norms.map(norm => {
