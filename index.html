@@ -912,16 +912,20 @@ function renderRashod(rows) {
   }
 
   // Парсинг остатка из БСУ: Google Sheets русская локаль передаёт
-  // 96 887 как 96.887 (JS float). Определяем по дробной части из 3 цифр.
-  function parseBSUOst(v) {
+  // 96 887 кг как 96.887. НО 431.829 м³ — это реальные кубометры.
+  // Решение: передаём unit, умножаем только для кг (не м³)
+  function parseBSUOst(v, unit) {
     if (v === null || v === undefined || v === '') return null;
     if (typeof v === 'number') {
-      const s = v.toString();
-      const dot = s.indexOf('.');
-      if (dot !== -1 && s.length - dot - 1 === 3) {
-        return Math.round(v * 1000); // 96.887 → 96887
+      // Только для кг: 96.887 → 96887, 5421.763 → 5421763
+      if (unit === 'кг') {
+        const s = v.toString();
+        const dot = s.indexOf('.');
+        if (dot > 0 && s.length - dot - 1 === 3) {
+          return Math.round(v * 1000);
+        }
       }
-      return v; // целое число — возвращаем как есть
+      return v;
     }
     return parseNum(v);
   }
@@ -943,7 +947,7 @@ function renderRashod(rows) {
 
   const items = norms.map(norm => {
     const row = dataRows.find(r => String(r[1]).toLowerCase().includes(norm.name.toLowerCase()));
-    const ost = row ? parseBSUOst(row[5]) : null;
+    const ost = row ? parseBSUOst(row[5], norm.unit) : null;
     const count = (ost !== null && norm.norm > 0) ? Math.floor(ost / norm.norm) : null;
     dbg(`Расход: ${norm.name} → col5="${row ? row[5] : 'не найдено'}" ost=${ost} count=${count}`);
     return { ...norm, ost, count };
