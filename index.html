@@ -890,66 +890,37 @@ async function fetchSheet(sheetName, label) {
 // ── РАСХОД — расчёт шпал ──────────────────────────────────────────────────────
 function renderRashod(rows) {
   const inner = document.getElementById('rashodInner');
-  if (!rows || rows.length < 3) { inner.innerHTML = '<div style="margin:auto;color:#9ab4c4;font-size:12px;">Нет данных</div>'; return; }
+  const badge = document.getElementById('rashodDate');
+  if (!rows || rows.length < 5) {
+    inner.innerHTML = '<div style="margin:auto;color:#9ab4c4;font-size:12px;">Нет данных</div>';
+    return;
+  }
 
-  // Структура БСУ (точно как в renderBSU):
-  // rows[0] = общий заголовок
-  // rows[1] = col0=№, col1=Название, col2=Остаток(дата1), col3=Приход, col4=Расход, col5=Остаток(дата2)
-  // rows[2+] = строки сырья
+  // Структура листа "Расход":
+  // rows[0] = заголовок "РАСЧЁТ КОЛИЧЕСТВА ШПАЛ..."
+  // rows[1] = пустая
+  // rows[2] = "НОРМЫ РАСХОДА НА 1 ШПАЛУ"
+  // rows[3] = col0=Сырьё, col1=Ед.изм, col2=Норма, col3=Остаток, col4=Хватит шпал
+  // rows[4+] = строки данных
 
-  function parseNum(v) {
+  function safeNum(v) {
     if (v === null || v === undefined || v === '') return null;
     if (typeof v === 'number') return v;
-    let s = String(v).trim();
-    s = s.replace(/[\s\u00a0\u202f]+/g, '');
-    if (/^\d+,\d{3}$/.test(s)) {
-      s = s.replace(',', '');
-    } else {
-      s = s.replace(',', '.');
-    }
-    const n = parseFloat(s);
+    const n = parseFloat(String(v).replace(/[\s\u00a0]/g,'').replace(',','.'));
     return isNaN(n) ? null : n;
   }
 
-  // Парсинг остатка из БСУ: Google Sheets русская локаль передаёт
-  // 96 887 кг как 96.887. НО 431.829 м³ — это реальные кубометры.
-  // Решение: передаём unit, умножаем только для кг (не м³)
-  function parseBSUOst(v, unit) {
-    if (v === null || v === undefined || v === '') return null;
-    if (typeof v === 'number') return v;
-    return parseNum(v);
-  }
+  // Дата из badge берём из заголовка БСУ (уже установлена), или оставляем
+  // Строки данных начинаются с rows[4]
+  const dataRows = rows.slice(4).filter(r => r && r[0] && String(r[0]).trim());
 
-  // Расчёт как в Google Sheets: =ЦЕЛОЕ((остаток*1000)/норма_в_граммах_или_мл)
-  // Норма в кг → умножаем на 1000 чтобы работать в граммах
-  // Норма в м³ → умножаем на 1000 чтобы работать в литрах
-  function calcCount(ost, norm) {
-    if (ost === null || ost === undefined || !norm) return null;
-    return Math.floor((ost * 1000) / (norm * 1000));
-  }
-
-  // Дата из заголовка col5 (свежий остаток)
-  const hdr = rows[1] || [];
-  const badge = document.getElementById('rashodDate');
-  badge.textContent = String(hdr[5] || hdr[2] || 'Расход');
-
-  // Строки данных: название в col1, свежий остаток в col5
-  const dataRows = rows.slice(2).filter(r => r && r[1]);
-
-  const norms = [
-    { name: 'Цемент',        display: 'Цемент',        unit: 'кг', norm: 63.84  },
-    { name: 'Щебень',        display: 'Щебень',        unit: 'м³', norm: 0.112  },
-    { name: 'Песок',         display: 'Песок',         unit: 'м³', norm: 0.056  },
-    { name: 'пластификатор',  display: 'Пластификатор', unit: 'кг', norm: 0.73   },
-  ];
-
-  const items = norms.map(norm => {
-    const row = dataRows.find(r => String(r[1]).toLowerCase().includes(norm.name.toLowerCase()));
-    const ost = row ? parseBSUOst(row[5], norm.unit) : null;
-    const count = calcCount(ost, norm.norm);
-    dbg(`Расход: ${norm.name} → col5="${row ? row[5] : 'не найдено'}" ost=${ost} count=${count}`);
-    return { ...norm, ost, count };
-  });
+  const items = dataRows.map(r => ({
+    name:  String(r[0] || '').trim(),
+    unit:  String(r[1] || '').trim(),
+    norm:  safeNum(r[2]),
+    ost:   safeNum(r[3]),
+    count: safeNum(r[4]),
+  }));
 
   const validCounts = items.map(i => i.count).filter(c => c !== null && c >= 0);
   const minCount = validCounts.length ? Math.min(...validCounts) : null;
@@ -967,13 +938,14 @@ function renderRashod(rows) {
     </div>`;
 
   items.forEach(item => {
-    const ostStr = item.ost !== null ? item.ost.toLocaleString('ru-RU') : '—';
+    const ostStr   = item.ost   !== null ? item.ost.toLocaleString('ru-RU')   : '—';
     const countStr = item.count !== null ? item.count.toLocaleString('ru-RU') : '—';
+    const normStr  = item.norm  !== null ? item.norm  : '—';
     const isMin = item.count !== null && item.count === minCount;
     html += `<div class="rashod-item${isMin ? ' is-limit' : ''}">
-      <div class="rashod-label">${item.display || item.name}</div>
+      <div class="rashod-label">${item.name}</div>
       <div style="text-align:center; font-size:11px; color:#5a8aaa;">${item.unit}</div>
-      <div class="rashod-norm" style="text-align:right;">${item.norm} ${item.unit}</div>
+      <div class="rashod-norm" style="text-align:right;">${normStr} ${item.unit}</div>
       <div class="rashod-ost" style="text-align:right;">${ostStr}</div>
       <div class="rashod-count" style="text-align:right;">${countStr} <span class="rashod-unit">шт.</span></div>
     </div>`;
@@ -985,7 +957,7 @@ function renderRashod(rows) {
   </div>`;
 
   inner.innerHTML = html;
-  dbg(`Расход: min=${minCount}`, 'ok');
+  dbg(`Расход: отображено ${items.length} позиций, min=${minCount}`, 'ok');
 }
 
 // ── ЗАГРУЗКА ДАННЫХ ───────────────────────────────────────────────────────────
@@ -1050,12 +1022,16 @@ async function loadData() {
     showOKError([e.message, 'Проверьте название листа ОК в настройках (регистр важен)']);
   }
 
-  // Расход — используем данные БСУ напрямую (уже загружены)
-  if (bsuData) {
-    renderRashod(bsuData);
-    dbg('Расход: данные взяты из БСУ', 'ok');
-  } else {
-    document.getElementById('rashodInner').innerHTML = '<div style="margin:auto;color:#dc2626;font-size:11px;">Нет данных БСУ для расчёта</div>';
+  // Расход — загружаем отдельный лист "Расход" с готовыми данными
+  let rashodOk = false;
+  try {
+    const rashodData = await fetchSheet(cfg.rashod, 'Расход');
+    renderRashod(rashodData);
+    rashodOk = true;
+    dbg('Расход: данные загружены из листа Расход', 'ok');
+  } catch(e) {
+    document.getElementById('rashodInner').innerHTML = '<div style="margin:auto;color:#dc2626;font-size:11px;">Ошибка загрузки листа Расход</div>';
+    dbg('Расход: ошибка — ' + e.message, 'err');
   }
 
   if (pcOk && bsuOk && otgOk && okOk) {
