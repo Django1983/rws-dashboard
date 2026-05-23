@@ -939,10 +939,10 @@ function renderRashod(rows) {
   const dataRows = rows.slice(2).filter(r => r && r[1]);
 
   const norms = [
-    { name: 'Цемент',        unit: 'кг', norm: 63.84  },
-    { name: 'Щебень',        unit: 'м³', norm: 0.112  },
-    { name: 'Песок',         unit: 'м³', norm: 0.056  },
-    { name: 'Пластификатор', unit: 'кг', norm: 0.73   },
+    { name: 'Цемент',        display: 'Цемент',        unit: 'кг', norm: 63.84  },
+    { name: 'Щебень',        display: 'Щебень',        unit: 'м³', norm: 0.112  },
+    { name: 'Песок',         display: 'Песок',         unit: 'м³', norm: 0.056  },
+    { name: 'Пласификатор',  display: 'Пластификатор', unit: 'кг', norm: 0.73   },
   ];
 
   const items = norms.map(norm => {
@@ -973,7 +973,7 @@ function renderRashod(rows) {
     const countStr = item.count !== null ? item.count.toLocaleString('ru-RU') : '—';
     const isMin = item.count !== null && item.count === minCount;
     html += `<div class="rashod-item${isMin ? ' is-limit' : ''}">
-      <div class="rashod-label">${item.name}</div>
+      <div class="rashod-label">${item.display || item.name}</div>
       <div style="text-align:center; font-size:11px; color:#5a8aaa;">${item.unit}</div>
       <div class="rashod-norm" style="text-align:right;">${item.norm} ${item.unit}</div>
       <div class="rashod-ost" style="text-align:right;">${ostStr}</div>
