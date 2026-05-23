@@ -899,19 +899,31 @@ function renderRashod(rows) {
 
   function parseNum(v) {
     if (v === null || v === undefined || v === '') return null;
+    if (typeof v === 'number') return v;
     let s = String(v).trim();
-    // Убираем пробелы и неразрывные пробелы как разделители тысяч
     s = s.replace(/[\s\u00a0\u202f]+/g, '');
-    // Если запятая — десятичный разделитель (нет точки), заменяем на точку
-    // Формат: 96,887 → может быть 96887 (тысячи через запятую) или 96.887 (дробная часть)
-    // Определяем: если после запятой ровно 3 цифры и нет точки → тысячи → убираем запятую
     if (/^\d+,\d{3}$/.test(s)) {
-      s = s.replace(',', ''); // убираем разделитель тысяч: 96,887 → 96887
+      s = s.replace(',', '');
     } else {
-      s = s.replace(',', '.'); // десятичная запятая: 63,84 → 63.84
+      s = s.replace(',', '.');
     }
     const n = parseFloat(s);
     return isNaN(n) ? null : n;
+  }
+
+  // Парсинг остатка из БСУ: Google Sheets русская локаль передаёт
+  // 96 887 как 96.887 (JS float). Определяем по дробной части из 3 цифр.
+  function parseBSUOst(v) {
+    if (v === null || v === undefined || v === '') return null;
+    if (typeof v === 'number') {
+      const s = v.toString();
+      const dot = s.indexOf('.');
+      if (dot !== -1 && s.length - dot - 1 === 3) {
+        return Math.round(v * 1000); // 96.887 → 96887
+      }
+      return v; // целое число — возвращаем как есть
+    }
+    return parseNum(v);
   }
 
   // Дата из заголовка col5 (свежий остаток)
@@ -931,7 +943,7 @@ function renderRashod(rows) {
 
   const items = norms.map(norm => {
     const row = dataRows.find(r => String(r[1]).toLowerCase().includes(norm.name.toLowerCase()));
-    const ost = row ? parseNum(row[5]) : null;
+    const ost = row ? parseBSUOst(row[5]) : null;
     const count = (ost !== null && norm.norm > 0) ? Math.floor(ost / norm.norm) : null;
     dbg(`Расход: ${norm.name} → col5="${row ? row[5] : 'не найдено'}" ost=${ost} count=${count}`);
     return { ...norm, ost, count };
