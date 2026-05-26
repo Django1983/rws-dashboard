@@ -1145,8 +1145,14 @@ function renderOnec(rows) {
 
   body.innerHTML = html || '<div class="onec-row"><div class="onec-name" style="color:#9ab4c4;">Нет строк</div><div></div><div></div></div>';
   if (updatedAt) {
-    updated.textContent = 'Обновлено: ' + updatedAt;
-    badge.textContent = updatedAt.split(' ')[0] || '1С';
+    // Чистим ISO формат типа 2026-05-26T06:34:00.000Z
+    let displayDate = updatedAt;
+    const isoMatch = updatedAt.match(/(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+    if (isoMatch) {
+      displayDate = isoMatch[3] + '.' + isoMatch[2] + '.' + isoMatch[1] + ' ' + isoMatch[4] + ':' + isoMatch[5];
+    }
+    updated.textContent = 'Обновлено: ' + displayDate;
+    badge.textContent = displayDate.split(' ')[0] || '1С';
   }
   dbg(`1С: отображено ${rowCount} строк`, 'ok');
 }
