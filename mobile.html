@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>RWS Optimum — Mobile</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  :root {
+    --navy: #1a3a52;
+    --navy2: #1a5c8a;
+    --blue: #2277aa;
+    --blue-light: #b0d4ea;
+    --bg: #f0f4f8;
+    --card: #ffffff;
+    --border: #c8dce8;
+    --text: #1a2e3b;
+    --text2: #5a8aaa;
+    --green: #16a34a;
+    --red: #dc2626;
+    --amber: #d97706;
+  }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 70px;
+  }
+
+  /* LOGIN */
+  #loginScreen {
+    position: fixed; inset: 0; z-index: 9999;
+    background: #0f172a;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .login-box {
+    background: #1e293b; border-radius: 14px;
+    padding: 2rem 1.5rem; width: 300px; text-align: center;
+  }
+  .login-box h2 { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: 0.08em; margin-bottom: 4px; }
+  .login-box p { font-size: 11px; color: #7aacc8; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 24px; }
+  .login-box input {
+    width: 100%; padding: 11px 14px; border-radius: 8px;
+    border: 1px solid #334155; background: #0f172a;
+    color: #fff; font-size: 14px; margin-bottom: 10px; outline: none;
+  }
+  .login-box .pw-error { color: #f87171; font-size: 12px; margin-bottom: 10px; display: none; }
+  .login-box button {
+    width: 100%; padding: 11px; background: #2277aa; color: #fff;
+    border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--navy);
+    padding: 10px 14px 12px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .header-left { display: flex; align-items: center; gap: 8px; }
+  .hlogo { font-size: 15px; font-weight: 700; color: #fff; letter-spacing: 0.08em; }
+  .hsub { font-size: 9px; color: var(--blue-light); letter-spacing: 0.1em; text-transform: uppercase; }
+  .htime { font-size: 12px; color: var(--blue-light); }
+
+  /* STATUS */
+  .status-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 4px 14px; background: #e2ecf4;
+    border-bottom: 1px solid var(--border);
+    font-size: 10px; color: var(--text2);
+  }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+  .dot.loading { background: var(--amber); animation: pulse 1.2s infinite; }
+  .dot.error { background: var(--red); }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  /* NAV */
+  .nav {
+    display: flex; background: var(--navy);
+    border-top: 1px solid #15304a;
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+  }
+  .nav-tab {
+    flex: 1; padding: 8px 4px; text-align: center;
+    font-size: 10px; color: rgba(255,255,255,0.4);
+    cursor: pointer; border-top: 2px solid transparent;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+  }
+  .nav-tab .icon { font-size: 20px; line-height: 1; }
+  .nav-tab.active { color: #7aacc8; border-top-color: #7aacc8; }
+
+  /* PAGES */
+  .page { display: none; padding: 10px; }
+  .page.active { display: block; }
+
+  /* CARDS */
+  .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+  .kpi {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 12px;
+  }
+  .kpi-label { font-size: 9px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+  .kpi-value { font-size: 20px; font-weight: 500; color: var(--navy2); }
+  .kpi-unit { font-size: 10px; color: var(--text2); margin-left: 2px; }
+
+  /* SECTION */
+  .section {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 8px; overflow: hidden; margin-bottom: 10px;
+  }
+  .sec-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 12px; background: var(--navy2);
+    font-size: 12px; font-weight: 600; color: #fff;
+  }
+  .sec-badge {
+    font-size: 9px; padding: 1px 8px; border-radius: 20px;
+    background: rgba(255,255,255,0.15); color: #fff;
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+
+  /* TABLE */
+  .tbl-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 11px; min-width: 320px; }
+  th {
+    padding: 5px 6px; text-align: center; font-size: 9px; font-weight: 700;
+    color: #fff; border-bottom: 2px solid #154e78;
+    text-transform: uppercase; letter-spacing: 0.04em; background: var(--navy2);
+    position: sticky; top: 0;
+  }
+  td { padding: 5px 6px; border-bottom: 1px solid #eaf2f8; color: var(--text); text-align: center; }
+  td.name-col { text-align: left; }
+  tr:last-child td { border-bottom: none; }
+  .num { font-variant-numeric: tabular-nums; font-size: 11px; font-weight: 600; color: var(--navy2); }
+  .plus { color: var(--green); }
+  .minus { color: var(--red); }
+  .neutral { color: #9ab4c4; }
+  .empty { padding: 16px; text-align: center; color: #9ab4c4; font-size: 11px; }
+
+  /* RASHOD */
+  .rashod-item {
+    display: grid;
+    grid-template-columns: 1fr 40px 70px 80px 100px;
+    align-items: center;
+    padding: 7px 10px; border-bottom: 1px solid #eaf2f8;
+    gap: 6px; font-size: 11px;
+  }
+  .rashod-item:last-of-type { border-bottom: none; }
+  .rashod-item.is-limit { background: #fff3cd; border-left: 3px solid #f59e0b; }
+  .rashod-item.is-limit .r-name { color: #92400e; font-weight: 700; }
+  .r-name { font-weight: 600; color: var(--text); font-size: 11px; line-height: 1.3; }
+  .r-norm { font-size: 10px; color: var(--text2); text-align: right; }
+  .r-ost  { font-size: 11px; font-weight: 600; color: var(--blue); text-align: right; }
+  .r-count { font-size: 13px; font-weight: 700; color: var(--green); text-align: right; }
+  .rashod-min {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 12px; background: #f0faf4;
+    border-top: 2px solid #86efac; margin: 0;
+  }
+  .rashod-min-label { font-size: 10px; font-weight: 600; color: var(--green); text-transform: uppercase; }
+  .rashod-min-val { font-size: 22px; font-weight: 700; color: #15803d; }
+
+  /* REFRESH BTN */
+  .refresh-btn {
+    display: block; width: 100%; padding: 9px;
+    background: var(--navy2); color: #fff; border: none;
+    border-radius: 8px; font-size: 12px; font-weight: 600;
+    cursor: pointer; margin-bottom: 10px; text-align: center;
+  }
+
+  .update-info { font-size: 10px; color: var(--text2); text-align: center; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <h2>RWS OPTIMUM</h2>
+    <p>Производство ЖБ Шпал</p>
+    <input id="pwInput" type="password" placeholder="Введите пароль"
+      onkeydown="if(event.key==='Enter') checkPassword()">
+    <div class="pw-error" id="pwError">⚠ Неверный пароль</div>
+    <button onclick="checkPassword()">🔓 Войти</button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div>
+      <div class="hlogo">RWS OPTIMUM</div>
+      <div class="hsub">ЖБ Шпалы</div>
+    </div>
+  </div>
+  <div class="htime" id="headerTime">--:--</div>
+</div>
+
+<!-- STATUS -->
+<div class="status-bar">
+  <span class="dot loading" id="statusDot"></span>
+  <span id="statusText">Загрузка...</span>
+  <span style="margin-left:auto;" id="lastUpdate"></span>
+</div>
+
+<!-- PAGES -->
+
+<!-- ПЦ -->
+<div class="page active" id="page-pc">
+  <button class="refresh-btn" onclick="loadData()">↻ Обновить данные</button>
+  <div class="kpi-grid" id="pcCards" style="display:none;">
+    <div class="kpi">
+      <div class="kpi-label">Итого шпал</div>
+      <div class="kpi-value" id="pcTotal">— <span class="kpi-unit">шт.</span></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Видов шпал</div>
+      <div class="kpi-value" id="pcTypes">— <span class="kpi-unit">типов</span></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="sec-header">
+      🏭 Производственный цех
+      <span class="sec-badge" id="pcDate">ПЦ</span>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th style="text-align:left">Наименование</th>
+          <th>Остаток</th>
+        </tr></thead>
+        <tbody id="pcBody"><tr><td colspan="2" class="empty">Загрузка...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- БСУ -->
+<div class="page" id="page-bsu">
+  <div class="kpi-grid" id="bsuCards" style="display:none;">
+    <div class="kpi">
+      <div class="kpi-label">Позиций</div>
+      <div class="kpi-value" id="bsuCount">—</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Дата</div>
+      <div class="kpi-value" id="bsuDate" style="font-size:13px;">—</div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="sec-header">
+      🧱 БСУ — Сырьё
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th style="text-align:left">Наименование</th>
+          <th id="bsuH1">Остаток</th>
+          <th id="bsuH2">Приход</th>
+          <th id="bsuH3">Расход</th>
+          <th id="bsuH4">Новый остаток</th>
+        </tr></thead>
+        <tbody id="bsuBody"><tr><td colspan="5" class="empty">Загрузка...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- РАСХОД -->
+<div class="page" id="page-rashod">
+  <div class="section">
+    <div class="sec-header">🧮 Расчёт шпал по сырью</div>
+    <div id="rashodInner">
+      <div class="empty">Загрузка...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ОК -->
+
+<div class="page" id="page-onec">
+  <div class="section">
+    <div class="sec-header"><svg width="16" height="16" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:4px"><circle cx="11" cy="11" r="10" fill="#e8000d"/><text x="11" y="15" text-anchor="middle" font-size="10" font-weight="900" font-family="Arial" fill="white">1С</text></svg> Остатки сырья (1С)</div>
+    <div id="onecInner">
+      <div class="empty">Загрузка...</div>
+    </div>
+  </div>
+</div>
+<div class="page" id="page-ok">
+  <div class="kpi-grid" id="okCards" style="display:none;">
+    <div class="kpi">
+      <div class="kpi-label">Всего сотрудников</div>
+      <div class="kpi-value" id="okTotal">—</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Рабочих</div>
+      <div class="kpi-value" id="okWorkers">—</div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="sec-header">
+      👷 Отдел кадров
+      <span class="sec-badge" id="okDate">ОК</span>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th style="text-align:left">Подразделение</th>
+          <th>Раб.</th>
+          <th>ИТР</th>
+          <th>Всего</th>
+        </tr></thead>
+        <tbody id="okBody"><tr><td colspan="4" class="empty">Загрузка...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ОТГРУЗКА -->
+<div class="page" id="page-otg">
+  <div class="section">
+    <div class="sec-header">
+      🚛 Отгрузка шпал
+      <span class="sec-badge" id="otgDate">Отгрузка</span>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th style="text-align:left">Наименование</th>
+          <th>За день<br>шт.</th>
+          <th>За мес.<br>шт.</th>
+          <th>За год<br>шт.</th>
+          <th>Остаток<br>шт.</th>
+        </tr></thead>
+        <tbody id="otgBody"><tr><td colspan="5" class="empty">Загрузка...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-tab active" onclick="switchTab('pc',this)">
+    <div class="icon">🏭</div>ПЦ
+  </div>
+  <div class="nav-tab" onclick="switchTab('bsu',this)">
+    <div class="icon">🧱</div>БСУ
+  </div>
+  <div class="nav-tab" onclick="switchTab('otg',this)">
+    <div class="icon">🚛</div>Отгрузка
+  </div>
+  <div class="nav-tab" onclick="switchTab('rashod',this)">
+    <div class="icon">🧮</div>Расход
+  </div>
+  <div class="nav-tab" onclick="switchTab('ok',this)">
+    <div class="icon">👷</div>ОК
+  </div>
+  <div class="nav-tab" onclick="switchTab('onec',this)">
+    <div class="icon"><svg width="22" height="22" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="11" cy="11" r="10" fill="#e8000d"/>
+  <circle cx="11" cy="11" r="10" fill="url(#g1c)" opacity="0.6"/>
+  <defs>
+    <radialGradient id="g1c" cx="35%" cy="35%">
+      <stop offset="0%" stop-color="#ffcc00"/>
+      <stop offset="100%" stop-color="#e8000d" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <text x="11" y="15" text-anchor="middle" font-size="10" font-weight="900" font-family="Arial" fill="white">1С</text>
+</svg></div>1С
+  </div>
+</nav>
+
+<script>
+// ── CONFIG (копируется из основного дашборда) ─────────────────────────────────
+const DEFAULT_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymYCBoPrkF-l8JM5Qm52u0A5gMWqMbNT_F_Tqr-6kq6Go1HtXpcY6BGmS9KMQE3oWA/exec';
+const DASHBOARD_PASSWORD = "RWS7777";
+
+// ── TELEGRAM INIT ─────────────────────────────────────────────────────────────
+if (window.Telegram && window.Telegram.WebApp) {
+  window.Telegram.WebApp.ready();
+  window.Telegram.WebApp.expand();
+}
+
+// ── LOGIN (отключён для мини-версии) ─────────────────────────────────────────
+(function() {
+  document.getElementById("loginScreen").style.display = "none";
+})();
+
+function checkPassword() {}
+
+// ── CLOCK ─────────────────────────────────────────────────────────────────────
+function updateClock() {
+  const now = new Date();
+  document.getElementById('headerTime').textContent =
+    now.toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'});
+}
+updateClock();
+setInterval(updateClock, 10000);
+
+// ── NAV ───────────────────────────────────────────────────────────────────────
+function switchTab(tab, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + tab).classList.add('active');
+  el.classList.add('active');
+}
+
+// ── STATUS ────────────────────────────────────────────────────────────────────
+function status(msg, state) {
+  const dot = document.getElementById('statusDot');
+  document.getElementById('statusText').textContent = msg;
+  dot.className = 'dot ' + (state || '');
+}
+
+// ── FETCH ─────────────────────────────────────────────────────────────────────
+async function fetchSheet(sheetName) {
+  const url = DEFAULT_APPS_SCRIPT_URL + '?sheet=' + encodeURIComponent(sheetName) + '&t=' + Date.now();
+  const r = await fetch(url);
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  const text = await r.text();
+  if (text.trim().startsWith('<!')) throw new Error('Получен HTML вместо данных');
+  const data = JSON.parse(text);
+  if (data.error) throw new Error(data.error);
+  return data;
+}
+
+function safeNum(v) {
+  if (v === null || v === undefined || v === '') return null;
+  if (typeof v === 'number') return v;
+  const n = parseFloat(String(v).replace(/[\s\u00a0]/g,'').replace(',','.'));
+  return isNaN(n) ? null : n;
+}
+function fmt(v) {
+  const n = safeNum(v);
+  return (n !== null && n !== 0) ? n.toLocaleString('ru-RU') : '<span class="neutral">—</span>';
+}
+
+// ── RENDER ПЦ ─────────────────────────────────────────────────────────────────
+function renderPC(rows) {
+  const body = document.getElementById('pcBody');
+  if (!rows || rows.length < 3) { body.innerHTML = '<tr><td colspan="2" class="empty">Нет данных</td></tr>'; return; }
+
+  const hrow = rows[0] || [];
+  const dateMatch = hrow.join(' ').match(/\d{2}\.\d{2}\.\d{4}/);
+  if (dateMatch) document.getElementById('pcDate').textContent = dateMatch[0];
+
+  let dataStart = 2;
+  for (let i = 0; i < rows.length; i++) {
+    const line = (rows[i]||[]).join(' ').toLowerCase();
+    if (line.includes('наименование') || line.includes('остаток')) { dataStart = i+1; break; }
+  }
+
+  let html = '', total = 0, count = 0;
+  for (let i = dataStart; i < rows.length; i++) {
+    const r = rows[i];
+    if (!r) continue;
+    const name = String(r[1]||r[0]||'').trim();
+    if (!name) continue;
+    const isTotal = name.toLowerCase().startsWith('итого') || name.toLowerCase().startsWith('всего');
+    const val = safeNum(r[2]) || safeNum(r[1]) || 0;
+    if (!isTotal && val > 0) { total += val; count++; }
+    const rowStyle = isTotal ? ' style="background:#f0f6fb;font-weight:700;"' : '';
+    html += `<tr${rowStyle}>
+      <td class="name-col" style="${isTotal?'font-weight:700;':''}">${name}</td>
+      <td class="num">${val ? val.toLocaleString('ru-RU') : '<span class="neutral">—</span>'}</td>
+    </tr>`;
+  }
+  body.innerHTML = html || '<tr><td colspan="2" class="empty">Нет строк</td></tr>';
+  document.getElementById('pcTotal').innerHTML = total.toLocaleString('ru-RU') + ' <span class="kpi-unit">шт.</span>';
+  document.getElementById('pcTypes').innerHTML = count + ' <span class="kpi-unit">типов</span>';
+  document.getElementById('pcCards').style.display = 'grid';
+}
+
+// ── RENDER БСУ ────────────────────────────────────────────────────────────────
+function renderBSU(rows) {
+  const body = document.getElementById('bsuBody');
+  if (!rows || rows.length < 3) { body.innerHTML = '<tr><td colspan="4" class="empty">Нет данных</td></tr>'; return; }
+
+  // Ищем последнюю дату во всех строках заголовка (обычно в заголовке колонок)
+  let lastDate = null;
+  for (let i = 0; i < Math.min(5, rows.length); i++) {
+    const joined = (rows[i] || []).join(' ');
+    const matches = joined.match(/\d{2}\.\d{2}\.\d{4}/g);
+    if (matches) lastDate = matches[matches.length - 1];
+  }
+  if (lastDate) document.getElementById('bsuDate').textContent = lastDate;
+
+  // Ищем строку с датами в заголовках колонок
+  for (let i = 0; i < Math.min(5, rows.length); i++) {
+    const r = rows[i] || [];
+    const dates = [];
+    r.forEach(cell => {
+      const m = String(cell||'').match(/\d{2}\.\d{2}\.\d{4}/);
+      if (m) dates.push(m[0]);
+    });
+    if (dates.length >= 2) {
+      // Берём даты для заголовков: остаток, приход, расход, новый остаток
+      if (dates[0]) document.getElementById('bsuH1').innerHTML = dates[0] + '<br>Остаток';
+      if (dates[1]) document.getElementById('bsuH2').innerHTML = dates[1] + '<br>Приход';
+      if (dates[2]) document.getElementById('bsuH3').innerHTML = dates[2] + '<br>Расход';
+      if (dates[3]) document.getElementById('bsuH4').innerHTML = dates[3] + '<br>Остаток';
+      else if (dates[0]) document.getElementById('bsuH4').innerHTML = (dates[dates.length-1]) + '<br>Остаток';
+      break;
+    }
+  }
+
+  let dataStart = 2;
+  for (let i = 0; i < rows.length; i++) {
+    const line = (rows[i]||[]).join(' ').toLowerCase();
+    if (line.includes('наименование')) { dataStart = i+1; break; }
+  }
+
+  let html = '', count = 0;
+  for (let i = dataStart; i < rows.length; i++) {
+    const r = rows[i];
+    if (!r) continue;
+    const name = String(r[1]||r[0]||'').trim();
+    if (!name) continue;
+    const isTotal = name.toLowerCase().startsWith('итого') || name.toLowerCase().startsWith('всего');
+    if (!isTotal) count++;
+    const ost     = safeNum(r[2]);
+    const prih    = safeNum(r[3]);
+    const rash    = safeNum(r[4]);
+    const newOst  = safeNum(r[5]);
+    const rowStyle = isTotal ? ' style="background:#f0f6fb;font-weight:700;border-top:2px solid var(--border);"' : '';
+    html += `<tr${rowStyle}>
+      <td class="name-col" style="font-size:10px;">${name}</td>
+      <td class="num">${fmt(ost)}</td>
+      <td class="num ${prih > 0 ? 'plus' : 'neutral'}">${fmt(prih)}</td>
+      <td class="num ${rash > 0 ? 'minus' : 'neutral'}">${fmt(rash)}</td>
+      <td class="num" style="font-weight:700;color:#1a5c8a;">${fmt(newOst)}</td>
+    </tr>`;
+  }
+  body.innerHTML = html || '<tr><td colspan="4" class="empty">Нет строк</td></tr>';
+  document.getElementById('bsuCount').textContent = count;
+  document.getElementById('bsuCards').style.display = 'grid';
+}
+
+// ── RENDER РАСХОД ─────────────────────────────────────────────────────────────
+function renderRashod(rows) {
+  const inner = document.getElementById('rashodInner');
+  if (!rows || rows.length < 5) { inner.innerHTML = '<div class="empty">Нет данных</div>'; return; }
+
+  const dataRows = rows.slice(4).filter(r => r && r[0] && String(r[0]).trim());
+  const items = dataRows.map(r => ({
+    name:  String(r[0]||'').trim(),
+    unit:  String(r[1]||'').trim(),
+    norm:  safeNum(r[2]),
+    ost:   safeNum(r[3]),
+    count: safeNum(r[4]),
+  }));
+
+  const validCounts = items.map(i => i.count).filter(c => c !== null && c >= 0);
+  const minCount = validCounts.length ? Math.min(...validCounts) : null;
+
+  let html = '';
+  items.forEach(item => {
+    const isMin = item.count !== null && item.count === minCount;
+    const normStr  = item.norm  !== null ? item.norm.toLocaleString('ru-RU') : '—';
+    const ostStr   = item.ost   !== null ? item.ost.toLocaleString('ru-RU') : '—';
+    const countStr = item.count !== null ? item.count.toLocaleString('ru-RU') : '—';
+    html += `<div style="padding:10px 12px; border-bottom:1px solid #eaf2f8;${isMin ? 'background:#fff3cd;border-left:3px solid #f59e0b;' : ''}">
+      <div style="font-size:12px;font-weight:700;color:${isMin ? '#92400e' : 'var(--text)'};margin-bottom:8px;">${item.name} <span style="font-size:10px;font-weight:400;color:var(--text2);">(${item.unit})</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;text-align:center;">
+        <div style="background:#f0f6fb;border-radius:6px;padding:5px 4px;">
+          <div style="font-size:8px;color:var(--text2);text-transform:uppercase;margin-bottom:2px;">Норма</div>
+          <div style="font-size:12px;font-weight:600;color:var(--navy2);">${normStr}</div>
+        </div>
+        <div style="background:#f0f6fb;border-radius:6px;padding:5px 4px;">
+          <div style="font-size:8px;color:var(--text2);text-transform:uppercase;margin-bottom:2px;">Остаток</div>
+          <div style="font-size:12px;font-weight:600;color:var(--blue);">${ostStr}</div>
+        </div>
+        <div style="background:${isMin ? '#fef3c7' : '#f0faf4'};border-radius:6px;padding:5px 4px;">
+          <div style="font-size:8px;color:var(--text2);text-transform:uppercase;margin-bottom:2px;">Шпал</div>
+          <div style="font-size:14px;font-weight:700;color:${isMin ? '#b45309' : 'var(--green)'};">${countStr}</div>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  html += `<div class="rashod-min">
+    <div class="rashod-min-label">🧮 Лимит по сырью:</div>
+    <div><span class="rashod-min-val">${minCount !== null ? minCount.toLocaleString('ru-RU') : '—'}</span><span style="font-size:11px;color:#4ade80;margin-left:3px;">шт.</span></div>
+  </div>`;
+
+  inner.innerHTML = html;
+}
+
+// ── RENDER ОК ─────────────────────────────────────────────────────────────────
+function renderOK(rows) {
+  const body = document.getElementById('okBody');
+  if (!rows || rows.length < 2) { body.innerHTML = '<tr><td colspan="4" class="empty">Нет данных</td></tr>'; return; }
+
+  const firstRow = rows[0] || [];
+  const dateMatch = firstRow.join(' ').match(/\d{2}\.\d{2}\.\d{4}/);
+  if (dateMatch) document.getElementById('okDate').textContent = dateMatch[0];
+
+  let dataStart = 2;
+  for (let i = 0; i < rows.length; i++) {
+    const line = (rows[i]||[]).join(' ').toLowerCase();
+    if (line.includes('подразделение') || line.includes('наименование')) { dataStart = i+1; break; }
+  }
+
+  let html = '', totalAll = 0, totalWorkers = 0;
+  for (let i = dataStart; i < rows.length; i++) {
+    const r = rows[i];
+    if (!r) continue;
+    const num  = String(r[0]||'').trim();
+    const name = String(r[1]||'').trim();
+    if (!name) continue;
+    const isTotal = name.toLowerCase().startsWith('всего');
+    const workers  = safeNum(r[2]) || 0;
+    const masters  = safeNum(r[3]) || 0;
+    const total    = safeNum(r[6]) || (workers + masters);
+    if (!isTotal && num) { totalWorkers += workers; totalAll += total; }
+    const rowStyle = isTotal ? ' style="background:#f0f6fb;font-weight:700;border-top:2px solid var(--border);"' : '';
+    html += `<tr${rowStyle}>
+      <td class="name-col" style="font-size:10px;${isTotal?'font-weight:700;':''}">${name}</td>
+      <td class="num">${workers||'—'}</td>
+      <td class="num">${masters||'—'}</td>
+      <td class="num" style="font-weight:700;">${total||'—'}</td>
+    </tr>`;
+  }
+  body.innerHTML = html || '<tr><td colspan="4" class="empty">Нет строк</td></tr>';
+  document.getElementById('okTotal').innerHTML   = totalAll + ' <span class="kpi-unit">чел.</span>';
+  document.getElementById('okWorkers').innerHTML = totalWorkers + ' <span class="kpi-unit">чел.</span>';
+  document.getElementById('okCards').style.display = 'grid';
+}
+
+// ── RENDER ОТГРУЗКА ───────────────────────────────────────────────────────────
+function renderOTG(rows) {
+  const body = document.getElementById('otgBody');
+  const dateEl = document.getElementById('otgDate');
+  if (!rows || rows.length < 4) { body.innerHTML = '<tr><td colspan="5" class="empty">Нет данных</td></tr>'; return; }
+
+  // Дата в строке заголовка колонок (row index 2, col 11)
+  const hrow = rows[2] || [];
+  const dateMatch = hrow.join(' ').match(/\d{2}\.\d{2}\.\d{4}/);
+  if (dateMatch && dateEl) dateEl.textContent = dateMatch[0];
+
+  function fmt(v) {
+    const n = parseFloat(String(v||'').replace(/\s/g,'').replace(',','.'));
+    return isNaN(n) || n === 0 ? '<span class="neutral">—</span>' : n.toLocaleString('ru-RU');
+  }
+
+  let html = '';
+  let i = 4;
+  while (i < rows.length) {
+    const r = rows[i];
+    const num  = String(r[0]||'').trim();
+    const name = String(r[1]||'').trim();
+    if (!num && !name) { i++; continue; }
+
+    if (num && name) {
+      const ostn = parseFloat(String(r[11]||'').replace(/\s/g,'').replace(',','.')) || 0;
+      html += `<tr style="background:#f0f6fb;font-weight:600;">
+        <td class="name-col" colspan="4" style="font-size:10px;">${name}</td>
+        <td class="num n-num">${ostn ? ostn.toLocaleString('ru-RU') : '<span class="neutral">—</span>'}</td>
+      </tr>`;
+    } else if (!num && name) {
+      html += `<tr>
+        <td class="name-col" style="color:#5a8aaa;font-size:10px;padding-left:14px;">${name}</td>
+        <td class="num">${fmt(r[4])}</td>
+        <td class="num">${fmt(r[7])}</td>
+        <td class="num">${fmt(r[10])}</td>
+        <td class="num"></td>
+      </tr>`;
+    }
+    i++;
+  }
+  body.innerHTML = html || '<tr><td colspan="5" class="empty">Нет данных</td></tr>';
+}
+
+
+// ── RENDER 1С ─────────────────────────────────────────────────────────────────
+function renderOnec(rows) {
+  const inner = document.getElementById('onecInner');
+  if (!rows || rows.length < 2) {
+    inner.innerHTML = '<div class="empty">Нет данных</div>';
+    return;
+  }
+
+  let html = '<table style="width:100%"><thead><tr><th style="text-align:left;padding:4px 8px;">Материал</th><th style="text-align:right;padding:4px 8px;">Остаток</th><th style="text-align:right;padding:4px 8px;">Ед.</th></tr></thead><tbody>';
+  let updatedAt = '';
+
+  for (let i = 1; i < rows.length; i++) {
+    const r = rows[i];
+    if (!r || !r[1]) continue;
+    updatedAt = r[0] || updatedAt;
+    const name  = String(r[1] || '').trim();
+    const qty   = parseFloat(String(r[3] || '0').replace(',', '.')) || 0;
+    const unit  = String(r[4] || 'тн').trim();
+    const isTotal = name.startsWith('ИТОГО');
+
+    // Форматируем дату если ISO
+    let displayDate = updatedAt;
+    const isoMatch = updatedAt.match(/(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+    if (isoMatch) displayDate = isoMatch[3]+'.'+isoMatch[2]+'.'+isoMatch[1]+' '+isoMatch[4]+':'+isoMatch[5];
+
+    const style = isTotal ? ' style="background:#f0f6fb;font-weight:700;border-top:2px solid #c8dce8;"' : '';
+    html += `<tr${style}>
+      <td style="text-align:left;padding:4px 8px;">${name}</td>
+      <td style="text-align:right;padding:4px 8px;font-weight:700;color:${isTotal ? '#0e7490' : '#2277aa'}">${qty.toLocaleString('ru-RU', {maximumFractionDigits:3})}</td>
+      <td style="text-align:right;padding:4px 8px;font-size:10px;color:#9ab4c4;">${unit}</td>
+    </tr>`;
+  }
+
+  html += '</tbody></table>';
+
+  // Дата обновления
+  let displayDate = updatedAt;
+  const isoMatch = updatedAt.match(/(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+  if (isoMatch) displayDate = isoMatch[3]+'.'+isoMatch[2]+'.'+isoMatch[1]+' '+isoMatch[4]+':'+isoMatch[5];
+  if (displayDate) html += `<div style="font-size:9px;color:#9ab4c4;padding:4px 10px;">Обновлено: ${displayDate}</div>`;
+
+  inner.innerHTML = html;
+}
+
+// ── LOAD ──────────────────────────────────────────────────────────────────────
+async function loadData() {
+  status('Загрузка...', 'loading');
+  let ok = 0, fail = 0;
+
+  const tasks = [
+    { sheet: 'ПЦ',        render: renderPC },
+    { sheet: 'БСУ',       render: renderBSU },
+    { sheet: 'Отгрузка',  render: renderOTG },
+    { sheet: 'Расход',    render: renderRashod },
+    { sheet: 'ОК',        render: renderOK },
+    { sheet: '1С_Остатки', render: renderOnec },
+  ];
+
+  await Promise.allSettled(tasks.map(async t => {
+    try {
+      const data = await fetchSheet(t.sheet);
+      t.render(data);
+      ok++;
+    } catch(e) {
+      fail++;
+    }
+  }));
+
+  if (fail === 0) status('Данные загружены ✔', 'ok');
+  else if (ok === 0) status('Ошибка загрузки — проверьте Apps Script', 'error');
+  else status(`Загружено ${ok} из ${tasks.length} листов`, 'loading');
+
+  document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'});
+}
+
+loadData();
+setInterval(loadData, 5 * 60 * 1000);
+</script>
+</body>
+</html>
