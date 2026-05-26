@@ -43,7 +43,7 @@
     flex: 1;
     display: grid;
     grid-template-columns: minmax(0,1fr) minmax(0,1.5fr) minmax(0,1fr);
-    grid-template-rows: minmax(0,1fr) minmax(0,1fr) minmax(0,1.2fr);
+    grid-template-rows: minmax(0,1fr) minmax(0,1fr) minmax(0,0.65fr);
     gap: 8px;
     padding: 8px;
     overflow: hidden;
@@ -176,8 +176,9 @@
   .url-editor input:focus { outline: none; border-color: #2277aa; }
 
   /* Панели настроек и диагностики — в попап поверх */
-  .overlay-panels { position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; padding: 0 8px 8px; pointer-events: none; }
-  .overlay-panels .section { pointer-events: all; }
+  .overlay-panels { position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; padding: 0 8px 4px; pointer-events: none; display: flex; gap: 6px; }
+  .overlay-panels .section { pointer-events: all; flex: 1; }
+  .overlay-panels .section-header { padding: 3px 10px; font-size: 10px; min-height: 0; }
 
   @media print {
     body { overflow: visible; height: auto; }
