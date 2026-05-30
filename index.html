@@ -118,7 +118,7 @@
   .card-value { font-size: 18px; font-weight: 500; color: #1a5c8a; }
   .card-unit { font-size: 10px; color: #7aacc8; margin-left: 2px; }
 
-  .table-wrap { overflow: auto; flex: 1; min-height: 0; }
+  .table-wrap { overflow: hidden; flex: 1; min-height: 0; }
   table { width: 100%; border-collapse: collapse; font-size: 11px; }
   th {
     padding: 5px 8px; text-align: center; font-size: 9px; font-weight: 700;
@@ -448,6 +448,14 @@
       🏭 Остатки сырья (1С)
       <span class="auto-badge">● Авто</span>
       <span class="section-badge" id="onecDate">—</span>
+      <button id="syncBtn" onclick="syncWith1C()" title="Синхронизировать с 1С" style="
+        margin-left:6px; padding:2px 10px; font-size:10px; font-weight:600;
+        background:#e8520a; color:#fff; border:none; border-radius:5px;
+        cursor:pointer; display:inline-flex; align-items:center; gap:4px;
+        transition:background 0.15s; flex-shrink:0;
+      " onmouseover="this.style.background='#c0440f'" onmouseout="this.style.background='#e8520a'">
+        <span id="syncIcon">⟳</span> <span id="syncLabel">1С Синхронизировать</span>
+      </button>
     </div>
     <div class="onec-inner">
       <div class="onec-header-row">
@@ -1197,6 +1205,90 @@ function checkPassword() {
     err.style.display = "block";
     document.getElementById("pwInput").value = "";
     document.getElementById("pwInput").focus();
+  }
+}
+
+// ── СИНХРОНИЗАЦИЯ С 1С ────────────────────────────────────────────────────────
+async function syncWith1C() {
+  const btn   = document.getElementById('syncBtn');
+  const icon  = document.getElementById('syncIcon');
+  const label = document.getElementById('syncLabel');
+
+  btn.disabled = true;
+  btn.style.background = '#888';
+  icon.style.display = 'inline-block';
+  icon.style.animation = 'spin 1s linear infinite';
+  label.textContent = 'Запуск...';
+
+  // Добавляем анимацию вращения
+  if (!document.getElementById('spinStyle')) {
+    const s = document.createElement('style');
+    s.id = 'spinStyle';
+    s.textContent = '@keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }';
+    document.head.appendChild(s);
+  }
+
+  try {
+    const resp = await fetch('http://localhost:5000/sync', { method: 'POST' });
+    const data = await resp.json();
+
+    if (data.status === 'started') {
+      label.textContent = 'Выполняется...';
+      // Проверяем статус каждые 3 сек
+      const check = setInterval(async () => {
+        try {
+          const sr = await fetch('http://localhost:5000/status');
+          const st = await sr.json();
+          if (!st.running) {
+            clearInterval(check);
+            if (st.last_result === 'ok') {
+              icon.style.animation = '';
+              icon.textContent = '✓';
+              label.textContent = 'Готово!';
+              btn.style.background = '#16a34a';
+              setTimeout(() => {
+                icon.textContent = '⟳';
+                icon.style.animation = '';
+                label.textContent = '1С Синхронизировать';
+                btn.style.background = '#e8520a';
+                btn.disabled = false;
+                loadData(); // Перезагружаем данные
+              }, 3000);
+            } else {
+              icon.textContent = '✗';
+              label.textContent = 'Ошибка!';
+              btn.style.background = '#dc2626';
+              setTimeout(() => {
+                icon.textContent = '⟳';
+                label.textContent = '1С Синхронизировать';
+                btn.style.background = '#e8520a';
+                btn.disabled = false;
+              }, 3000);
+            }
+          }
+        } catch(e) { clearInterval(check); }
+      }, 3000);
+    } else if (data.status === 'running') {
+      label.textContent = 'Уже выполняется';
+      setTimeout(() => {
+        icon.style.animation = '';
+        icon.textContent = '⟳';
+        label.textContent = '1С Синхронизировать';
+        btn.style.background = '#e8520a';
+        btn.disabled = false;
+      }, 2000);
+    }
+  } catch(e) {
+    icon.style.animation = '';
+    icon.textContent = '✗';
+    label.textContent = 'Сервер недоступен';
+    btn.style.background = '#dc2626';
+    setTimeout(() => {
+      icon.textContent = '⟳';
+      label.textContent = '1С Синхронизировать';
+      btn.style.background = '#e8520a';
+      btn.disabled = false;
+    }, 3000);
   }
 }
 
