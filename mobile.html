@@ -281,7 +281,19 @@
 
 <div class="page" id="page-onec">
   <div class="section">
-    <div class="sec-header"><svg width="16" height="16" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:4px"><circle cx="11" cy="11" r="10" fill="#e8000d"/><text x="11" y="15" text-anchor="middle" font-size="10" font-weight="900" font-family="Arial" fill="white">1С</text></svg> Остатки сырья (1С)</div>
+    <div class="sec-header" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+      <svg width="16" height="16" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;flex-shrink:0"><circle cx="11" cy="11" r="10" fill="#e8000d"/><text x="11" y="15" text-anchor="middle" font-size="10" font-weight="900" font-family="Arial" fill="white">1С</text></svg>
+      <span style="flex:1;">Остатки сырья (1С)</span>
+      <button id="mobSyncBtn" onclick="mobileSyncWith1C()" style="
+        padding:3px 10px; font-size:10px; font-weight:600;
+        background:#e8520a; color:#fff; border:none; border-radius:6px;
+        cursor:pointer; display:inline-flex; align-items:center; gap:4px;
+        flex-shrink:0;
+      ">
+        <span id="mobSyncIcon">⟳</span>
+        <span id="mobSyncLabel">Синхр. 1С</span>
+      </button>
+    </div>
     <div id="onecInner">
       <div class="empty">Загрузка...</div>
     </div>
@@ -750,6 +762,67 @@ async function loadData() {
 
 loadData();
 setInterval(loadData, 5 * 60 * 1000);
+
+// ── СИНХРОНИЗАЦИЯ С 1С ────────────────────────────────────────────────────────
+async function mobileSyncWith1C() {
+  const btn   = document.getElementById('mobSyncBtn');
+  const icon  = document.getElementById('mobSyncIcon');
+  const label = document.getElementById('mobSyncLabel');
+
+  btn.disabled = true;
+  btn.style.background = '#888';
+  label.textContent = 'Запуск...';
+
+  try {
+    const resp = await fetch('http://localhost:5000/sync', { method: 'POST' });
+    const data = await resp.json();
+
+    if (data.status === 'started' || data.status === 'running') {
+      label.textContent = 'Выполняется...';
+      const check = setInterval(async () => {
+        try {
+          const sr = await fetch('http://localhost:5000/status');
+          const st = await sr.json();
+          if (!st.running) {
+            clearInterval(check);
+            if (st.last_result === 'ok') {
+              icon.textContent = '✓';
+              label.textContent = 'Готово!';
+              btn.style.background = '#16a34a';
+              setTimeout(() => {
+                icon.textContent = '⟳';
+                label.textContent = 'Синхр. 1С';
+                btn.style.background = '#e8520a';
+                btn.disabled = false;
+                loadData();
+              }, 3000);
+            } else {
+              icon.textContent = '✗';
+              label.textContent = 'Ошибка!';
+              btn.style.background = '#dc2626';
+              setTimeout(() => {
+                icon.textContent = '⟳';
+                label.textContent = 'Синхр. 1С';
+                btn.style.background = '#e8520a';
+                btn.disabled = false;
+              }, 3000);
+            }
+          }
+        } catch(e) { clearInterval(check); }
+      }, 3000);
+    }
+  } catch(e) {
+    icon.textContent = '✗';
+    label.textContent = 'Нет сервера';
+    btn.style.background = '#dc2626';
+    setTimeout(() => {
+      icon.textContent = '⟳';
+      label.textContent = 'Синхр. 1С';
+      btn.style.background = '#e8520a';
+      btn.disabled = false;
+    }, 3000);
+  }
+}
 </script>
 </body>
 </html>
