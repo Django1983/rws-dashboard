@@ -506,33 +506,54 @@
   </div>
 
   <!-- Солнечные панели — строка 3, центр+право -->
-  <div class="section section-solar" style="background: linear-gradient(135deg, #0f2538 0%, #1a3a52 100%); border: 1px solid #2a5a78;">
-    <div class="section-header" style="background: linear-gradient(90deg, #1a4a2a, #1a3a52); border-bottom-color: #2a5a78;">
+  <div class="section section-solar" style="background:linear-gradient(135deg,#0a1e2e 0%,#1a3a52 100%);border:1px solid #2a5a78;">
+    <div class="section-header" style="background:linear-gradient(90deg,#0f3020,#1a3a52);border-bottom:1px solid #2a5a78;">
       ☀️ Солнечная энергия — RWS Solar
-      <span class="auto-badge">● Авто</span>
-      <span class="section-badge" id="solarDate" style="background:#1a4a2a; color:#4ade80;">—</span>
+      <span class="auto-badge" style="background:rgba(74,222,128,0.15);color:#4ade80;border:1px solid rgba(74,222,128,0.3);">● Авто</span>
+      <span class="section-badge" id="solarDate" style="background:#0f3020;color:#4ade80;border:1px solid #2a7a45;">—</span>
     </div>
-    <div class="solar-grid">
-      <div class="solar-card realtime">
-        <div class="solar-card-label">⚡ Мощность сейчас</div>
-        <div class="solar-card-value"><span id="solarPowerKw">—</span><span class="solar-card-unit">кВт</span></div>
-        <div class="solar-card-sub" id="solarStatus">Загрузка...</div>
+    <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr 1fr;gap:8px;padding:8px 10px;align-items:stretch;">
+
+      <!-- Мощность сейчас — большая зелёная -->
+      <div style="background:linear-gradient(135deg,#0f3020,#1a5a30);border:1px solid #2a7a45;border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:4px;">
+        <div style="font-size:9px;color:#86efac;text-transform:uppercase;letter-spacing:0.06em;display:flex;align-items:center;gap:4px;">⚡ Мощность сейчас</div>
+        <div style="font-size:26px;font-weight:600;color:#4ade80;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarPowerKw">—</span><span style="font-size:12px;color:#86efac;margin-left:3px;">кВт</span></div>
+        <div style="font-size:11px;color:#86efac;" id="solarStatus">Загрузка...</div>
+        <div style="font-size:9px;color:#4a7a5a;margin-top:2px;">Установлено: 400 кВт</div>
       </div>
-      <div class="solar-card">
-        <div class="solar-card-label">📅 За сегодня</div>
-        <div class="solar-card-value"><span id="solarDay">—</span><span class="solar-card-unit">кВт·ч</span></div>
-        <div class="solar-card-sub" id="solarDayMwh"></div>
+
+      <!-- За сегодня -->
+      <div style="background:linear-gradient(135deg,#1a3a52,#1e4d6b);border:1px solid #2a5a78;border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:4px;">
+        <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;">📅 За сегодня</div>
+        <div style="font-size:20px;font-weight:600;color:#fff;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarDay">—</span></div>
+        <div style="font-size:10px;color:#7aacc8;">кВт·ч</div>
+        <div style="font-size:10px;color:#4a8aaa;" id="solarDayMwh"></div>
       </div>
-      <div class="solar-card">
-        <div class="solar-card-label">📆 За месяц</div>
-        <div class="solar-card-value"><span id="solarMonth">—</span><span class="solar-card-unit">кВт·ч</span></div>
-        <div class="solar-card-sub" id="solarMonthMwh"></div>
+
+      <!-- За месяц -->
+      <div style="background:linear-gradient(135deg,#1a3a52,#1e4d6b);border:1px solid #2a5a78;border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:4px;">
+        <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;">📆 За месяц</div>
+        <div style="font-size:20px;font-weight:600;color:#fff;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarMonth">—</span></div>
+        <div style="font-size:10px;color:#7aacc8;">кВт·ч</div>
+        <div style="font-size:10px;color:#4a8aaa;" id="solarMonthMwh"></div>
       </div>
-      <div class="solar-card">
-        <div class="solar-card-label">🏆 Всего выработано</div>
-        <div class="solar-card-value"><span id="solarTotal">—</span><span class="solar-card-unit">МВт·ч</span></div>
-        <div class="solar-card-sub">с начала эксплуатации</div>
+
+      <!-- Прошлый месяц -->
+      <div style="background:linear-gradient(135deg,#1a3a52,#1e4d6b);border:1px solid #2a5a78;border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:4px;">
+        <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;">📅 Прошлый месяц</div>
+        <div style="font-size:20px;font-weight:600;color:#b0d4ea;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarPrevMonth">—</span></div>
+        <div style="font-size:10px;color:#7aacc8;">кВт·ч</div>
+        <div style="font-size:10px;color:#4a8aaa;" id="solarPrevMonthMwh"></div>
       </div>
+
+      <!-- Всего выработано -->
+      <div style="background:linear-gradient(135deg,#1a2a1a,#2a4a20);border:1px solid #3a6a2a;border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:4px;">
+        <div style="font-size:9px;color:#a3e635;text-transform:uppercase;letter-spacing:0.06em;">🏆 Всего выработано</div>
+        <div style="font-size:20px;font-weight:600;color:#d9f99d;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarTotal">—</span></div>
+        <div style="font-size:10px;color:#a3e635;">МВт·ч</div>
+        <div style="font-size:9px;color:#4a7a2a;">с начала эксплуатации</div>
+      </div>
+
     </div>
   </div>
 
@@ -1180,24 +1201,28 @@ async function loadData() {
 // ── РЕНДЕР СОЛНЕЧНЫЕ ПАНЕЛИ ──────────────────────────────────────────────────
 function renderSolar(rows) {
   if (!rows || rows.length < 2) return;
-  const data = rows[1]; // строка 2 — данные
-  const updated  = data[0] || '';
-  const power    = parseFloat(data[2]) || 0;   // Мощность Вт
-  const dayKwh   = parseFloat(data[3]) || 0;   // За день кВт·ч
-  const monthKwh = parseFloat(data[4]) || 0;   // За месяц кВт·ч
-  const totalKwh = parseFloat(data[5]) || 0;   // Всего кВт·ч
+  const data = rows[1];
+  const updated      = data[0] || '';
+  const power        = parseFloat(data[2]) || 0;   // Вт
+  const dayKwh       = parseFloat(data[3]) || 0;   // За день
+  const monthKwh     = parseFloat(data[4]) || 0;   // За месяц
+  const prevMonthKwh = parseFloat(data[5]) || 0;   // Прошлый месяц
+  const totalKwh     = parseFloat(data[6]) || 0;   // Всего
 
-  const powerKw = Math.round(power / 1000);
-  const totalMwh = (totalKwh / 1000).toFixed(1);
-  const monthMwh = (monthKwh / 1000).toFixed(2);
+  const powerKw      = Math.round(power / 1000);
+  const totalMwh     = (totalKwh / 1000).toFixed(1);
+  const monthMwh     = (monthKwh / 1000).toFixed(2);
+  const prevMonthMwh = (prevMonthKwh / 1000).toFixed(2);
 
-  document.getElementById('solarPowerKw').textContent = powerKw.toLocaleString('ru-RU');
-  document.getElementById('solarDay').textContent = dayKwh.toLocaleString('ru-RU');
-  document.getElementById('solarMonth').textContent = monthKwh.toLocaleString('ru-RU');
-  document.getElementById('solarTotal').textContent = totalMwh.toLocaleString('ru-RU');
-  document.getElementById('solarMonthMwh').textContent = monthMwh + ' МВт·ч';
-  document.getElementById('solarStatus').textContent = power > 0 ? '🟢 Работает' : '⚫ Не активно';
-  document.getElementById('solarDate').textContent = updated;
+  document.getElementById('solarPowerKw').textContent    = powerKw.toLocaleString('ru-RU');
+  document.getElementById('solarDay').textContent         = dayKwh.toLocaleString('ru-RU');
+  document.getElementById('solarMonth').textContent       = monthKwh.toLocaleString('ru-RU');
+  document.getElementById('solarPrevMonth').textContent   = prevMonthKwh.toLocaleString('ru-RU');
+  document.getElementById('solarTotal').textContent       = totalMwh.toLocaleString('ru-RU');
+  document.getElementById('solarMonthMwh').textContent    = monthMwh + ' МВт·ч';
+  document.getElementById('solarPrevMonthMwh').textContent = prevMonthMwh + ' МВт·ч';
+  document.getElementById('solarStatus').textContent      = power > 0 ? '🟢 Работает' : '⚫ Не активно';
+  document.getElementById('solarDate').textContent        = updated;
 }
 
 // ── РЕНДЕР 1С ОСТАТКИ ────────────────────────────────────────────────────────
