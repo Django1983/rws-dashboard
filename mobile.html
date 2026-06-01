@@ -30,27 +30,13 @@
   }
 
   /* LOGIN */
-  #loginScreen {
-    position: fixed; inset: 0; z-index: 9999;
-    background: #0f172a;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .login-box {
-    background: #1e293b; border-radius: 14px;
-    padding: 2rem 1.5rem; width: 300px; text-align: center;
-  }
-  .login-box h2 { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: 0.08em; margin-bottom: 4px; }
-  .login-box p { font-size: 11px; color: #7aacc8; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 24px; }
-  .login-box input {
-    width: 100%; padding: 11px 14px; border-radius: 8px;
-    border: 1px solid #334155; background: #0f172a;
-    color: #fff; font-size: 14px; margin-bottom: 10px; outline: none;
-  }
-  .login-box .pw-error { color: #f87171; font-size: 12px; margin-bottom: 10px; display: none; }
-  .login-box button {
-    width: 100%; padding: 11px; background: #2277aa; color: #fff;
-    border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;
-  }
+  
+  
+  
+  
+  
+  
+  
 
   /* HEADER */
   .header {
@@ -175,16 +161,7 @@
 <body>
 
 <!-- LOGIN -->
-<div id="loginScreen">
-  <div class="login-box">
-    <h2>RWS OPTIMUM</h2>
-    <p>Производство ЖБ Шпал</p>
-    <input id="pwInput" type="password" placeholder="Введите пароль"
-      onkeydown="if(event.key==='Enter') checkPassword()">
-    <div class="pw-error" id="pwError">⚠ Неверный пароль</div>
-    <button onclick="checkPassword()">🔓 Войти</button>
-  </div>
-</div>
+
 
 <!-- HEADER -->
 <div class="header">
@@ -408,11 +385,10 @@ if (window.Telegram && window.Telegram.WebApp) {
 
 // ── LOGIN (отключён для мини-версии) ─────────────────────────────────────────
 (function() {
-  document.getElementById("loginScreen").style.display = "none";
-  document.getElementById("appContent").style.display = "flex";
+  
 })();
 
-function checkPassword() {}
+
 
 // ── CLOCK ─────────────────────────────────────────────────────────────────────
 function updateClock() {
