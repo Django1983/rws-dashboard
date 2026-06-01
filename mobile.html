@@ -697,10 +697,29 @@ function renderSolar(rows) {
   const prevMonKwh  = parseFloat(String(r[5] || '0').replace(',','.')) || 0;
   const totalKwh    = parseFloat(String(r[6] || '0').replace(',','.')) || 0;
 
-  const powerKw    = (powerW / 1000).toFixed(1);
-  const totalMwh   = (totalKwh / 1000).toFixed(1);
-  const prevMonMwh = (prevMonKwh / 1000).toFixed(2);
-  const isWorking  = powerW > 0;
+  const capacity    = 400;
+  const TARIFF      = 1100;
+  const powerKw     = (powerW / 1000).toFixed(1);
+  const totalMwh    = (totalKwh / 1000).toFixed(1);
+  const prevMonMwh  = (prevMonKwh / 1000).toFixed(2);
+  const isWorking   = powerW > 0;
+
+  // % загрузки
+  const loadPct   = capacity > 0 ? Math.round(parseFloat(powerKw) / capacity * 100) : 0;
+  const loadColor = loadPct >= 70 ? '#4ade80' : loadPct >= 40 ? '#fbbf24' : '#9ab4c4';
+
+  // Сравнение с прошлым месяцем
+  let diffHtml = '';
+  if (prevMonKwh > 0) {
+    const diff  = ((monKwh - prevMonKwh) / prevMonKwh * 100).toFixed(1);
+    const arrow = diff >= 0 ? '↑' : '↓';
+    const color = diff >= 0 ? '#4ade80' : '#f87171';
+    diffHtml = `<div style="font-size:10px;color:${color};font-weight:700;margin-top:2px;">${arrow} ${Math.abs(diff)}% vs прошлый</div>`;
+  }
+
+  // Экономия
+  const savingsMonth = Math.round(monKwh * TARIFF).toLocaleString('ru-RU');
+  const savingsTotal = Math.round(totalKwh * TARIFF).toLocaleString('ru-RU');
 
   let displayDate = updatedAt;
   const m = updatedAt.match(/(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
@@ -713,6 +732,7 @@ function renderSolar(rows) {
           <div style="font-size:9px;color:#4ade80;text-transform:uppercase;margin-bottom:4px;">Мощность сейчас</div>
           <div style="font-size:22px;font-weight:700;color:#4ade80;">${powerKw} <span style="font-size:12px;">кВт</span></div>
           <div style="font-size:10px;color:${isWorking?'#4ade80':'#9ab4c4'};margin-top:2px;">${isWorking?'● Работает':'○ Не работает'}</div>
+          <div style="font-size:10px;color:${loadColor};margin-top:3px;">Загрузка: <b>${loadPct}%</b></div>
         </div>
         <div style="background:#0f1f2a;border:1px solid #1d4ed8;border-radius:8px;padding:12px;text-align:center;">
           <div style="font-size:9px;color:#60a5fa;text-transform:uppercase;margin-bottom:4px;">За сегодня</div>
@@ -723,6 +743,8 @@ function renderSolar(rows) {
         <div style="background:#1a1a2e;border:1px solid #7c3aed;border-radius:8px;padding:12px;text-align:center;">
           <div style="font-size:9px;color:#a78bfa;text-transform:uppercase;margin-bottom:4px;">За месяц</div>
           <div style="font-size:20px;font-weight:700;color:#a78bfa;">${monKwh.toLocaleString('ru-RU',{maximumFractionDigits:1})} <span style="font-size:11px;">кВт·ч</span></div>
+          ${diffHtml}
+          <div style="font-size:9px;color:#a3e635;margin-top:4px;">💰 ${savingsMonth} сум</div>
         </div>
         <div style="background:#0f1e2a;border:1px solid #2563eb;border-radius:8px;padding:12px;text-align:center;">
           <div style="font-size:9px;color:#93c5fd;text-transform:uppercase;margin-bottom:4px;">Прошлый месяц</div>
@@ -734,6 +756,7 @@ function renderSolar(rows) {
         <div style="background:#1a1500;border:1px solid #d97706;border-radius:8px;padding:12px;text-align:center;">
           <div style="font-size:9px;color:#fbbf24;text-transform:uppercase;margin-bottom:4px;">Всего выработано</div>
           <div style="font-size:20px;font-weight:700;color:#fbbf24;">${totalMwh} <span style="font-size:11px;">МВт·ч</span></div>
+          <div style="font-size:9px;color:#a3e635;margin-top:4px;">💰 ${savingsTotal} сум сэкономлено</div>
         </div>
       </div>
       <div style="font-size:9px;color:#9ab4c4;padding:8px 0 0;text-align:center;">Обновлено: ${displayDate}</div>
