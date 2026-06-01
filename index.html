@@ -1219,9 +1219,10 @@ function renderSolar(rows) {
   document.getElementById('solarMonth').textContent       = monthKwh.toLocaleString('ru-RU');
   document.getElementById('solarPrevMonth').textContent   = prevMonthKwh.toLocaleString('ru-RU');
   document.getElementById('solarTotal').textContent       = totalMwh.toLocaleString('ru-RU');
-  document.getElementById('solarMonthMwh').textContent    = monthMwh + ' МВт·ч';
-  document.getElementById('solarPrevMonthMwh').textContent = prevMonthMwh + ' МВт·ч';
-  document.getElementById('solarStatus').textContent      = power > 0 ? '🟢 Работает' : '⚫ Не активно';
+  document.getElementById('solarMonthMwh').textContent    = '= ' + monthMwh + ' МВт·ч';
+  document.getElementById('solarPrevMonthMwh').textContent = '= ' + prevMonthMwh + ' МВт·ч';
+  document.getElementById('solarDayMwh').textContent      = '= ' + (dayKwh / 1000).toFixed(3) + ' МВт·ч';
+  document.getElementById('solarStatus').textContent      = power > 0 ? '🟢 ' + (power/1000).toFixed(1) + ' МВт — Работает' : '⚫ Не активно';
   document.getElementById('solarDate').textContent        = updated;
 }
 
