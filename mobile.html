@@ -288,6 +288,15 @@
     </div>
   </div>
 </div>
+
+<div class="page" id="page-solar">
+  <div class="section">
+    <div class="sec-header">☀️ Солнечная энергия — RWS Solar</div>
+    <div id="solarInner">
+      <div class="empty">Загрузка...</div>
+    </div>
+  </div>
+</div>
 <div class="page" id="page-onec">
   <div class="section">
     <div class="sec-header"><svg width="16" height="16" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:4px"><circle cx="11" cy="11" r="10" fill="#e8000d"/><text x="11" y="15" text-anchor="middle" font-size="10" font-weight="900" font-family="Arial" fill="white">1С</text></svg> Остатки сырья (1С)</div>
@@ -368,6 +377,9 @@
   <div class="nav-tab" onclick="switchTab('solar',this)">
     <div class="icon">☀️</div>Солнце
   </div>
+  <div class="nav-tab" onclick="switchTab('solar',this)">
+    <div class="icon">☀️</div>Солнце
+  </div>
   <div class="nav-tab" onclick="switchTab('onec',this)">
     <div class="icon"><svg width="22" height="22" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
   <circle cx="11" cy="11" r="10" fill="#e8000d"/>
@@ -397,6 +409,7 @@ if (window.Telegram && window.Telegram.WebApp) {
 // ── LOGIN (отключён для мини-версии) ─────────────────────────────────────────
 (function() {
   document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("appContent").style.display = "flex";
 })();
 
 function checkPassword() {}
@@ -740,6 +753,59 @@ function renderSolar(rows) {
   \`;
 }
 
+
+// ── RENDER SOLAR ──────────────────────────────────────────────────────────────
+function renderSolar(rows) {
+  const inner = document.getElementById('solarInner');
+  if (!rows || rows.length < 2) {
+    inner.innerHTML = '<div class="empty">Нет данных</div>';
+    return;
+  }
+  const r = rows[1];
+  if (!r) { inner.innerHTML = '<div class="empty">Нет данных</div>'; return; }
+
+  const updatedAt = String(r[0] || '').trim();
+  const powerW    = parseFloat(String(r[2] || '0').replace(',','.')) || 0;
+  const dayKwh    = parseFloat(String(r[3] || '0').replace(',','.')) || 0;
+  const monKwh    = parseFloat(String(r[4] || '0').replace(',','.')) || 0;
+  const totalKwh  = parseFloat(String(r[5] || '0').replace(',','.')) || 0;
+
+  const isWorking = powerW > 0;
+  const powerKw   = (powerW / 1000).toFixed(1);
+  const totalMwh  = (totalKwh / 1000).toFixed(1);
+
+  let displayDate = updatedAt;
+  const isoMatch = updatedAt.match(/(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+  if (isoMatch) displayDate = isoMatch[3]+'.'+isoMatch[2]+'.'+isoMatch[1]+' '+isoMatch[4]+':'+isoMatch[5];
+
+  inner.innerHTML = `
+    <div style="padding:12px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+        <div style="background:#0f2a1a;border:1px solid #16a34a;border-radius:8px;padding:12px;text-align:center;">
+          <div style="font-size:9px;color:#4ade80;text-transform:uppercase;margin-bottom:4px;">Мощность сейчас</div>
+          <div style="font-size:22px;font-weight:700;color:#4ade80;">${powerKw} <span style="font-size:12px;">кВт</span></div>
+          <div style="font-size:10px;color:${isWorking ? '#4ade80' : '#9ab4c4'};margin-top:2px;">${isWorking ? '● Работает' : '○ Не работает'}</div>
+        </div>
+        <div style="background:#0f1f2a;border:1px solid #1d4ed8;border-radius:8px;padding:12px;text-align:center;">
+          <div style="font-size:9px;color:#60a5fa;text-transform:uppercase;margin-bottom:4px;">За сегодня</div>
+          <div style="font-size:22px;font-weight:700;color:#60a5fa;">${dayKwh.toLocaleString('ru-RU',{maximumFractionDigits:1})} <span style="font-size:12px;">кВт·ч</span></div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div style="background:#1a1a2e;border:1px solid #7c3aed;border-radius:8px;padding:12px;text-align:center;">
+          <div style="font-size:9px;color:#a78bfa;text-transform:uppercase;margin-bottom:4px;">За месяц</div>
+          <div style="font-size:20px;font-weight:700;color:#a78bfa;">${monKwh.toLocaleString('ru-RU',{maximumFractionDigits:1})} <span style="font-size:11px;">кВт·ч</span></div>
+        </div>
+        <div style="background:#1a1500;border:1px solid #d97706;border-radius:8px;padding:12px;text-align:center;">
+          <div style="font-size:9px;color:#fbbf24;text-transform:uppercase;margin-bottom:4px;">Всего выработано</div>
+          <div style="font-size:20px;font-weight:700;color:#fbbf24;">${totalMwh} <span style="font-size:11px;">МВт·ч</span></div>
+        </div>
+      </div>
+      <div style="font-size:9px;color:#9ab4c4;padding:8px 0 0;text-align:center;">Обновлено: ${displayDate}</div>
+    </div>
+  `;
+}
+
 // ── RENDER 1С ─────────────────────────────────────────────────────────────────
 function renderOnec(rows) {
   const inner = document.getElementById('onecInner');
@@ -795,6 +861,7 @@ async function loadData() {
     { sheet: 'Отгрузка',  render: renderOTG },
     { sheet: 'Расход',    render: renderRashod },
     { sheet: 'ОК',        render: renderOK },
+    { sheet: 'Солнечные',  render: renderSolar },
     { sheet: 'Солнечные',  render: renderSolar },
     { sheet: '1С_Остатки', render: renderOnec },
   ];
