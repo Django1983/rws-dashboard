@@ -519,7 +519,7 @@
         <div style="font-size:9px;color:#86efac;text-transform:uppercase;letter-spacing:0.06em;display:flex;align-items:center;gap:4px;">⚡ Мощность сейчас</div>
         <div style="font-size:26px;font-weight:600;color:#4ade80;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarPowerKw">—</span><span style="font-size:12px;color:#86efac;margin-left:3px;">кВт</span></div>
         <div style="font-size:11px;color:#86efac;" id="solarStatus">Загрузка...</div>
-        <div style="font-size:9px;color:#4a7a5a;margin-top:2px;">Установлено: 400 кВт</div>
+        <div style="font-size:9px;color:#4a7a5a;margin-top:2px;" id="solarLoad">Установлено: 400 кВт</div>
       </div>
 
       <!-- За сегодня -->
@@ -536,6 +536,8 @@
         <div style="font-size:20px;font-weight:600;color:#fff;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarMonth">—</span></div>
         <div style="font-size:10px;color:#7aacc8;">кВт·ч</div>
         <div style="font-size:10px;color:#4a8aaa;" id="solarMonthMwh"></div>
+        <div style="font-size:9px;margin-top:2px;" id="solarDiff"></div>
+        <div style="font-size:9px;color:#a3e635;margin-top:1px;">💰 <span id="solarSavingsMonth">—</span></div>
       </div>
 
       <!-- Прошлый месяц -->
@@ -552,6 +554,7 @@
         <div style="font-size:20px;font-weight:600;color:#d9f99d;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarTotal">—</span></div>
         <div style="font-size:10px;color:#a3e635;">МВт·ч</div>
         <div style="font-size:9px;color:#4a7a2a;">с начала эксплуатации</div>
+        <div style="font-size:9px;color:#a3e635;margin-top:1px;">💰 <span id="solarSavingsTotal">—</span></div>
       </div>
 
     </div>
@@ -1208,22 +1211,45 @@ function renderSolar(rows) {
   const monthKwh     = parseFloat(data[4]) || 0;   // За месяц
   const prevMonthKwh = parseFloat(data[5]) || 0;   // Прошлый месяц
   const totalKwh     = parseFloat(data[6]) || 0;   // Всего
+  const capacity     = 400;                         // кВт установленная мощность
+  const TARIFF       = 1100;                        // сум за кВт·ч
 
   const powerKw      = Math.round(power / 1000);
   const totalMwh     = (totalKwh / 1000).toFixed(1);
   const monthMwh     = (monthKwh / 1000).toFixed(2);
   const prevMonthMwh = (prevMonthKwh / 1000).toFixed(2);
 
-  document.getElementById('solarPowerKw').textContent    = powerKw.toLocaleString('ru-RU');
-  document.getElementById('solarDay').textContent         = dayKwh.toLocaleString('ru-RU');
-  document.getElementById('solarMonth').textContent       = monthKwh.toLocaleString('ru-RU');
-  document.getElementById('solarPrevMonth').textContent   = prevMonthKwh.toLocaleString('ru-RU');
-  document.getElementById('solarTotal').textContent       = totalMwh.toLocaleString('ru-RU');
-  document.getElementById('solarMonthMwh').textContent    = '= ' + monthMwh + ' МВт·ч';
+  // % загрузки
+  const loadPct = capacity > 0 ? Math.round(powerKw / capacity * 100) : 0;
+  const loadColor = loadPct >= 70 ? '#4ade80' : loadPct >= 40 ? '#fbbf24' : '#9ab4c4';
+
+  // Сравнение с прошлым месяцем
+  let diffHtml = '';
+  if (prevMonthKwh > 0) {
+    const diff = ((monthKwh - prevMonthKwh) / prevMonthKwh * 100).toFixed(1);
+    const arrow = diff >= 0 ? '↑' : '↓';
+    const color = diff >= 0 ? '#4ade80' : '#f87171';
+    diffHtml = `<span style="color:${color};font-weight:600;">${arrow} ${Math.abs(diff)}% vs прошлый</span>`;
+  }
+
+  // Экономия в деньгах (за месяц)
+  const savingsMonth = Math.round(monthKwh * TARIFF);
+  const savingsTotal = Math.round(totalKwh * TARIFF);
+
+  document.getElementById('solarPowerKw').textContent     = powerKw.toLocaleString('ru-RU');
+  document.getElementById('solarDay').textContent          = dayKwh.toLocaleString('ru-RU');
+  document.getElementById('solarMonth').textContent        = monthKwh.toLocaleString('ru-RU');
+  document.getElementById('solarPrevMonth').textContent    = prevMonthKwh.toLocaleString('ru-RU');
+  document.getElementById('solarTotal').textContent        = totalMwh.toLocaleString('ru-RU');
+  document.getElementById('solarMonthMwh').textContent     = '= ' + monthMwh + ' МВт·ч';
   document.getElementById('solarPrevMonthMwh').textContent = '= ' + prevMonthMwh + ' МВт·ч';
-  document.getElementById('solarDayMwh').textContent      = '= ' + (dayKwh / 1000).toFixed(3) + ' МВт·ч';
-  document.getElementById('solarStatus').textContent      = power > 0 ? '🟢 ' + (power/1000).toFixed(1) + ' МВт — Работает' : '⚫ Не активно';
-  document.getElementById('solarDate').textContent        = updated;
+  document.getElementById('solarDayMwh').textContent       = '= ' + (dayKwh / 1000).toFixed(3) + ' МВт·ч';
+  document.getElementById('solarStatus').textContent       = power > 0 ? '🟢 ' + (power/1000).toFixed(1) + ' МВт — Работает' : '⚫ Не активно';
+  document.getElementById('solarDate').textContent         = updated;
+  document.getElementById('solarLoad').innerHTML           = `<span style="color:${loadColor};font-weight:700;">${loadPct}%</span> от макс. (${capacity} кВт)`;
+  document.getElementById('solarDiff').innerHTML           = diffHtml || '<span style="color:#4a8aaa;">—</span>';
+  document.getElementById('solarSavingsMonth').textContent = savingsMonth.toLocaleString('ru-RU') + ' сум';
+  document.getElementById('solarSavingsTotal').textContent = savingsTotal.toLocaleString('ru-RU') + ' сум';
 }
 
 // ── РЕНДЕР 1С ОСТАТКИ ────────────────────────────────────────────────────────
