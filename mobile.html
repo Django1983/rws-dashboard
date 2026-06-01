@@ -690,15 +690,17 @@ function renderSolar(rows) {
   const r = rows[1];
   if (!r) { inner.innerHTML = '<div class="empty">Нет данных</div>'; return; }
 
-  const updatedAt = String(r[0] || '').trim();
-  const powerW  = parseFloat(String(r[2] || '0').replace(',','.')) || 0;
-  const dayKwh  = parseFloat(String(r[3] || '0').replace(',','.')) || 0;
-  const monKwh  = parseFloat(String(r[4] || '0').replace(',','.')) || 0;
-  const totalKwh= parseFloat(String(r[5] || '0').replace(',','.')) || 0;
+  const updatedAt   = String(r[0] || '').trim();
+  const powerW      = parseFloat(String(r[2] || '0').replace(',','.')) || 0;
+  const dayKwh      = parseFloat(String(r[3] || '0').replace(',','.')) || 0;
+  const monKwh      = parseFloat(String(r[4] || '0').replace(',','.')) || 0;
+  const prevMonKwh  = parseFloat(String(r[5] || '0').replace(',','.')) || 0;
+  const totalKwh    = parseFloat(String(r[6] || '0').replace(',','.')) || 0;
 
-  const powerKw  = (powerW / 1000).toFixed(1);
-  const totalMwh = (totalKwh / 1000).toFixed(1);
-  const isWorking = powerW > 0;
+  const powerKw    = (powerW / 1000).toFixed(1);
+  const totalMwh   = (totalKwh / 1000).toFixed(1);
+  const prevMonMwh = (prevMonKwh / 1000).toFixed(2);
+  const isWorking  = powerW > 0;
 
   let displayDate = updatedAt;
   const m = updatedAt.match(/(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
@@ -722,6 +724,13 @@ function renderSolar(rows) {
           <div style="font-size:9px;color:#a78bfa;text-transform:uppercase;margin-bottom:4px;">За месяц</div>
           <div style="font-size:20px;font-weight:700;color:#a78bfa;">${monKwh.toLocaleString('ru-RU',{maximumFractionDigits:1})} <span style="font-size:11px;">кВт·ч</span></div>
         </div>
+        <div style="background:#0f1e2a;border:1px solid #2563eb;border-radius:8px;padding:12px;text-align:center;">
+          <div style="font-size:9px;color:#93c5fd;text-transform:uppercase;margin-bottom:4px;">Прошлый месяц</div>
+          <div style="font-size:20px;font-weight:700;color:#b0d4ea;">${prevMonKwh.toLocaleString('ru-RU',{maximumFractionDigits:1})} <span style="font-size:11px;">кВт·ч</span></div>
+          <div style="font-size:9px;color:#4a8aaa;margin-top:2px;">= ${prevMonMwh} МВт·ч</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr;gap:8px;margin-top:8px;">
         <div style="background:#1a1500;border:1px solid #d97706;border-radius:8px;padding:12px;text-align:center;">
           <div style="font-size:9px;color:#fbbf24;text-transform:uppercase;margin-bottom:4px;">Всего выработано</div>
           <div style="font-size:20px;font-weight:700;color:#fbbf24;">${totalMwh} <span style="font-size:11px;">МВт·ч</span></div>
