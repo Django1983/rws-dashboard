@@ -698,7 +698,7 @@ function renderSolar(rows) {
   const totalKwh    = parseFloat(String(r[6] || '0').replace(',','.')) || 0;
 
   const capacity    = 400;
-  const TARIFF      = 1100;
+  const TARIFF      = 800;
   const powerKw     = (powerW / 1000).toFixed(1);
   const totalMwh    = (totalKwh / 1000).toFixed(1);
   const prevMonMwh  = (prevMonKwh / 1000).toFixed(2);
