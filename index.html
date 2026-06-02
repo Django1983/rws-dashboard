@@ -1212,7 +1212,7 @@ function renderSolar(rows) {
   const prevMonthKwh = parseFloat(data[5]) || 0;   // Прошлый месяц
   const totalKwh     = parseFloat(data[6]) || 0;   // Всего
   const capacity     = 400;                         // кВт установленная мощность
-  const TARIFF       = 1100;                        // сум за кВт·ч
+  const TARIFF       = 800;                        // сум за кВт·ч
 
   const powerKw      = Math.round(power / 1000);
   const totalMwh     = (totalKwh / 1000).toFixed(1);
