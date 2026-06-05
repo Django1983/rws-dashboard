@@ -451,28 +451,29 @@ function renderPC(rows) {
   const body = document.getElementById('pcBody');
   if (!rows || rows.length < 3) { body.innerHTML = '<tr><td colspan="2" class="empty">Нет данных</td></tr>'; return; }
 
-  const hrow = rows[0] || [];
-  const dateMatch = hrow.join(' ').match(/\d{2}\.\d{2}\.\d{4}/);
-  if (dateMatch) document.getElementById('pcDate').textContent = dateMatch[0];
-
-  let dataStart = 2;
+  // Ищем ПОСЛЕДНЮЮ строку с "остаток" в колонке C — это заголовок блока "Производственный цех"
+  let ostHeaderRow = -1;
   for (let i = 0; i < rows.length; i++) {
-    const line = (rows[i]||[]).join(' ').toLowerCase();
-    if (line.includes('наименование') || line.includes('остаток')) { dataStart = i+1; break; }
+    const c2 = String(rows[i][2] || '').toLowerCase();
+    if (c2.includes('остаток')) {
+      ostHeaderRow = i;
+      document.getElementById('pcDate').textContent = rows[i][2] || 'ПЦ';
+    }
   }
+
+  const dataStart = ostHeaderRow >= 0 ? ostHeaderRow + 1 : 2;
 
   let html = '', total = 0, count = 0;
   for (let i = dataStart; i < rows.length; i++) {
     const r = rows[i];
     if (!r) continue;
-    const name = String(r[1]||r[0]||'').trim();
-    if (!name) continue;
-    const isTotal = name.toLowerCase().startsWith('итого') || name.toLowerCase().startsWith('всего');
-    const val = safeNum(r[2]) || safeNum(r[1]) || 0;
-    if (!isTotal && val > 0) { total += val; count++; }
-    const rowStyle = isTotal ? ' style="background:#f0f6fb;font-weight:700;"' : '';
-    html += `<tr${rowStyle}>
-      <td class="name-col" style="${isTotal?'font-weight:700;':''}">${name}</td>
+    const name = String(r[1]||'').trim();
+    const num  = r[0];
+    if (!name || (!num && !r[2])) continue;
+    const val = safeNum(r[2]) || 0;
+    if (val > 0) { total += val; count++; }
+    html += `<tr>
+      <td class="name-col">${name}</td>
       <td class="num">${val ? val.toLocaleString('ru-RU') : '<span class="neutral">—</span>'}</td>
     </tr>`;
   }
