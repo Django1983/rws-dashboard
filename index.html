@@ -660,57 +660,57 @@
       <span class="auto-badge" style="background:rgba(74,222,128,0.15);color:#4ade80;border:1px solid rgba(74,222,128,0.3);">● Авто</span>
       <span class="section-badge" id="aqiTime" style="background:#0f1e30;color:#7aacc8;border:1px solid #2a5a78;">—</span>
     </div>
-    <div style="padding:8px 10px;height:calc(100% - 32px);display:flex;flex-direction:column;gap:6px;">
+    <div style="padding:5px 8px;height:calc(100% - 32px);display:flex;flex-direction:column;gap:4px;overflow:hidden;">
 
-      <!-- AQI большой -->
-      <div style="display:flex;align-items:center;gap:10px;">
-        <div id="aqiBadge" style="min-width:64px;height:64px;border-radius:12px;background:#1a4a2a;border:2px solid #2a7a45;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;">
-          <div id="aqiValue" style="font-size:26px;font-weight:700;color:#4ade80;line-height:1;">—</div>
-          <div style="font-size:8px;color:#86efac;letter-spacing:0.05em;">US AQI</div>
+      <!-- AQI строка -->
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+        <div id="aqiBadge" style="min-width:50px;height:50px;border-radius:10px;background:#1a4a2a;border:2px solid #2a7a45;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;">
+          <div id="aqiValue" style="font-size:22px;font-weight:700;color:#4ade80;line-height:1;">—</div>
+          <div style="font-size:7px;color:#86efac;letter-spacing:0.05em;">US AQI</div>
         </div>
         <div style="flex:1;">
-          <div id="aqiLabel" style="font-size:18px;font-weight:600;color:#4ade80;">Загрузка...</div>
-          <div style="font-size:10px;color:#7aacc8;margin-top:2px;">📍 Ташкент, Узбекистан</div>
-          <div style="font-size:10px;color:#7aacc8;margin-top:1px;">Основной загрязнитель: <span id="mainPollutant" style="color:#fbbf24;">PM2.5</span></div>
+          <div id="aqiLabel" style="font-size:15px;font-weight:600;color:#4ade80;line-height:1.2;">Загрузка...</div>
+          <div style="font-size:9px;color:#7aacc8;margin-top:2px;">📍 Ташкент, Узбекистан</div>
+          <div style="font-size:9px;color:#7aacc8;">Загрязнитель: <span id="mainPollutant" style="color:#fbbf24;">PM2.5</span></div>
         </div>
       </div>
 
-      <!-- Сетка показателей -->
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;flex:1;">
+      <!-- Сетка 3x2 -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;flex:1;min-height:0;">
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:7px;padding:7px 8px;display:flex;flex-direction:column;gap:2px;">
-          <div style="font-size:8px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;">🔴 PM2.5</div>
-          <div style="font-size:18px;font-weight:600;color:#fbbf24;line-height:1;font-variant-numeric:tabular-nums;"><span id="pm25Value">—</span></div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 7px;display:flex;flex-direction:column;justify-content:center;gap:1px;">
+          <div style="font-size:8px;color:#7aacc8;text-transform:uppercase;">🔴 PM2.5</div>
+          <div style="font-size:16px;font-weight:600;color:#fbbf24;line-height:1;"><span id="pm25Value">—</span></div>
           <div style="font-size:8px;color:#4a6a88;">мкг/м³</div>
         </div>
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:7px;padding:7px 8px;display:flex;flex-direction:column;gap:2px;">
-          <div style="font-size:8px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;">🌡️ Температура</div>
-          <div style="font-size:18px;font-weight:600;color:#f87171;line-height:1;font-variant-numeric:tabular-nums;"><span id="tempValue">—</span>°</div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 7px;display:flex;flex-direction:column;justify-content:center;gap:1px;">
+          <div style="font-size:8px;color:#7aacc8;text-transform:uppercase;">🌡️ Темп.</div>
+          <div style="font-size:16px;font-weight:600;color:#f87171;line-height:1;"><span id="tempValue">—</span>°C</div>
           <div style="font-size:8px;color:#4a6a88;">Цельсий</div>
         </div>
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:7px;padding:7px 8px;display:flex;flex-direction:column;gap:2px;">
-          <div style="font-size:8px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;">💧 Влажность</div>
-          <div style="font-size:18px;font-weight:600;color:#60a5fa;line-height:1;font-variant-numeric:tabular-nums;"><span id="humidValue">—</span>%</div>
-          <div style="font-size:8px;color:#4a6a88;">отн. влажность</div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 7px;display:flex;flex-direction:column;justify-content:center;gap:1px;">
+          <div style="font-size:8px;color:#7aacc8;text-transform:uppercase;">💧 Влажн.</div>
+          <div style="font-size:16px;font-weight:600;color:#60a5fa;line-height:1;"><span id="humidValue">—</span>%</div>
+          <div style="font-size:8px;color:#4a6a88;">отн.</div>
         </div>
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:7px;padding:7px 8px;display:flex;flex-direction:column;gap:2px;">
-          <div style="font-size:8px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;">🔵 Давление</div>
-          <div style="font-size:18px;font-weight:600;color:#a78bfa;line-height:1;font-variant-numeric:tabular-nums;"><span id="pressValue">—</span></div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 7px;display:flex;flex-direction:column;justify-content:center;gap:1px;">
+          <div style="font-size:8px;color:#7aacc8;text-transform:uppercase;">🔵 Давл.</div>
+          <div style="font-size:16px;font-weight:600;color:#a78bfa;line-height:1;"><span id="pressValue">—</span></div>
           <div style="font-size:8px;color:#4a6a88;">мб</div>
         </div>
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:7px;padding:7px 8px;display:flex;flex-direction:column;gap:2px;">
-          <div style="font-size:8px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;">💨 Ветер</div>
-          <div style="font-size:18px;font-weight:600;color:#34d399;line-height:1;font-variant-numeric:tabular-nums;"><span id="windValue">—</span></div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 7px;display:flex;flex-direction:column;justify-content:center;gap:1px;">
+          <div style="font-size:8px;color:#7aacc8;text-transform:uppercase;">💨 Ветер</div>
+          <div style="font-size:16px;font-weight:600;color:#34d399;line-height:1;"><span id="windValue">—</span></div>
           <div style="font-size:8px;color:#4a6a88;">км/ч</div>
         </div>
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:7px;padding:7px 8px;display:flex;flex-direction:column;gap:2px;">
-          <div style="font-size:8px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;">🌫️ PM10</div>
-          <div style="font-size:18px;font-weight:600;color:#fb923c;line-height:1;font-variant-numeric:tabular-nums;"><span id="pm10Value">—</span></div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 7px;display:flex;flex-direction:column;justify-content:center;gap:1px;">
+          <div style="font-size:8px;color:#7aacc8;text-transform:uppercase;">🌫️ PM10</div>
+          <div style="font-size:16px;font-weight:600;color:#fb923c;line-height:1;"><span id="pm10Value">—</span></div>
           <div style="font-size:8px;color:#4a6a88;">мкг/м³</div>
         </div>
 
