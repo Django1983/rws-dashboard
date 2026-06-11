@@ -62,7 +62,9 @@
   /* Расход — строка 2 центр */
   .section-rashod { grid-column: 2; grid-row: 2; }
   /* Солнечные — строка 3 центр */
-  .section-solar  { grid-column: 2 / 4; grid-row: 3; }
+  .section-solar  { grid-column: 2; grid-row: 3; }
+  /* IQAir — строка 3 право */
+  .section-iqair  { grid-column: 3; grid-row: 3; }
 
   /* Расход: вертикальная таблица карточек */
   .rashod-inner {
@@ -648,6 +650,17 @@
         <div style="font-size:9px;color:#a3e635;margin-top:1px;">💰 <span id="solarSavingsTotal">—</span></div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- IQAir — качество воздуха, строка 3 право -->
+  <div class="section section-iqair" style="background:linear-gradient(135deg,#0a1e2e 0%,#1a3a52 100%);border:1px solid #2a5a78;">
+    <div class="section-header" style="background:linear-gradient(90deg,#0f1e30,#1a3a52);border-bottom:1px solid #2a5a78;">
+      🌬️ Качество воздуха — IQAir
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;height:calc(100% - 32px);padding:4px;">
+      <div name="airvisual_widget" key="6a2a55ab4534e4786bd54b02"></div>
+      <script type="text/javascript" src="https://cdn.airvisual.net/assets/widgets/widget_v3.0.js"></script>
     </div>
   </div>
 
