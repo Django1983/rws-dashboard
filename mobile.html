@@ -833,43 +833,83 @@ function renderSolar(rows) {
   `;
 }
 
-// ── КАЧЕСТВО ВОЗДУХА ──────────────────────────────────────────────────────────
-// Данные получаем через Apps Script (кеш 10 мин) — один быстрый запрос вместо двух внешних
+// ── КАЧЕСТВО ВОЗДУХА (кеш 10 минут в памяти) ─────────────────────────────────
+var _airCache = null; // { data, ts }
+
+function renderAirData(d) {
+  const aqi = d.aqi || 0;
+  let aqiColor, aqiLabel;
+  if (aqi <= 50)       { aqiColor = '#4ade80'; aqiLabel = 'Хорошее'; }
+  else if (aqi <= 100) { aqiColor = '#facc15'; aqiLabel = 'Умеренное'; }
+  else if (aqi <= 150) { aqiColor = '#fb923c'; aqiLabel = 'Вредно для групп риска'; }
+  else if (aqi <= 200) { aqiColor = '#f87171'; aqiLabel = 'Вредное'; }
+  else if (aqi <= 300) { aqiColor = '#c084fc'; aqiLabel = 'Очень вредное'; }
+  else                 { aqiColor = '#f43f5e'; aqiLabel = 'Опасное'; }
+
+  document.getElementById('aqiValue').textContent = aqi;
+  document.getElementById('aqiValue').style.color = aqiColor;
+  document.getElementById('aqiBadge').style.borderColor = aqiColor;
+  document.getElementById('aqiLabel').textContent = aqiLabel;
+  document.getElementById('aqiLabel').style.color = aqiColor;
+  document.getElementById('pm25ValueM').textContent = d.pm25 ?? '—';
+  document.getElementById('pm10ValueM').textContent = d.pm10 ?? '—';
+  document.getElementById('tempValueM').textContent = d.temp ?? '—';
+  document.getElementById('humidValueM').textContent = d.humid ?? '—';
+  document.getElementById('pressValueM').textContent = d.press ?? '—';
+  document.getElementById('windValueM').textContent = d.wind ?? '—';
+  const airTime = document.getElementById('airTime');
+  if (airTime) airTime.textContent =
+    new Date().toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'});
+}
+
 async function fetchAirQualityMobile() {
   const airTime = document.getElementById('airTime');
+
+  // Показываем кеш сразу если он свежий (< 10 минут)
+  if (_airCache && (Date.now() - _airCache.ts) < 10 * 60 * 1000) {
+    renderAirData(_airCache.data);
+    return;
+  }
+
   if (airTime) airTime.textContent = '⏳';
 
   try {
-    const d = await fetchSheet('Воздух'); // один запрос к вашему скрипту
-    if (!d || d.error) throw new Error(d?.error || 'no data');
+    const lat = 41.2995, lon = 69.2401;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
 
-    const { aqi, pm25, pm10, temp, humid, press, wind } = d;
+    const [weatherRes, aqRes] = await Promise.all([
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,surface_pressure,wind_speed_10m&wind_speed_unit=kmh&timezone=Asia/Tashkent`, { signal: controller.signal }),
+      fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=pm2_5,pm10,us_aqi&timezone=Asia/Tashkent`, { signal: controller.signal })
+    ]);
+    clearTimeout(timeout);
 
-    let aqiColor, aqiLabel;
-    if (aqi <= 50)       { aqiColor = '#4ade80'; aqiLabel = 'Хорошее'; }
-    else if (aqi <= 100) { aqiColor = '#facc15'; aqiLabel = 'Умеренное'; }
-    else if (aqi <= 150) { aqiColor = '#fb923c'; aqiLabel = 'Вредно для групп риска'; }
-    else if (aqi <= 200) { aqiColor = '#f87171'; aqiLabel = 'Вредное'; }
-    else if (aqi <= 300) { aqiColor = '#c084fc'; aqiLabel = 'Очень вредное'; }
-    else                 { aqiColor = '#f43f5e'; aqiLabel = 'Опасное'; }
+    const weather = await weatherRes.json();
+    const aq = await aqRes.json();
 
-    document.getElementById('aqiValue').textContent = aqi;
-    document.getElementById('aqiValue').style.color = aqiColor;
-    document.getElementById('aqiBadge').style.borderColor = aqiColor;
-    document.getElementById('aqiLabel').textContent = aqiLabel;
-    document.getElementById('aqiLabel').style.color = aqiColor;
-    document.getElementById('pm25ValueM').textContent = pm25;
-    document.getElementById('pm10ValueM').textContent = pm10;
-    document.getElementById('tempValueM').textContent = temp;
-    document.getElementById('humidValueM').textContent = humid;
-    document.getElementById('pressValueM').textContent = press;
-    document.getElementById('windValueM').textContent = wind;
+    const d = {
+      temp:  weather.current?.temperature_2m ?? '—',
+      humid: weather.current?.relative_humidity_2m ?? '—',
+      press: Math.round(weather.current?.surface_pressure ?? 0),
+      wind:  Math.round(weather.current?.wind_speed_10m ?? 0),
+      pm25:  (aq.current?.pm2_5 ?? 0).toFixed(1),
+      pm10:  (aq.current?.pm10  ?? 0).toFixed(1),
+      aqi:   Math.round(aq.current?.us_aqi ?? 0),
+    };
 
-    if (airTime) airTime.textContent =
-      new Date().toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'});
+    // Сохраняем в кеш
+    _airCache = { data: d, ts: Date.now() };
+    renderAirData(d);
+
   } catch(e) {
-    if (airTime) airTime.textContent = '⚠️';
-    console.error('Воздух:', e);
+    // Если ошибка но есть старый кеш — показываем его
+    if (_airCache) {
+      renderAirData(_airCache.data);
+      if (airTime) airTime.textContent += ' (кеш)';
+    } else {
+      if (airTime) airTime.textContent = '⚠️';
+    }
+    console.error('Воздух:', e.name === 'AbortError' ? 'таймаут' : e);
   }
 }
 
