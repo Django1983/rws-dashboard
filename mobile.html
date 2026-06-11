@@ -834,35 +834,16 @@ function renderSolar(rows) {
 }
 
 // ── КАЧЕСТВО ВОЗДУХА ──────────────────────────────────────────────────────────
+// Данные получаем через Apps Script (кеш 10 мин) — один быстрый запрос вместо двух внешних
 async function fetchAirQualityMobile() {
-  // Показываем загрузку
   const airTime = document.getElementById('airTime');
   if (airTime) airTime.textContent = '⏳';
 
   try {
-    const lat = 41.2995, lon = 69.2401;
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 8000); // 8 сек таймаут
+    const d = await fetchSheet('Воздух'); // один запрос к вашему скрипту
+    if (!d || d.error) throw new Error(d?.error || 'no data');
 
-    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,surface_pressure,wind_speed_10m&wind_speed_unit=kmh&timezone=Asia/Tashkent`;
-    const aqUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=pm2_5,pm10,us_aqi&timezone=Asia/Tashkent`;
-
-    const [weatherRes, aqRes] = await Promise.all([
-      fetch(weatherUrl, { signal: controller.signal }),
-      fetch(aqUrl, { signal: controller.signal })
-    ]);
-    clearTimeout(timeout);
-
-    const weather = await weatherRes.json();
-    const aq = await aqRes.json();
-
-    const temp  = weather.current?.temperature_2m ?? '—';
-    const humid = weather.current?.relative_humidity_2m ?? '—';
-    const press = Math.round(weather.current?.surface_pressure ?? 0);
-    const wind  = Math.round(weather.current?.wind_speed_10m ?? 0);
-    const pm25  = (aq.current?.pm2_5 ?? 0).toFixed(1);
-    const pm10  = (aq.current?.pm10 ?? 0).toFixed(1);
-    const aqi   = Math.round(aq.current?.us_aqi ?? 0);
+    const { aqi, pm25, pm10, temp, humid, press, wind } = d;
 
     let aqiColor, aqiLabel;
     if (aqi <= 50)       { aqiColor = '#4ade80'; aqiLabel = 'Хорошее'; }
@@ -884,12 +865,11 @@ async function fetchAirQualityMobile() {
     document.getElementById('pressValueM').textContent = press;
     document.getElementById('windValueM').textContent = wind;
 
-    const now = new Date();
-    document.getElementById('airTime').textContent =
-      now.toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'});
+    if (airTime) airTime.textContent =
+      new Date().toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'});
   } catch(e) {
     if (airTime) airTime.textContent = '⚠️';
-    console.error('Качество воздуха: ошибка', e.name === 'AbortError' ? 'таймаут' : e);
+    console.error('Воздух:', e);
   }
 }
 
