@@ -918,9 +918,9 @@ function renderAuris(d) {
   const iza = Number(d.iza);
   let izaColor, izaLabel;
   if (isNaN(iza))     { izaColor = '#9ab4c4'; izaLabel = 'Нет данных'; }
-  else if (iza <= 2)  { izaColor = '#4ade80'; izaLabel = 'Низкий'; }
-  else if (iza <= 4)  { izaColor = '#facc15'; izaLabel = 'Повышенный'; }
-  else if (iza <= 7)  { izaColor = '#fb923c'; izaLabel = 'Высокий'; }
+  else if (iza <= 4)  { izaColor = '#4ade80'; izaLabel = 'Низкий'; }
+  else if (iza <= 6)  { izaColor = '#facc15'; izaLabel = 'Повышенный'; }
+  else if (iza <= 13) { izaColor = '#fb923c'; izaLabel = 'Высокий'; }
   else                { izaColor = '#f87171'; izaLabel = 'Очень высокий'; }
 
   document.getElementById('izaValue').textContent = isNaN(iza) ? '—' : iza.toFixed(1);
