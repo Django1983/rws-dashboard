@@ -336,46 +336,64 @@
           <div class="air-cell-label">🔴 PM2.5</div>
           <div class="air-cell-val" id="aurisPm25" style="color:#fbbf24;">—</div>
           <div class="air-cell-unit">мкг/м³</div>
+          <div style="font-size:7px;color:#4a6a88;margin-top:3px;line-height:1.4;">Мелкая пыль<br>Норма ВОЗ: &lt;15</div>
+          <div id="aurisPm25Status" style="font-size:7px;margin-top:2px;font-weight:700;"></div>
         </div>
         <div class="air-cell">
           <div class="air-cell-label">🌫️ PM10</div>
           <div class="air-cell-val" id="aurisPm10" style="color:#fb923c;">—</div>
           <div class="air-cell-unit">мкг/м³</div>
+          <div style="font-size:7px;color:#4a6a88;margin-top:3px;line-height:1.4;">Крупная пыль<br>Норма ВОЗ: &lt;45</div>
+          <div id="aurisPm10Status" style="font-size:7px;margin-top:2px;font-weight:700;"></div>
         </div>
         <div class="air-cell">
           <div class="air-cell-label">🟡 SO₂</div>
           <div class="air-cell-val" id="aurisSo2" style="color:#fbbf24;">—</div>
           <div class="air-cell-unit">мкг/м³</div>
+          <div style="font-size:7px;color:#4a6a88;margin-top:3px;line-height:1.4;">Диоксид серы<br>Норма: &lt;20</div>
+          <div id="aurisSo2Status" style="font-size:7px;margin-top:2px;font-weight:700;"></div>
         </div>
         <div class="air-cell">
           <div class="air-cell-label">🟤 NO₂</div>
           <div class="air-cell-val" id="aurisNo2" style="color:#fb923c;">—</div>
           <div class="air-cell-unit">мкг/м³</div>
+          <div style="font-size:7px;color:#4a6a88;margin-top:3px;line-height:1.4;">Диоксид азота<br>Норма: &lt;25</div>
+          <div id="aurisNo2Status" style="font-size:7px;margin-top:2px;font-weight:700;"></div>
         </div>
         <div class="air-cell">
           <div class="air-cell-label">⚪ CO</div>
           <div class="air-cell-val" id="aurisCo" style="color:#a3a3a3;">—</div>
           <div class="air-cell-unit">мг/м³</div>
+          <div style="font-size:7px;color:#4a6a88;margin-top:3px;line-height:1.4;">Угарный газ<br>Норма: &lt;4</div>
+          <div id="aurisCoStatus" style="font-size:7px;margin-top:2px;font-weight:700;"></div>
         </div>
         <div class="air-cell">
           <div class="air-cell-label">🔵 O₃</div>
           <div class="air-cell-val" id="aurisO3" style="color:#60a5fa;">—</div>
           <div class="air-cell-unit">мкг/м³</div>
+          <div style="font-size:7px;color:#4a6a88;margin-top:3px;line-height:1.4;">Озон<br>Норма: &lt;100</div>
+          <div id="aurisO3Status" style="font-size:7px;margin-top:2px;font-weight:700;"></div>
         </div>
         <div class="air-cell">
           <div class="air-cell-label">🟢 NH₃</div>
           <div class="air-cell-val" id="aurisNh3" style="color:#4ade80;">—</div>
           <div class="air-cell-unit">мкг/м³</div>
+          <div style="font-size:7px;color:#4a6a88;margin-top:3px;line-height:1.4;">Аммиак<br>Норма: &lt;40</div>
+          <div id="aurisNh3Status" style="font-size:7px;margin-top:2px;font-weight:700;"></div>
         </div>
         <div class="air-cell">
           <div class="air-cell-label">🟣 H₂S</div>
           <div class="air-cell-val" id="aurisH2s" style="color:#c084fc;">—</div>
           <div class="air-cell-unit">мкг/м³</div>
+          <div style="font-size:7px;color:#4a6a88;margin-top:3px;line-height:1.4;">Сероводород<br>Норма: &lt;8</div>
+          <div id="aurisH2sStatus" style="font-size:7px;margin-top:2px;font-weight:700;"></div>
         </div>
         <div class="air-cell">
           <div class="air-cell-label">💨 VOC</div>
           <div class="air-cell-val" id="aurisVoc" style="color:#34d399;">—</div>
           <div class="air-cell-unit">мкг/м³</div>
+          <div style="font-size:7px;color:#4a6a88;margin-top:3px;line-height:1.4;">Летучие орг.<br>Норма: &lt;160</div>
+          <div id="aurisVocStatus" style="font-size:7px;margin-top:2px;font-weight:700;"></div>
         </div>
       </div>
 
@@ -970,16 +988,41 @@ function renderAuris(d) {
   document.getElementById('aqiLabel').textContent = aqi !== null ? 'AQI: ' + aqiLabel : '';
   document.getElementById('aqiLabel').style.color = aqiColor;
 
-  // Загрязняющие вещества
-  document.getElementById('aurisPm25').textContent = fmtAir(d.pm25, 1);
-  document.getElementById('aurisPm10').textContent = fmtAir(d.pm10, 1);
-  document.getElementById('aurisSo2').textContent  = fmtAir(d.so2, 1);
-  document.getElementById('aurisNo2').textContent  = fmtAir(d.no2, 1);
-  document.getElementById('aurisCo').textContent   = fmtAir(d.co, 2);
-  document.getElementById('aurisO3').textContent   = fmtAir(d.o3, 1);
-  document.getElementById('aurisNh3').textContent  = fmtAir(d.nh3, 1);
-  document.getElementById('aurisH2s').textContent  = fmtAir(d.h2s, 1);
-  document.getElementById('aurisVoc').textContent  = fmtAir(d.voc, 1);
+  // Загрязняющие вещества + статус
+  function setAirCell(id, val, norm, digits) {
+    const el = document.getElementById(id);
+    const statusEl = document.getElementById(id + 'Status');
+    if (!el) return;
+    const n = Number(val);
+    el.textContent = fmtAir(val, digits);
+    if (!statusEl || isNaN(n) || val === null || val === '') return;
+    if (n === 0) {
+      statusEl.textContent = '✔ Не обнаружен';
+      statusEl.style.color = '#4ade80';
+    } else if (n <= norm) {
+      statusEl.textContent = '✔ В норме';
+      statusEl.style.color = '#4ade80';
+    } else if (n <= norm * 2) {
+      statusEl.textContent = '⚠ Повышен';
+      statusEl.style.color = '#facc15';
+    } else if (n <= norm * 5) {
+      statusEl.textContent = '⚠ Высокий!';
+      statusEl.style.color = '#fb923c';
+    } else {
+      statusEl.textContent = '🚨 Опасный!';
+      statusEl.style.color = '#f87171';
+    }
+  }
+
+  setAirCell('aurisPm25', d.pm25, 15,  1);
+  setAirCell('aurisPm10', d.pm10, 45,  1);
+  setAirCell('aurisSo2',  d.so2,  20,  1);
+  setAirCell('aurisNo2',  d.no2,  25,  1);
+  setAirCell('aurisCo',   d.co,   4,   2);
+  setAirCell('aurisO3',   d.o3,   100, 1);
+  setAirCell('aurisNh3',  d.nh3,  40,  1);
+  setAirCell('aurisH2s',  d.h2s,  8,   1);
+  setAirCell('aurisVoc',  d.voc,  160, 1);
 
   // Погодные условия
   document.getElementById('aurisTemp').textContent  = fmtAir(d.temp, 1);
