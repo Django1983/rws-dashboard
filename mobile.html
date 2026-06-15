@@ -903,7 +903,12 @@ function renderAuris(d) {
   const statusEl = document.getElementById('aurisStatus');
   if (!d || d.error) {
     if (statusEl) statusEl.textContent = '⚠ Ошибка';
+    document.getElementById('izaValue').textContent = '—';
+    document.getElementById('izaValue').style.color = '#f87171';
+    document.getElementById('izaBadge').style.borderColor = '#f87171';
     document.getElementById('izaLabel').textContent = 'Нет данных';
+    document.getElementById('izaLabel').style.color = '#f87171';
+    document.getElementById('aurisTime').textContent = (d && d.error) ? String(d.error) : 'нет ответа';
     return;
   }
 
@@ -1016,6 +1021,7 @@ async function loadData() {
       ok++;
     } catch(e) {
       fail++;
+      if (t.sheet === 'Auris') renderAuris({ error: e.message || String(e) });
     }
   }));
 
