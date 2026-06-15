@@ -170,6 +170,23 @@
   }
 
   .update-info { font-size: 10px; color: var(--text2); text-align: center; margin-bottom: 10px; }
+
+  /* AIR (AURIS) */
+  .air-cell {
+    background: #0f1e30; border: 1px solid #1e3a52; border-radius: 8px;
+    padding: 8px 6px; text-align: center;
+  }
+  .air-cell-label { font-size: 8px; color: #7aacc8; text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 4px; }
+  .air-cell-val { font-size: 16px; font-weight: 700; line-height: 1; }
+  .air-cell-unit { font-size: 8px; color: #4a6a88; margin-top: 3px; }
+  .weather-cell {
+    background: #0f1e30; border: 1px solid #1e3a52; border-radius: 8px;
+    padding: 10px 12px;
+  }
+  .weather-cell-label { font-size: 9px; color: #7aacc8; text-transform: uppercase; margin-bottom: 4px; }
+  .weather-cell-val { font-size: 22px; font-weight: 600; line-height: 1; }
+  .weather-cell-unit { font-size: 9px; color: #4a6a88; }
+  .air-section-title { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.05em; margin: 10px 0 6px; }
 </style>
 </head>
 <body>
@@ -286,67 +303,99 @@
   </div>
 </div>
 
-<!-- КАЧЕСТВО ВОЗДУХА -->
+<!-- КАЧЕСТВО ВОЗДУХА (AURIS GREEN TECH) -->
 <div class="page" id="page-air">
   <div class="section">
-    <div class="sec-header">🌬️ Качество воздуха — Чирчик Буйи 4
-      <span class="sec-badge" id="airTime">—</span>
+    <div class="sec-header">🌬️ Качество воздуха — станция ENE04588
+      <span class="sec-badge" id="aurisStatus">—</span>
     </div>
     <div style="padding:10px 8px;">
 
-      <!-- AQI большой -->
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
-        <div id="aqiBadge" style="min-width:70px;height:70px;border-radius:12px;background:#1a4a2a;border:2px solid #2a7a45;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-          <div id="aqiValue" style="font-size:28px;font-weight:700;color:#4ade80;line-height:1;">—</div>
-          <div style="font-size:9px;color:#86efac;">US AQI</div>
+      <!-- ИЗА большой -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+        <div id="izaBadge" style="min-width:70px;height:70px;border-radius:12px;background:#1a4a2a;border:2px solid #2a7a45;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+          <div id="izaValue" style="font-size:28px;font-weight:700;color:#4ade80;line-height:1;">—</div>
+          <div style="font-size:9px;color:#86efac;">ИЗА</div>
         </div>
         <div>
-          <div id="aqiLabel" style="font-size:20px;font-weight:600;color:#4ade80;">Загрузка...</div>
-          <div style="font-size:11px;color:#7aacc8;margin-top:3px;">📍 Ташкент, Узбекистан</div>
-          <div style="font-size:11px;color:#7aacc8;">Загрязнитель: <span id="mainPollutantM" style="color:#fbbf24;">PM2.5</span></div>
+          <div id="izaLabel" style="font-size:20px;font-weight:600;color:#4ade80;">Загрузка...</div>
+          <div style="font-size:11px;color:#7aacc8;margin-top:3px;">📍 Чирчик, Буйи 4</div>
+          <div style="font-size:11px;color:#7aacc8;">Замер: <span id="aurisTime">—</span></div>
         </div>
       </div>
 
-      <!-- Сетка 2x3 -->
+      <!-- Загрязняющие вещества -->
+      <div class="air-section-title">Загрязняющие вещества</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
+        <div class="air-cell">
+          <div class="air-cell-label">🔴 PM2.5</div>
+          <div class="air-cell-val" id="aurisPm25" style="color:#fbbf24;">—</div>
+          <div class="air-cell-unit">мкг/м³</div>
+        </div>
+        <div class="air-cell">
+          <div class="air-cell-label">🌫️ PM10</div>
+          <div class="air-cell-val" id="aurisPm10" style="color:#fb923c;">—</div>
+          <div class="air-cell-unit">мкг/м³</div>
+        </div>
+        <div class="air-cell">
+          <div class="air-cell-label">🟡 SO₂</div>
+          <div class="air-cell-val" id="aurisSo2" style="color:#fbbf24;">—</div>
+          <div class="air-cell-unit">мкг/м³</div>
+        </div>
+        <div class="air-cell">
+          <div class="air-cell-label">🟤 NO₂</div>
+          <div class="air-cell-val" id="aurisNo2" style="color:#fb923c;">—</div>
+          <div class="air-cell-unit">мкг/м³</div>
+        </div>
+        <div class="air-cell">
+          <div class="air-cell-label">⚪ CO</div>
+          <div class="air-cell-val" id="aurisCo" style="color:#a3a3a3;">—</div>
+          <div class="air-cell-unit">мг/м³</div>
+        </div>
+        <div class="air-cell">
+          <div class="air-cell-label">🔵 O₃</div>
+          <div class="air-cell-val" id="aurisO3" style="color:#60a5fa;">—</div>
+          <div class="air-cell-unit">мкг/м³</div>
+        </div>
+        <div class="air-cell">
+          <div class="air-cell-label">🟢 NH₃</div>
+          <div class="air-cell-val" id="aurisNh3" style="color:#4ade80;">—</div>
+          <div class="air-cell-unit">мкг/м³</div>
+        </div>
+        <div class="air-cell">
+          <div class="air-cell-label">🟣 H₂S</div>
+          <div class="air-cell-val" id="aurisH2s" style="color:#c084fc;">—</div>
+          <div class="air-cell-unit">мкг/м³</div>
+        </div>
+        <div class="air-cell">
+          <div class="air-cell-label">💨 VOC</div>
+          <div class="air-cell-val" id="aurisVoc" style="color:#34d399;">—</div>
+          <div class="air-cell-unit">мкг/м³</div>
+        </div>
+      </div>
+
+      <!-- Погодные условия -->
+      <div class="air-section-title">Погодные условия</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:8px;padding:10px 12px;">
-          <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;margin-bottom:4px;">🔴 PM2.5</div>
-          <div style="font-size:22px;font-weight:600;color:#fbbf24;"><span id="pm25ValueM">—</span></div>
-          <div style="font-size:9px;color:#4a6a88;">мкг/м³</div>
+        <div class="weather-cell">
+          <div class="weather-cell-label">🌡️ Температура</div>
+          <div class="weather-cell-val" style="color:#f87171;"><span id="aurisTemp">—</span><span class="weather-cell-unit">°C</span></div>
         </div>
-
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:8px;padding:10px 12px;">
-          <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;margin-bottom:4px;">🌫️ PM10</div>
-          <div style="font-size:22px;font-weight:600;color:#fb923c;"><span id="pm10ValueM">—</span></div>
-          <div style="font-size:9px;color:#4a6a88;">мкг/м³</div>
+        <div class="weather-cell">
+          <div class="weather-cell-label">💧 Влажность</div>
+          <div class="weather-cell-val" style="color:#60a5fa;"><span id="aurisHumid">—</span><span class="weather-cell-unit">%</span></div>
         </div>
-
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:8px;padding:10px 12px;">
-          <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;margin-bottom:4px;">🌡️ Температура</div>
-          <div style="font-size:22px;font-weight:600;color:#f87171;"><span id="tempValueM">—</span>°C</div>
-          <div style="font-size:9px;color:#4a6a88;">Цельсий</div>
+        <div class="weather-cell">
+          <div class="weather-cell-label">🔵 Давление</div>
+          <div class="weather-cell-val" style="color:#a78bfa;"><span id="aurisPress">—</span><span class="weather-cell-unit"> мб</span></div>
         </div>
-
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:8px;padding:10px 12px;">
-          <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;margin-bottom:4px;">💧 Влажность</div>
-          <div style="font-size:22px;font-weight:600;color:#60a5fa;"><span id="humidValueM">—</span>%</div>
-          <div style="font-size:9px;color:#4a6a88;">отн. влажность</div>
+        <div class="weather-cell">
+          <div class="weather-cell-label">💨 Ветер</div>
+          <div class="weather-cell-val" style="color:#34d399;"><span id="aurisWind">—</span><span class="weather-cell-unit"> м/с</span></div>
+          <div class="weather-cell-unit" style="margin-top:2px;">Направление: <span id="aurisWindDir">—</span></div>
         </div>
-
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:8px;padding:10px 12px;">
-          <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;margin-bottom:4px;">🔵 Давление</div>
-          <div style="font-size:22px;font-weight:600;color:#a78bfa;"><span id="pressValueM">—</span></div>
-          <div style="font-size:9px;color:#4a6a88;">мб</div>
-        </div>
-
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:8px;padding:10px 12px;">
-          <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;margin-bottom:4px;">💨 Ветер</div>
-          <div style="font-size:22px;font-weight:600;color:#34d399;"><span id="windValueM">—</span></div>
-          <div style="font-size:9px;color:#4a6a88;">км/ч</div>
-        </div>
-
       </div>
+
     </div>
   </div>
 </div>
@@ -833,84 +882,71 @@ function renderSolar(rows) {
   `;
 }
 
-// ── КАЧЕСТВО ВОЗДУХА (кеш 10 минут в памяти) ─────────────────────────────────
-var _airCache = null; // { data, ts }
-
-function renderAirData(d) {
-  const aqi = d.aqi || 0;
-  let aqiColor, aqiLabel;
-  if (aqi <= 50)       { aqiColor = '#4ade80'; aqiLabel = 'Хорошее'; }
-  else if (aqi <= 100) { aqiColor = '#facc15'; aqiLabel = 'Умеренное'; }
-  else if (aqi <= 150) { aqiColor = '#fb923c'; aqiLabel = 'Вредно для групп риска'; }
-  else if (aqi <= 200) { aqiColor = '#f87171'; aqiLabel = 'Вредное'; }
-  else if (aqi <= 300) { aqiColor = '#c084fc'; aqiLabel = 'Очень вредное'; }
-  else                 { aqiColor = '#f43f5e'; aqiLabel = 'Опасное'; }
-
-  document.getElementById('aqiValue').textContent = aqi;
-  document.getElementById('aqiValue').style.color = aqiColor;
-  document.getElementById('aqiBadge').style.borderColor = aqiColor;
-  document.getElementById('aqiLabel').textContent = aqiLabel;
-  document.getElementById('aqiLabel').style.color = aqiColor;
-  document.getElementById('pm25ValueM').textContent = d.pm25 ?? '—';
-  document.getElementById('pm10ValueM').textContent = d.pm10 ?? '—';
-  document.getElementById('tempValueM').textContent = d.temp ?? '—';
-  document.getElementById('humidValueM').textContent = d.humid ?? '—';
-  document.getElementById('pressValueM').textContent = d.press ?? '—';
-  document.getElementById('windValueM').textContent = d.wind ?? '—';
-  const airTime = document.getElementById('airTime');
-  if (airTime) airTime.textContent =
-    new Date().toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'});
+// ── КАЧЕСТВО ВОЗДУХА (станция Auris Green Tech ENE04588) ─────────────────────
+function windDirToText(deg) {
+  if (deg === null || deg === undefined || deg === '') return '—';
+  const n = Number(deg);
+  if (isNaN(n)) return '—';
+  const dirs = ['С','СВ','В','ЮВ','Ю','ЮЗ','З','СЗ'];
+  const idx = (Math.round(n / 45) % 8 + 8) % 8;
+  return dirs[idx];
 }
 
-async function fetchAirQualityMobile() {
-  const airTime = document.getElementById('airTime');
+function fmtAir(v, digits) {
+  if (v === null || v === undefined || v === '') return '—';
+  const n = Number(v);
+  if (isNaN(n)) return '—';
+  return digits !== undefined ? n.toFixed(digits) : String(n);
+}
 
-  // Показываем кеш сразу если он свежий (< 10 минут)
-  if (_airCache && (Date.now() - _airCache.ts) < 10 * 60 * 1000) {
-    renderAirData(_airCache.data);
+function renderAuris(d) {
+  const statusEl = document.getElementById('aurisStatus');
+  if (!d || d.error) {
+    if (statusEl) statusEl.textContent = '⚠ Ошибка';
+    document.getElementById('izaLabel').textContent = 'Нет данных';
     return;
   }
 
-  if (airTime) airTime.textContent = '⏳';
+  if (statusEl) statusEl.textContent = d.online ? '🟢 Онлайн' : '🔴 Офлайн';
 
-  try {
-    const lat = 41.2995, lon = 69.2401;
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 10000);
+  // Индекс ИЗА
+  const iza = Number(d.iza);
+  let izaColor, izaLabel;
+  if (isNaN(iza))     { izaColor = '#9ab4c4'; izaLabel = 'Нет данных'; }
+  else if (iza <= 2)  { izaColor = '#4ade80'; izaLabel = 'Низкий'; }
+  else if (iza <= 4)  { izaColor = '#facc15'; izaLabel = 'Повышенный'; }
+  else if (iza <= 7)  { izaColor = '#fb923c'; izaLabel = 'Высокий'; }
+  else                { izaColor = '#f87171'; izaLabel = 'Очень высокий'; }
 
-    const [weatherRes, aqRes] = await Promise.all([
-      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,surface_pressure,wind_speed_10m&wind_speed_unit=kmh&timezone=Asia/Tashkent`, { signal: controller.signal }),
-      fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=pm2_5,pm10,us_aqi&timezone=Asia/Tashkent`, { signal: controller.signal })
-    ]);
-    clearTimeout(timeout);
+  document.getElementById('izaValue').textContent = isNaN(iza) ? '—' : iza.toFixed(1);
+  document.getElementById('izaValue').style.color = izaColor;
+  document.getElementById('izaBadge').style.borderColor = izaColor;
+  document.getElementById('izaLabel').textContent = izaLabel;
+  document.getElementById('izaLabel').style.color = izaColor;
 
-    const weather = await weatherRes.json();
-    const aq = await aqRes.json();
+  // Загрязняющие вещества
+  document.getElementById('aurisPm25').textContent = fmtAir(d.pm25, 1);
+  document.getElementById('aurisPm10').textContent = fmtAir(d.pm10, 1);
+  document.getElementById('aurisSo2').textContent  = fmtAir(d.so2, 1);
+  document.getElementById('aurisNo2').textContent  = fmtAir(d.no2, 1);
+  document.getElementById('aurisCo').textContent   = fmtAir(d.co, 2);
+  document.getElementById('aurisO3').textContent   = fmtAir(d.o3, 1);
+  document.getElementById('aurisNh3').textContent  = fmtAir(d.nh3, 1);
+  document.getElementById('aurisH2s').textContent  = fmtAir(d.h2s, 1);
+  document.getElementById('aurisVoc').textContent  = fmtAir(d.voc, 1);
 
-    const d = {
-      temp:  weather.current?.temperature_2m ?? '—',
-      humid: weather.current?.relative_humidity_2m ?? '—',
-      press: Math.round(weather.current?.surface_pressure ?? 0),
-      wind:  Math.round(weather.current?.wind_speed_10m ?? 0),
-      pm25:  (aq.current?.pm2_5 ?? 0).toFixed(1),
-      pm10:  (aq.current?.pm10  ?? 0).toFixed(1),
-      aqi:   Math.round(aq.current?.us_aqi ?? 0),
-    };
+  // Погодные условия
+  document.getElementById('aurisTemp').textContent  = fmtAir(d.temp, 1);
+  document.getElementById('aurisHumid').textContent = fmtAir(d.humid, 0);
+  document.getElementById('aurisPress').textContent = fmtAir(d.pressure, 0);
+  document.getElementById('aurisWind').textContent  = fmtAir(d.wind, 1);
+  document.getElementById('aurisWindDir').textContent = windDirToText(d.wind_dir);
 
-    // Сохраняем в кеш
-    _airCache = { data: d, ts: Date.now() };
-    renderAirData(d);
-
-  } catch(e) {
-    // Если ошибка но есть старый кеш — показываем его
-    if (_airCache) {
-      renderAirData(_airCache.data);
-      if (airTime) airTime.textContent += ' (кеш)';
-    } else {
-      if (airTime) airTime.textContent = '⚠️';
-    }
-    console.error('Воздух:', e.name === 'AbortError' ? 'таймаут' : e);
-  }
+  // Время замера
+  let measured = String(d.measured || '');
+  const m = measured.match(/(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+  if (m) measured = m[3]+'.'+m[2]+'.'+m[1]+' '+m[4]+':'+m[5];
+  document.getElementById('aurisTime').textContent = measured || '—';
 }
 
 // ── RENDER 1С ─────────────────────────────────────────────────────────────────
@@ -970,6 +1006,7 @@ async function loadData() {
     { sheet: 'ОК',        render: renderOK },
     { sheet: 'Солнечные',  render: renderSolar },
     { sheet: '1С_Остатки', render: renderOnec },
+    { sheet: 'Auris',      render: renderAuris },
   ];
 
   await Promise.allSettled(tasks.map(async t => {
@@ -991,9 +1028,6 @@ async function loadData() {
 
 loadData();
 setInterval(loadData, 5 * 60 * 1000);
-
-fetchAirQualityMobile();
-setInterval(fetchAirQualityMobile, 10 * 60 * 1000);
 </script>
 </body>
 </html>
