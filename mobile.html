@@ -592,12 +592,17 @@ function renderPC(rows) {
   if (!rows || rows.length < 3) { body.innerHTML = '<tr><td colspan="2" class="empty">Нет данных</td></tr>'; return; }
 
   // Ищем ПОСЛЕДНЮЮ строку с "остаток" в колонке C — это заголовок блока "Производственный цех"
+  // Дата из C2 ("10.06.2026 за день")
+  const c2val = String((rows[1] || [])[2] || '');
+  const pcDateMatch = c2val.match(/\d{2}\.\d{2}\.\d{4}/);
+  if (pcDateMatch) document.getElementById('pcDate').textContent = pcDateMatch[0] + ' остаток шт.';
+
   let ostHeaderRow = -1;
   for (let i = 0; i < rows.length; i++) {
     const c2 = String(rows[i][2] || '').toLowerCase();
     if (c2.includes('остаток')) {
       ostHeaderRow = i;
-      document.getElementById('pcDate').textContent = rows[i][2] || 'ПЦ';
+      if (!pcDateMatch) document.getElementById('pcDate').textContent = rows[i][2] || 'ПЦ';
     }
   }
 
@@ -785,9 +790,9 @@ function renderOTG(rows) {
   const dateEl = document.getElementById('otgDate');
   if (!rows || rows.length < 4) { body.innerHTML = '<tr><td colspan="5" class="empty">Нет данных</td></tr>'; return; }
 
-  // Дата в строке заголовка колонок (row index 2, col 11)
-  const hrow = rows[2] || [];
-  const dateMatch = hrow.join(' ').match(/\d{2}\.\d{2}\.\d{4}/);
+  // Дата из B1 ("Отгружено шпал на 10.06.2026 г.")
+  const b1 = String((rows[0] || [])[1] || '');
+  const dateMatch = b1.match(/\d{2}\.\d{2}\.\d{4}/);
   if (dateMatch && dateEl) dateEl.textContent = dateMatch[0];
 
   function fmt(v) {
