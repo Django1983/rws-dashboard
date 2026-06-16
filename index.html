@@ -202,21 +202,21 @@
   }
   .solar-card {
     background: linear-gradient(135deg, #1a3a52 0%, #1e4d6b 100%);
-    border-radius: 8px; padding: 8px 10px;
-    display: flex; flex-direction: column; gap: 3px;
+    border-radius: 8px; padding: 12px 14px;
+    display: flex; flex-direction: column; gap: 5px;
     border: 1px solid #2a5a78;
   }
   .solar-card-label {
-    font-size: 9px; color: #7aacc8;
+    font-size: 12px; color: #7aacc8;
     text-transform: uppercase; letter-spacing: 0.06em;
-    display: flex; align-items: center; gap: 4px;
+    display: flex; align-items: center; gap: 5px;
   }
   .solar-card-value {
-    font-size: 20px; font-weight: 600; color: #fff;
-    font-variant-numeric: tabular-nums; line-height: 1;
+    font-size: 30px; font-weight: 600; color: #fff;
+    font-variant-numeric: tabular-nums; line-height: 1.1;
   }
-  .solar-card-unit { font-size: 10px; color: #7aacc8; margin-left: 2px; }
-  .solar-card-sub { font-size: 10px; color: #4a9a6a; margin-top: 1px; }
+  .solar-card-unit { font-size: 13px; color: #7aacc8; margin-left: 3px; }
+  .solar-card-sub { font-size: 12px; color: #4a9a6a; margin-top: 2px; }
   .solar-card.realtime { background: linear-gradient(135deg, #1a4a2a 0%, #1e6035 100%); border-color: #2a7a45; }
   .solar-card.realtime .solar-card-value { color: #4ade80; }
 
@@ -664,74 +664,74 @@
 
       <!-- ИЗА + AQI строка -->
       <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
-        <div id="izaBadge" style="min-width:48px;height:48px;border-radius:9px;background:#1a4a2a;border:2px solid #2a7a45;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;flex-shrink:0;">
-          <div id="izaValue" style="font-size:19px;font-weight:700;color:#4ade80;line-height:1;">—</div>
-          <div style="font-size:7px;color:#86efac;letter-spacing:0.05em;">ИЗА</div>
+        <div id="izaBadge" style="min-width:64px;height:64px;border-radius:11px;background:#1a4a2a;border:2px solid #2a7a45;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;flex-shrink:0;">
+          <div id="izaValue" style="font-size:26px;font-weight:700;color:#4ade80;line-height:1;">—</div>
+          <div style="font-size:10px;color:#86efac;letter-spacing:0.05em;">ИЗА</div>
         </div>
-        <div id="aqiBadge" style="min-width:48px;height:48px;border-radius:9px;background:#2a1a1a;border:2px solid #f87171;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;flex-shrink:0;">
-          <div id="aqiValue" style="font-size:19px;font-weight:700;color:#f87171;line-height:1;">—</div>
-          <div style="font-size:7px;color:#fca5a5;letter-spacing:0.05em;">AQI</div>
+        <div id="aqiBadge" style="min-width:64px;height:64px;border-radius:11px;background:#2a1a1a;border:2px solid #f87171;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;flex-shrink:0;">
+          <div id="aqiValue" style="font-size:26px;font-weight:700;color:#f87171;line-height:1;">—</div>
+          <div style="font-size:10px;color:#fca5a5;letter-spacing:0.05em;">AQI</div>
         </div>
       </div>
       <div style="flex-shrink:0;">
-        <div id="izaLabel" style="font-size:14px;font-weight:600;color:#4ade80;line-height:1.2;">Загрузка...</div>
-        <div id="aqiLabel" style="font-size:10px;font-weight:600;color:#f87171;line-height:1.3;margin-top:1px;">—</div>
-        <div style="font-size:9px;color:#7aacc8;margin-top:2px;">📍 Чирчик, Буйи 4</div>
-        <div style="font-size:9px;color:#7aacc8;">Замер: <span id="aqiTimeMeasured">—</span></div>
+        <div id="izaLabel" style="font-size:18px;font-weight:600;color:#4ade80;line-height:1.3;">Загрузка...</div>
+        <div id="aqiLabel" style="font-size:13px;font-weight:600;color:#f87171;line-height:1.4;margin-top:2px;">—</div>
+        <div style="font-size:11px;color:#7aacc8;margin-top:3px;">📍 Чирчик, Буйи 4</div>
+        <div style="font-size:11px;color:#7aacc8;">Замер: <span id="aqiTimeMeasured">—</span></div>
       </div>
 
       <!-- Сетка 2x... загрязнителей -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;flex:1;min-height:0;">
 
         <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
-          <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🔴 PM2.5</div>
-          <div style="font-size:16px;font-weight:600;color:#fbbf24;line-height:1.1;"><span id="pm25Value">—</span></div>
-          <div id="pm25Status" style="font-size:8px;font-weight:700;white-space:nowrap;"></div>
+          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🔴 PM2.5</div>
+          <div style="font-size:22px;font-weight:600;color:#fbbf24;line-height:1.2;"><span id="pm25Value">—</span></div>
+          <div id="pm25Status" style="font-size:11px;font-weight:700;white-space:nowrap;"></div>
         </div>
 
         <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
-          <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🌫️ PM10</div>
-          <div style="font-size:16px;font-weight:600;color:#fb923c;line-height:1.1;"><span id="pm10Value">—</span></div>
-          <div id="pm10Status" style="font-size:8px;font-weight:700;white-space:nowrap;"></div>
+          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🌫️ PM10</div>
+          <div style="font-size:22px;font-weight:600;color:#fb923c;line-height:1.2;"><span id="pm10Value">—</span></div>
+          <div id="pm10Status" style="font-size:11px;font-weight:700;white-space:nowrap;"></div>
         </div>
 
         <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
-          <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🟡 SO₂</div>
-          <div style="font-size:16px;font-weight:600;color:#fbbf24;line-height:1.1;"><span id="so2Value">—</span></div>
-          <div id="so2Status" style="font-size:8px;font-weight:700;white-space:nowrap;"></div>
+          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🟡 SO₂</div>
+          <div style="font-size:22px;font-weight:600;color:#fbbf24;line-height:1.2;"><span id="so2Value">—</span></div>
+          <div id="so2Status" style="font-size:11px;font-weight:700;white-space:nowrap;"></div>
         </div>
 
         <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
-          <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🟤 NO₂</div>
-          <div style="font-size:16px;font-weight:600;color:#fb923c;line-height:1.1;"><span id="no2Value">—</span></div>
-          <div id="no2Status" style="font-size:8px;font-weight:700;white-space:nowrap;"></div>
+          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🟤 NO₂</div>
+          <div style="font-size:22px;font-weight:600;color:#fb923c;line-height:1.2;"><span id="no2Value">—</span></div>
+          <div id="no2Status" style="font-size:11px;font-weight:700;white-space:nowrap;"></div>
         </div>
 
         <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
-          <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">⚪ CO</div>
-          <div style="font-size:16px;font-weight:600;color:#a3a3a3;line-height:1.1;"><span id="coValue">—</span></div>
-          <div id="coStatus" style="font-size:8px;font-weight:700;white-space:nowrap;"></div>
+          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">⚪ CO</div>
+          <div style="font-size:22px;font-weight:600;color:#a3a3a3;line-height:1.2;"><span id="coValue">—</span></div>
+          <div id="coStatus" style="font-size:11px;font-weight:700;white-space:nowrap;"></div>
         </div>
 
         <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
-          <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🔵 O₃</div>
-          <div style="font-size:16px;font-weight:600;color:#60a5fa;line-height:1.1;"><span id="o3Value">—</span></div>
-          <div id="o3Status" style="font-size:8px;font-weight:700;white-space:nowrap;"></div>
+          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🔵 O₃</div>
+          <div style="font-size:22px;font-weight:600;color:#60a5fa;line-height:1.2;"><span id="o3Value">—</span></div>
+          <div id="o3Status" style="font-size:11px;font-weight:700;white-space:nowrap;"></div>
         </div>
 
         <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
-          <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🌡️ Темп.</div>
-          <div style="font-size:16px;font-weight:600;color:#f87171;line-height:1.1;"><span id="tempValue">—</span>°C</div>
+          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🌡️ Темп.</div>
+          <div style="font-size:22px;font-weight:600;color:#f87171;line-height:1.2;"><span id="tempValue">—</span>°C</div>
         </div>
 
         <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
-          <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">💧 Влажн.</div>
-          <div style="font-size:16px;font-weight:600;color:#60a5fa;line-height:1.1;"><span id="humidValue">—</span>%</div>
+          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">💧 Влажн.</div>
+          <div style="font-size:22px;font-weight:600;color:#60a5fa;line-height:1.2;"><span id="humidValue">—</span>%</div>
         </div>
 
         <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;grid-column:1/3;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
-          <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">💨 Ветер</div>
-          <div style="font-size:16px;font-weight:600;color:#34d399;line-height:1.1;"><span id="windValue">—</span> м/с</div>
+          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">💨 Ветер</div>
+          <div style="font-size:22px;font-weight:600;color:#34d399;line-height:1.2;"><span id="windValue">—</span> м/с</div>
         </div>
 
       </div>
