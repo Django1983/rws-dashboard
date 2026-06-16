@@ -656,62 +656,90 @@
   <!-- Качество воздуха — строка 3 право -->
   <div class="section section-iqair" style="background:linear-gradient(135deg,#0a1e2e 0%,#1a3a52 100%);border:1px solid #2a5a78;">
     <div class="section-header" style="background:linear-gradient(90deg,#0f1e30,#1a3a52);border-bottom:1px solid #2a5a78;">
-      🌬️ Качество воздуха — Чирчик Буйи 4
+      🌬️ Качество воздуха — станция ENE04588 (Auris)
       <span class="auto-badge" style="background:rgba(74,222,128,0.15);color:#4ade80;border:1px solid rgba(74,222,128,0.3);">● Авто</span>
       <span class="section-badge" id="aqiTime" style="background:#0f1e30;color:#7aacc8;border:1px solid #2a5a78;">—</span>
     </div>
     <div style="padding:5px 8px;height:calc(100% - 32px);display:flex;flex-direction:column;gap:4px;overflow:hidden;">
 
-      <!-- AQI строка -->
-      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
-        <div id="aqiBadge" style="min-width:50px;height:50px;border-radius:10px;background:#1a4a2a;border:2px solid #2a7a45;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;">
-          <div id="aqiValue" style="font-size:22px;font-weight:700;color:#4ade80;line-height:1;">—</div>
-          <div style="font-size:7px;color:#86efac;letter-spacing:0.05em;">US AQI</div>
+      <!-- ИЗА + AQI строка -->
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+        <div id="izaBadge" style="min-width:46px;height:46px;border-radius:9px;background:#1a4a2a;border:2px solid #2a7a45;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;">
+          <div id="izaValue" style="font-size:18px;font-weight:700;color:#4ade80;line-height:1;">—</div>
+          <div style="font-size:6px;color:#86efac;letter-spacing:0.05em;">ИЗА</div>
+        </div>
+        <div id="aqiBadge" style="min-width:46px;height:46px;border-radius:9px;background:#2a1a1a;border:2px solid #f87171;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;">
+          <div id="aqiValue" style="font-size:18px;font-weight:700;color:#f87171;line-height:1;">—</div>
+          <div style="font-size:6px;color:#fca5a5;letter-spacing:0.05em;">AQI</div>
         </div>
         <div style="flex:1;">
-          <div id="aqiLabel" style="font-size:15px;font-weight:600;color:#4ade80;line-height:1.2;">Загрузка...</div>
-          <div style="font-size:9px;color:#7aacc8;margin-top:2px;">📍 Ташкент, Узбекистан</div>
-          <div style="font-size:9px;color:#7aacc8;">Загрязнитель: <span id="mainPollutant" style="color:#fbbf24;">PM2.5</span></div>
+          <div id="izaLabel" style="font-size:13px;font-weight:600;color:#4ade80;line-height:1.2;">Загрузка...</div>
+          <div id="aqiLabel" style="font-size:9px;font-weight:600;color:#f87171;">—</div>
+          <div style="font-size:8px;color:#7aacc8;">📍 Чирчик, Буйи 4 · <span id="aqiTimeMeasured">—</span></div>
         </div>
       </div>
 
-      <!-- Сетка 3x2 -->
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;flex:1;min-height:0;">
+      <!-- Сетка 3x3 загрязнителей -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;flex:1;min-height:0;">
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 7px;display:flex;flex-direction:column;justify-content:center;gap:1px;">
-          <div style="font-size:8px;color:#7aacc8;text-transform:uppercase;">🔴 PM2.5</div>
-          <div style="font-size:16px;font-weight:600;color:#fbbf24;line-height:1;"><span id="pm25Value">—</span></div>
-          <div style="font-size:8px;color:#4a6a88;">мкг/м³</div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:5px;padding:3px 5px;display:flex;flex-direction:column;justify-content:center;gap:0;">
+          <div style="font-size:7px;color:#7aacc8;text-transform:uppercase;">🔴 PM2.5</div>
+          <div style="font-size:13px;font-weight:600;color:#fbbf24;line-height:1;"><span id="pm25Value">—</span></div>
+          <div style="font-size:6px;color:#4a6a88;">мкг/м³ · норма &lt;35</div>
+          <div id="pm25Status" style="font-size:6px;font-weight:700;"></div>
         </div>
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 7px;display:flex;flex-direction:column;justify-content:center;gap:1px;">
-          <div style="font-size:8px;color:#7aacc8;text-transform:uppercase;">🌡️ Темп.</div>
-          <div style="font-size:16px;font-weight:600;color:#f87171;line-height:1;"><span id="tempValue">—</span>°C</div>
-          <div style="font-size:8px;color:#4a6a88;">Цельсий</div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:5px;padding:3px 5px;display:flex;flex-direction:column;justify-content:center;gap:0;">
+          <div style="font-size:7px;color:#7aacc8;text-transform:uppercase;">🌫️ PM10</div>
+          <div style="font-size:13px;font-weight:600;color:#fb923c;line-height:1;"><span id="pm10Value">—</span></div>
+          <div style="font-size:6px;color:#4a6a88;">мкг/м³ · норма &lt;50</div>
+          <div id="pm10Status" style="font-size:6px;font-weight:700;"></div>
         </div>
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 7px;display:flex;flex-direction:column;justify-content:center;gap:1px;">
-          <div style="font-size:8px;color:#7aacc8;text-transform:uppercase;">💧 Влажн.</div>
-          <div style="font-size:16px;font-weight:600;color:#60a5fa;line-height:1;"><span id="humidValue">—</span>%</div>
-          <div style="font-size:8px;color:#4a6a88;">отн.</div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:5px;padding:3px 5px;display:flex;flex-direction:column;justify-content:center;gap:0;">
+          <div style="font-size:7px;color:#7aacc8;text-transform:uppercase;">🟡 SO₂</div>
+          <div style="font-size:13px;font-weight:600;color:#fbbf24;line-height:1;"><span id="so2Value">—</span></div>
+          <div style="font-size:6px;color:#4a6a88;">мкг/м³ · норма &lt;50</div>
+          <div id="so2Status" style="font-size:6px;font-weight:700;"></div>
         </div>
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 7px;display:flex;flex-direction:column;justify-content:center;gap:1px;">
-          <div style="font-size:8px;color:#7aacc8;text-transform:uppercase;">🔵 Давл.</div>
-          <div style="font-size:16px;font-weight:600;color:#a78bfa;line-height:1;"><span id="pressValue">—</span></div>
-          <div style="font-size:8px;color:#4a6a88;">мб</div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:5px;padding:3px 5px;display:flex;flex-direction:column;justify-content:center;gap:0;">
+          <div style="font-size:7px;color:#7aacc8;text-transform:uppercase;">🟤 NO₂</div>
+          <div style="font-size:13px;font-weight:600;color:#fb923c;line-height:1;"><span id="no2Value">—</span></div>
+          <div style="font-size:6px;color:#4a6a88;">мкг/м³ · норма &lt;40</div>
+          <div id="no2Status" style="font-size:6px;font-weight:700;"></div>
         </div>
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 7px;display:flex;flex-direction:column;justify-content:center;gap:1px;">
-          <div style="font-size:8px;color:#7aacc8;text-transform:uppercase;">💨 Ветер</div>
-          <div style="font-size:16px;font-weight:600;color:#34d399;line-height:1;"><span id="windValue">—</span></div>
-          <div style="font-size:8px;color:#4a6a88;">км/ч</div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:5px;padding:3px 5px;display:flex;flex-direction:column;justify-content:center;gap:0;">
+          <div style="font-size:7px;color:#7aacc8;text-transform:uppercase;">⚪ CO</div>
+          <div style="font-size:13px;font-weight:600;color:#a3a3a3;line-height:1;"><span id="coValue">—</span></div>
+          <div style="font-size:6px;color:#4a6a88;">мг/м³ · норма &lt;3</div>
+          <div id="coStatus" style="font-size:6px;font-weight:700;"></div>
         </div>
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 7px;display:flex;flex-direction:column;justify-content:center;gap:1px;">
-          <div style="font-size:8px;color:#7aacc8;text-transform:uppercase;">🌫️ PM10</div>
-          <div style="font-size:16px;font-weight:600;color:#fb923c;line-height:1;"><span id="pm10Value">—</span></div>
-          <div style="font-size:8px;color:#4a6a88;">мкг/м³</div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:5px;padding:3px 5px;display:flex;flex-direction:column;justify-content:center;gap:0;">
+          <div style="font-size:7px;color:#7aacc8;text-transform:uppercase;">🔵 O₃</div>
+          <div style="font-size:13px;font-weight:600;color:#60a5fa;line-height:1;"><span id="o3Value">—</span></div>
+          <div style="font-size:6px;color:#4a6a88;">мкг/м³ · норма &lt;100</div>
+          <div id="o3Status" style="font-size:6px;font-weight:700;"></div>
+        </div>
+
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:5px;padding:3px 5px;display:flex;flex-direction:column;justify-content:center;gap:0;">
+          <div style="font-size:7px;color:#7aacc8;text-transform:uppercase;">🌡️ Темп.</div>
+          <div style="font-size:13px;font-weight:600;color:#f87171;line-height:1;"><span id="tempValue">—</span>°C</div>
+          <div style="font-size:6px;color:#4a6a88;">Цельсий</div>
+        </div>
+
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:5px;padding:3px 5px;display:flex;flex-direction:column;justify-content:center;gap:0;">
+          <div style="font-size:7px;color:#7aacc8;text-transform:uppercase;">💧 Влажн.</div>
+          <div style="font-size:13px;font-weight:600;color:#60a5fa;line-height:1;"><span id="humidValue">—</span>%</div>
+          <div style="font-size:6px;color:#4a6a88;">отн.</div>
+        </div>
+
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:5px;padding:3px 5px;display:flex;flex-direction:column;justify-content:center;gap:0;">
+          <div style="font-size:7px;color:#7aacc8;text-transform:uppercase;">💨 Ветер</div>
+          <div style="font-size:13px;font-weight:600;color:#34d399;line-height:1;"><span id="windValue">—</span></div>
+          <div style="font-size:6px;color:#4a6a88;">м/с</div>
         </div>
 
       </div>
@@ -1427,57 +1455,107 @@ function renderSolar(rows) {
   document.getElementById('solarSavingsTotal').textContent = savingsTotal.toLocaleString('ru-RU') + ' сум';
 }
 
-// ── КАЧЕСТВО ВОЗДУХА (Open-Meteo) ────────────────────────────────────────────
+// ── КАЧЕСТВО ВОЗДУХА (Auris Green Tech через Apps Script) ───────────────────
+function pm25toAQI(pm) {
+  const bp = [
+    [0, 12, 0, 50], [12.1, 35.4, 51, 100], [35.5, 55.4, 101, 150],
+    [55.5, 150.4, 151, 200], [150.5, 250.4, 201, 300],
+    [250.5, 350.4, 301, 400], [350.5, 500.4, 401, 500],
+  ];
+  for (const [cLow, cHigh, iLow, iHigh] of bp) {
+    if (pm <= cHigh) return Math.round((iHigh - iLow) / (cHigh - cLow) * (pm - cLow) + iLow);
+  }
+  return 500;
+}
+
+function setPollutantCell(prefix, val, norm, digits) {
+  const valEl = document.getElementById(prefix + 'Value');
+  const statusEl = document.getElementById(prefix + 'Status');
+  if (!valEl) return;
+  const n = Number(val);
+  valEl.textContent = (val === null || val === undefined || isNaN(n)) ? '—' : n.toFixed(digits);
+  if (!statusEl || isNaN(n)) return;
+  if (n === 0)            { statusEl.textContent = '✔ Не обнаружен'; statusEl.style.color = '#4ade80'; }
+  else if (n <= norm)     { statusEl.textContent = '✔ В норме';      statusEl.style.color = '#4ade80'; }
+  else if (n <= norm * 2) { statusEl.textContent = '⚠ Повышен';      statusEl.style.color = '#facc15'; }
+  else if (n <= norm * 5) { statusEl.textContent = '⚠ Высокий!';     statusEl.style.color = '#fb923c'; }
+  else                    { statusEl.textContent = '🚨 Опасный!';    statusEl.style.color = '#f87171'; }
+}
+
 async function fetchAirQuality() {
   try {
-    // Координаты Ташкент (Чирчик)
-    const lat = 41.2995, lon = 69.2401;
+    const { url } = getConfig();
+    const fetchUrl = url + '?sheet=Auris&t=' + Date.now();
+    const r = await fetch(fetchUrl);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const d = await r.json();
+    if (d.error) throw new Error('Apps Script: ' + d.error);
 
-    // Погода
-    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,surface_pressure,wind_speed_10m&wind_speed_unit=kmh&timezone=Asia/Tashkent`;
-    // Качество воздуха
-    const aqUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=pm2_5,pm10,us_aqi&timezone=Asia/Tashkent`;
+    const iza = Number(d.iza);
+    let izaColor, izaLabel;
+    if (isNaN(iza))     { izaColor = '#9ab4c4'; izaLabel = 'Нет данных'; }
+    else if (iza <= 4)  { izaColor = '#4ade80'; izaLabel = 'Низкий'; }
+    else if (iza <= 6)  { izaColor = '#facc15'; izaLabel = 'Повышенный'; }
+    else if (iza <= 13) { izaColor = '#fb923c'; izaLabel = 'Высокий'; }
+    else if (iza <= 20) { izaColor = '#f87171'; izaLabel = 'Очень высокий'; }
+    else                { izaColor = '#be123c'; izaLabel = 'Критическое'; }
 
-    const [weatherRes, aqRes] = await Promise.all([fetch(weatherUrl), fetch(aqUrl)]);
-    const weather = await weatherRes.json();
-    const aq = await aqRes.json();
+    document.getElementById('izaValue').textContent = isNaN(iza) ? '—' : iza.toFixed(1);
+    document.getElementById('izaValue').style.color = izaColor;
+    document.getElementById('izaBadge').style.borderColor = izaColor;
+    document.getElementById('izaBadge').style.background = izaColor + '33';
+    document.getElementById('izaLabel').textContent = izaLabel;
+    document.getElementById('izaLabel').style.color = izaColor;
 
-    const temp     = weather.current?.temperature_2m ?? '—';
-    const humid    = weather.current?.relative_humidity_2m ?? '—';
-    const press    = Math.round(weather.current?.surface_pressure ?? 0);
-    const wind     = Math.round(weather.current?.wind_speed_10m ?? 0);
-    const pm25     = (aq.current?.pm2_5 ?? 0).toFixed(1);
-    const pm10     = (aq.current?.pm10 ?? 0).toFixed(1);
-    const aqi      = Math.round(aq.current?.us_aqi ?? 0);
-
-    // AQI цвет и метка
+    const pm25 = Number(d.pm25);
+    const aqi = isNaN(pm25) ? null : pm25toAQI(pm25);
     let aqiColor, aqiLabel;
-    if (aqi <= 50)       { aqiColor = '#4ade80'; aqiLabel = 'Хорошее'; }
+    if (aqi === null)    { aqiColor = '#9ab4c4'; aqiLabel = '—'; }
+    else if (aqi <= 50)  { aqiColor = '#4ade80'; aqiLabel = 'Хорошее'; }
     else if (aqi <= 100) { aqiColor = '#facc15'; aqiLabel = 'Умеренное'; }
     else if (aqi <= 150) { aqiColor = '#fb923c'; aqiLabel = 'Вредно для групп риска'; }
     else if (aqi <= 200) { aqiColor = '#f87171'; aqiLabel = 'Вредное'; }
     else if (aqi <= 300) { aqiColor = '#c084fc'; aqiLabel = 'Очень вредное'; }
-    else                 { aqiColor = '#f43f5e'; aqiLabel = 'Опасное'; }
+    else                 { aqiColor = '#be123c'; aqiLabel = 'Опасное'; }
 
-    document.getElementById('aqiValue').textContent = aqi;
+    document.getElementById('aqiValue').textContent = aqi !== null ? aqi : '—';
     document.getElementById('aqiValue').style.color = aqiColor;
     document.getElementById('aqiBadge').style.borderColor = aqiColor;
-    document.getElementById('aqiLabel').textContent = aqiLabel;
+    document.getElementById('aqiBadge').style.background = aqiColor + '22';
+    document.getElementById('aqiLabel').textContent = aqi !== null ? 'AQI: ' + aqiLabel : '';
     document.getElementById('aqiLabel').style.color = aqiColor;
-    document.getElementById('pm25Value').textContent = pm25;
-    document.getElementById('pm10Value').textContent = pm10;
-    document.getElementById('tempValue').textContent = temp;
-    document.getElementById('humidValue').textContent = humid;
-    document.getElementById('pressValue').textContent = press;
-    document.getElementById('windValue').textContent = wind;
+
+    setPollutantCell('pm25', d.pm25, 35, 1);
+    setPollutantCell('pm10', d.pm10, 50, 1);
+    setPollutantCell('so2',  d.so2,  50, 1);
+    setPollutantCell('no2',  d.no2,  40, 1);
+    setPollutantCell('co',   d.co,   3,  2);
+    setPollutantCell('o3',   d.o3,   100, 1);
+
+    document.getElementById('tempValue').textContent  = (d.temp  ?? '—');
+    document.getElementById('humidValue').textContent = (d.humid ?? '—');
+    document.getElementById('windValue').textContent  = (d.wind  ?? '—');
+
+    // Время замера (UTC -> Ташкент UTC+5)
+    let measured = '—';
+    if (d.measured) {
+      const dtUtc = new Date(d.measured);
+      if (!isNaN(dtUtc.getTime())) {
+        const dt = new Date(dtUtc.getTime() + 5 * 60 * 60 * 1000);
+        const hh = String(dt.getUTCHours()).padStart(2, '0');
+        const mm = String(dt.getUTCMinutes()).padStart(2, '0');
+        measured = hh + ':' + mm;
+      }
+    }
+    document.getElementById('aqiTimeMeasured').textContent = 'Замер: ' + measured;
 
     const now = new Date();
     document.getElementById('aqiTime').textContent =
       now.toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'});
 
-    dbg('Качество воздуха: данные загружены', 'ok');
+    dbg('Качество воздуха (Auris): данные загружены', 'ok');
   } catch(e) {
-    dbg('Качество воздуха: ошибка — ' + e.message, 'err');
+    dbg('Качество воздуха (Auris): ошибка — ' + e.message, 'err');
   }
 }
 
