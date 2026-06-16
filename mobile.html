@@ -1038,11 +1038,21 @@ function renderAuris(d) {
   document.getElementById('aurisWind').textContent  = fmtAir(d.wind, 1);
   document.getElementById('aurisWindDir').textContent = windDirToText(d.wind_dir);
 
-  // Время замера
-  let measured = String(d.measured || '');
-  const m = measured.match(/(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
-  if (m) measured = m[3]+'.'+m[2]+'.'+m[1]+' '+m[4]+':'+m[5];
-  document.getElementById('aurisTime').textContent = measured || '—';
+  // Время замера (конвертация UTC -> Ташкент UTC+5)
+  let measured = '—';
+  if (d.measured) {
+    const dtUtc = new Date(d.measured);
+    if (!isNaN(dtUtc.getTime())) {
+      const dt = new Date(dtUtc.getTime() + 5 * 60 * 60 * 1000);
+      const day  = String(dt.getUTCDate()).padStart(2, '0');
+      const mon  = String(dt.getUTCMonth() + 1).padStart(2, '0');
+      const year = dt.getUTCFullYear();
+      const hh   = String(dt.getUTCHours()).padStart(2, '0');
+      const mm   = String(dt.getUTCMinutes()).padStart(2, '0');
+      measured = day + '.' + mon + '.' + year + ' ' + hh + ':' + mm;
+    }
+  }
+  document.getElementById('aurisTime').textContent = measured;
 }
 
 // ── RENDER 1С ─────────────────────────────────────────────────────────────────
