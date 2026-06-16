@@ -655,91 +655,82 @@
 
   <!-- Качество воздуха — строка 3 право -->
   <div class="section section-iqair" style="background:linear-gradient(135deg,#0a1e2e 0%,#1a3a52 100%);border:1px solid #2a5a78;">
-    <div class="section-header" style="background:linear-gradient(90deg,#0f1e30,#1a3a52);border-bottom:1px solid #2a5a78;">
-      🌬️ Качество воздуха — станция ENE04588 (Auris)
+    <div class="section-header" style="background:linear-gradient(90deg,#0f1e30,#1a3a52);border-bottom:1px solid #2a5a78;padding:3px 8px;">
+      🌬️ Воздух — ENE04588 (Auris)
       <span class="auto-badge" style="background:rgba(74,222,128,0.15);color:#4ade80;border:1px solid rgba(74,222,128,0.3);">● Авто</span>
       <span class="section-badge" id="aqiTime" style="background:#0f1e30;color:#7aacc8;border:1px solid #2a5a78;">—</span>
     </div>
-    <div style="padding:5px 8px;height:calc(100% - 32px);display:flex;flex-direction:column;gap:4px;overflow:hidden;">
+    <div style="padding:3px 5px;height:calc(100% - 22px);display:flex;flex-direction:column;gap:2px;overflow:hidden;">
 
       <!-- ИЗА + AQI строка -->
-      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
-        <div id="izaBadge" style="min-width:46px;height:46px;border-radius:9px;background:#1a4a2a;border:2px solid #2a7a45;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;">
-          <div id="izaValue" style="font-size:18px;font-weight:700;color:#4ade80;line-height:1;">—</div>
-          <div style="font-size:6px;color:#86efac;letter-spacing:0.05em;">ИЗА</div>
+      <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
+        <div id="izaBadge" style="min-width:30px;height:30px;border-radius:6px;background:#1a4a2a;border:2px solid #2a7a45;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;">
+          <div id="izaValue" style="font-size:12px;font-weight:700;color:#4ade80;line-height:1;">—</div>
+          <div style="font-size:4px;color:#86efac;letter-spacing:0.05em;">ИЗА</div>
         </div>
-        <div id="aqiBadge" style="min-width:46px;height:46px;border-radius:9px;background:#2a1a1a;border:2px solid #f87171;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;">
-          <div id="aqiValue" style="font-size:18px;font-weight:700;color:#f87171;line-height:1;">—</div>
-          <div style="font-size:6px;color:#fca5a5;letter-spacing:0.05em;">AQI</div>
+        <div id="aqiBadge" style="min-width:30px;height:30px;border-radius:6px;background:#2a1a1a;border:2px solid #f87171;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;">
+          <div id="aqiValue" style="font-size:12px;font-weight:700;color:#f87171;line-height:1;">—</div>
+          <div style="font-size:4px;color:#fca5a5;letter-spacing:0.05em;">AQI</div>
         </div>
-        <div style="flex:1;">
-          <div id="izaLabel" style="font-size:13px;font-weight:600;color:#4ade80;line-height:1.2;">Загрузка...</div>
-          <div id="aqiLabel" style="font-size:9px;font-weight:600;color:#f87171;">—</div>
-          <div style="font-size:8px;color:#7aacc8;">📍 Чирчик, Буйи 4 · <span id="aqiTimeMeasured">—</span></div>
+        <div style="flex:1;min-width:0;">
+          <div id="izaLabel" style="font-size:9px;font-weight:600;color:#4ade80;line-height:1.1;">Загрузка...</div>
+          <div id="aqiLabel" style="font-size:6px;font-weight:600;color:#f87171;line-height:1.1;">—</div>
+          <div style="font-size:5px;color:#7aacc8;">📍 <span id="aqiTimeMeasured">—</span></div>
         </div>
       </div>
 
       <!-- Сетка 3x3 загрязнителей -->
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;flex:1;min-height:0;">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;flex:1;min-height:0;">
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:5px;padding:3px 5px;display:flex;flex-direction:column;justify-content:center;gap:0;">
-          <div style="font-size:7px;color:#7aacc8;text-transform:uppercase;">🔴 PM2.5</div>
-          <div style="font-size:13px;font-weight:600;color:#fbbf24;line-height:1;"><span id="pm25Value">—</span></div>
-          <div style="font-size:6px;color:#4a6a88;">мкг/м³ · норма &lt;35</div>
-          <div id="pm25Status" style="font-size:6px;font-weight:700;"></div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:3px;padding:1px 3px;display:flex;flex-direction:column;justify-content:center;gap:0;overflow:hidden;">
+          <div style="font-size:5px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🔴 PM2.5</div>
+          <div style="font-size:9px;font-weight:600;color:#fbbf24;line-height:1;"><span id="pm25Value">—</span></div>
+          <div id="pm25Status" style="font-size:4px;font-weight:700;white-space:nowrap;"></div>
         </div>
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:5px;padding:3px 5px;display:flex;flex-direction:column;justify-content:center;gap:0;">
-          <div style="font-size:7px;color:#7aacc8;text-transform:uppercase;">🌫️ PM10</div>
-          <div style="font-size:13px;font-weight:600;color:#fb923c;line-height:1;"><span id="pm10Value">—</span></div>
-          <div style="font-size:6px;color:#4a6a88;">мкг/м³ · норма &lt;50</div>
-          <div id="pm10Status" style="font-size:6px;font-weight:700;"></div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:3px;padding:1px 3px;display:flex;flex-direction:column;justify-content:center;gap:0;overflow:hidden;">
+          <div style="font-size:5px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🌫️ PM10</div>
+          <div style="font-size:9px;font-weight:600;color:#fb923c;line-height:1;"><span id="pm10Value">—</span></div>
+          <div id="pm10Status" style="font-size:4px;font-weight:700;white-space:nowrap;"></div>
         </div>
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:5px;padding:3px 5px;display:flex;flex-direction:column;justify-content:center;gap:0;">
-          <div style="font-size:7px;color:#7aacc8;text-transform:uppercase;">🟡 SO₂</div>
-          <div style="font-size:13px;font-weight:600;color:#fbbf24;line-height:1;"><span id="so2Value">—</span></div>
-          <div style="font-size:6px;color:#4a6a88;">мкг/м³ · норма &lt;50</div>
-          <div id="so2Status" style="font-size:6px;font-weight:700;"></div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:3px;padding:1px 3px;display:flex;flex-direction:column;justify-content:center;gap:0;overflow:hidden;">
+          <div style="font-size:5px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🟡 SO₂</div>
+          <div style="font-size:9px;font-weight:600;color:#fbbf24;line-height:1;"><span id="so2Value">—</span></div>
+          <div id="so2Status" style="font-size:4px;font-weight:700;white-space:nowrap;"></div>
         </div>
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:5px;padding:3px 5px;display:flex;flex-direction:column;justify-content:center;gap:0;">
-          <div style="font-size:7px;color:#7aacc8;text-transform:uppercase;">🟤 NO₂</div>
-          <div style="font-size:13px;font-weight:600;color:#fb923c;line-height:1;"><span id="no2Value">—</span></div>
-          <div style="font-size:6px;color:#4a6a88;">мкг/м³ · норма &lt;40</div>
-          <div id="no2Status" style="font-size:6px;font-weight:700;"></div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:3px;padding:1px 3px;display:flex;flex-direction:column;justify-content:center;gap:0;overflow:hidden;">
+          <div style="font-size:5px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🟤 NO₂</div>
+          <div style="font-size:9px;font-weight:600;color:#fb923c;line-height:1;"><span id="no2Value">—</span></div>
+          <div id="no2Status" style="font-size:4px;font-weight:700;white-space:nowrap;"></div>
         </div>
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:5px;padding:3px 5px;display:flex;flex-direction:column;justify-content:center;gap:0;">
-          <div style="font-size:7px;color:#7aacc8;text-transform:uppercase;">⚪ CO</div>
-          <div style="font-size:13px;font-weight:600;color:#a3a3a3;line-height:1;"><span id="coValue">—</span></div>
-          <div style="font-size:6px;color:#4a6a88;">мг/м³ · норма &lt;3</div>
-          <div id="coStatus" style="font-size:6px;font-weight:700;"></div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:3px;padding:1px 3px;display:flex;flex-direction:column;justify-content:center;gap:0;overflow:hidden;">
+          <div style="font-size:5px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">⚪ CO</div>
+          <div style="font-size:9px;font-weight:600;color:#a3a3a3;line-height:1;"><span id="coValue">—</span></div>
+          <div id="coStatus" style="font-size:4px;font-weight:700;white-space:nowrap;"></div>
         </div>
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:5px;padding:3px 5px;display:flex;flex-direction:column;justify-content:center;gap:0;">
-          <div style="font-size:7px;color:#7aacc8;text-transform:uppercase;">🔵 O₃</div>
-          <div style="font-size:13px;font-weight:600;color:#60a5fa;line-height:1;"><span id="o3Value">—</span></div>
-          <div style="font-size:6px;color:#4a6a88;">мкг/м³ · норма &lt;100</div>
-          <div id="o3Status" style="font-size:6px;font-weight:700;"></div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:3px;padding:1px 3px;display:flex;flex-direction:column;justify-content:center;gap:0;overflow:hidden;">
+          <div style="font-size:5px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🔵 O₃</div>
+          <div style="font-size:9px;font-weight:600;color:#60a5fa;line-height:1;"><span id="o3Value">—</span></div>
+          <div id="o3Status" style="font-size:4px;font-weight:700;white-space:nowrap;"></div>
         </div>
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:5px;padding:3px 5px;display:flex;flex-direction:column;justify-content:center;gap:0;">
-          <div style="font-size:7px;color:#7aacc8;text-transform:uppercase;">🌡️ Темп.</div>
-          <div style="font-size:13px;font-weight:600;color:#f87171;line-height:1;"><span id="tempValue">—</span>°C</div>
-          <div style="font-size:6px;color:#4a6a88;">Цельсий</div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:3px;padding:1px 3px;display:flex;flex-direction:column;justify-content:center;gap:0;overflow:hidden;">
+          <div style="font-size:5px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🌡️ Темп.</div>
+          <div style="font-size:9px;font-weight:600;color:#f87171;line-height:1;"><span id="tempValue">—</span>°C</div>
         </div>
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:5px;padding:3px 5px;display:flex;flex-direction:column;justify-content:center;gap:0;">
-          <div style="font-size:7px;color:#7aacc8;text-transform:uppercase;">💧 Влажн.</div>
-          <div style="font-size:13px;font-weight:600;color:#60a5fa;line-height:1;"><span id="humidValue">—</span>%</div>
-          <div style="font-size:6px;color:#4a6a88;">отн.</div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:3px;padding:1px 3px;display:flex;flex-direction:column;justify-content:center;gap:0;overflow:hidden;">
+          <div style="font-size:5px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">💧 Влажн.</div>
+          <div style="font-size:9px;font-weight:600;color:#60a5fa;line-height:1;"><span id="humidValue">—</span>%</div>
         </div>
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:5px;padding:3px 5px;display:flex;flex-direction:column;justify-content:center;gap:0;">
-          <div style="font-size:7px;color:#7aacc8;text-transform:uppercase;">💨 Ветер</div>
-          <div style="font-size:13px;font-weight:600;color:#34d399;line-height:1;"><span id="windValue">—</span></div>
-          <div style="font-size:6px;color:#4a6a88;">м/с</div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:3px;padding:1px 3px;display:flex;flex-direction:column;justify-content:center;gap:0;overflow:hidden;">
+          <div style="font-size:5px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">💨 Ветер</div>
+          <div style="font-size:9px;font-weight:600;color:#34d399;line-height:1;"><span id="windValue">—</span></div>
         </div>
 
       </div>
