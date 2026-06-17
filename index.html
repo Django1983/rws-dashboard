@@ -481,7 +481,7 @@
     <div class="section-header">
       🚛 ПЦ — Отгрузка шпал
       <span class="auto-badge">● Авто</span>
-      <span class="section-badge" id="otgDate">Отгрузка</span>
+      <span class="section-badge" id="otgDate">—</span>
     </div>
     <div class="error-block" id="otgError">
       <h4>⚠ Не удалось загрузить данные Отгрузки</h4>
@@ -1046,11 +1046,16 @@ function renderOTG(rows) {
     return;
   }
 
+  // Row 1 (index 0), col B (index 1) has "Отгружено шпал на ДД.MM.ГГГГ г."
+  const b1Cell = String(rows[0] && rows[0][1] || '');
+  const b1Match = b1Cell.match(/\d{2}\.\d{2}\.\d{4}/);
+  if (b1Match && dateEl) dateEl.textContent = b1Match[0];
+
   // Row 3 (index 2) has group headers, row 4 (index 3) has date in col L (index 11)
   const hrow = rows[2] || [];
   const dateCell = String(hrow[11] || '');
   const dateMatch = dateCell.match(/\d{2}\.\d{2}\.\d{4}/);
-  if (dateMatch && dateEl) dateEl.textContent = dateMatch[0] + ' остаток';
+  if (!b1Match && dateMatch && dateEl) dateEl.textContent = dateMatch[0] + ' остаток';
 
   function fmt(v) {
     const n = parseFloat(String(v).replace(/\s/g,'').replace(',','.'));
