@@ -71,16 +71,23 @@
   .section-bsu .section-header,
   .section-otg .section-header,
   .section-ok .section-header {
-    font-size: 10.5px;
-    padding: 5px 8px;
-    gap: 5px;
+    font-size: 10px;
+    padding: 5px 6px;
+    gap: 4px;
+    flex-wrap: nowrap;
+    overflow: hidden;
   }
+  .section-pc .auto-badge,
+  .section-bsu .auto-badge,
+  .section-otg .auto-badge,
+  .section-ok .auto-badge,
   .section-pc .section-badge,
   .section-bsu .section-badge,
   .section-otg .section-badge,
   .section-ok .section-badge {
-    font-size: 9px;
-    padding: 1px 6px;
+    font-size: 8.5px;
+    padding: 1px 5px;
+    flex-shrink: 0;
   }
   /* RadioMer — узкая колонка справа от Auris, вся высота */
   .section-power  { grid-column: 5; grid-row: 1 / 4; }
@@ -431,7 +438,7 @@
   <!-- ПЦ — верх слева -->
   <div class="section section-pc">
     <div class="section-header">
-      🏭 Производственный цех — шпалы
+      🏭 Производственный цех
       <span class="auto-badge">● Авто</span>
       <span class="section-badge" id="pcDate">ПЦ</span>
     </div>
@@ -468,7 +475,7 @@
   <!-- БСУ — низ слева -->
   <div class="section section-bsu">
     <div class="section-header">
-      📦 БСУ — остатки сырья
+      📦 БСУ — сырьё
       <span class="auto-badge">● Авто</span>
       <span class="section-badge" id="bsuDate">БСУ</span>
     </div>
@@ -498,7 +505,7 @@
   <!-- Отгрузка — центр, 2 строки -->
   <div class="section section-otg">
     <div class="section-header">
-      🚛 ПЦ — Отгрузка шпал
+      🚛 Отгрузка шпал
       <span class="auto-badge">● Авто</span>
       <span class="section-badge" id="otgDate">—</span>
     </div>
@@ -539,7 +546,7 @@
   <!-- ОК — право, 2 строки -->
   <div class="section section-ok">
     <div class="section-header">
-      👷 ОК — Численность работников
+      👷 ОК — кадры
       <span class="auto-badge">● Авто</span>
       <span class="section-badge" id="okDate">ОК</span>
     </div>
