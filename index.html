@@ -71,11 +71,11 @@
   .section-bsu .section-header,
   .section-otg .section-header,
   .section-ok .section-header {
-    font-size: 10px;
-    padding: 5px 6px;
-    gap: 4px;
-    flex-wrap: nowrap;
-    overflow: hidden;
+    font-size: 9px;
+    padding: 4px 6px;
+    gap: 3px;
+    flex-wrap: wrap;
+    row-gap: 2px;
   }
   .section-pc .auto-badge,
   .section-bsu .auto-badge,
@@ -85,9 +85,15 @@
   .section-bsu .section-badge,
   .section-otg .section-badge,
   .section-ok .section-badge {
-    font-size: 8.5px;
-    padding: 1px 5px;
+    font-size: 8px;
+    padding: 1px 4px;
     flex-shrink: 0;
+  }
+  .section-pc .section-badge,
+  .section-bsu .section-badge,
+  .section-otg .section-badge,
+  .section-ok .section-badge {
+    margin-left: auto;
   }
   /* RadioMer — узкая колонка справа от Auris, вся высота */
   .section-power  { grid-column: 5; grid-row: 1 / 4; }
