@@ -756,6 +756,23 @@
         <div style="font-size:20px;font-weight:700;color:#60a5fa;line-height:1.2;"><span id="powerMonth">—</span> <span style="font-size:11px;font-weight:400;">кВт·ч</span></div>
       </div>
 
+      <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:6px 8px;">
+        <div style="font-size:10px;color:#7aacc8;text-transform:uppercase;">Всего с начала учёта</div>
+        <div style="font-size:16px;font-weight:700;color:#a78bfa;line-height:1.2;"><span id="powerTotal">—</span> <span style="font-size:10px;font-weight:400;">кВт·ч</span></div>
+      </div>
+
+      <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:6px 8px;">
+        <div style="font-size:10px;color:#7aacc8;text-transform:uppercase;">Реактивная энергия</div>
+        <div style="font-size:13px;font-weight:600;color:#34d399;line-height:1.3;">за месяц: <span id="powerReactMonth">—</span> квар·ч</div>
+        <div style="font-size:13px;font-weight:600;color:#34d399;line-height:1.3;">всего: <span id="powerReactTotal">—</span> квар·ч</div>
+      </div>
+
+      <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:6px 8px;">
+        <div style="font-size:10px;color:#7aacc8;text-transform:uppercase;">Прибор учёта</div>
+        <div style="font-size:11px;font-weight:600;color:#9ab4c4;line-height:1.4;"><span id="powerDevice">—</span></div>
+        <div style="font-size:11px;color:#7aacc8;line-height:1.4;">№ <span id="powerNumber">—</span></div>
+      </div>
+
       <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:6px 8px;flex:1;display:flex;flex-direction:column;justify-content:center;gap:4px;">
         <div>
           <div style="font-size:10px;color:#7aacc8;text-transform:uppercase;">Ток, А (A/B/C)</div>
@@ -1581,6 +1598,12 @@ async function fetchRadiomer() {
 
     document.getElementById('powerToday').textContent = (d.consumedToday ?? '—');
     document.getElementById('powerMonth').textContent = (d.consumedMonth ?? '—');
+    document.getElementById('powerTotal').textContent = (d.wtotal ?? '—');
+    document.getElementById('powerReactMonth').textContent =
+      (d.qtotal != null && d.firstQtotal != null) ? (d.qtotal - d.firstQtotal).toFixed(2) : '—';
+    document.getElementById('powerReactTotal').textContent = (d.qtotal ?? '—');
+    document.getElementById('powerDevice').textContent = (d.deviceType ?? '—');
+    document.getElementById('powerNumber').textContent = (d.number ?? '—');
     document.getElementById('powerAmps').textContent =
       (d.ampA ?? '—') + ' / ' + (d.ampB ?? '—') + ' / ' + (d.ampC ?? '—');
     document.getElementById('powerVolts').textContent =
