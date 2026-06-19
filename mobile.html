@@ -311,19 +311,15 @@
     </div>
     <div style="padding:10px 8px;">
 
-      <!-- ИЗА + AQI большой -->
+      <!-- ИЗА -->
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
-        <div id="izaBadge" style="min-width:70px;height:70px;border-radius:12px;background:#1a4a2a;border:2px solid #2a7a45;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+        <div id="izaBadge" style="min-width:70px;height:70px;border-radius:12px;background:#1a4a2a;border:2px solid #2a7a45;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;">
           <div id="izaValue" style="font-size:28px;font-weight:700;color:#4ade80;line-height:1;">—</div>
           <div style="font-size:9px;color:#86efac;">ИЗА</div>
         </div>
-        <div id="aqiBadge" style="min-width:70px;height:70px;border-radius:12px;background:#2a1a1a;border:2px solid #f87171;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-          <div id="aqiValue" style="font-size:28px;font-weight:700;color:#f87171;line-height:1;">—</div>
-          <div style="font-size:9px;color:#fca5a5;">AQI</div>
-        </div>
         <div>
           <div id="izaLabel" style="font-size:20px;font-weight:600;color:#4ade80;">Загрузка...</div>
-          <div id="aqiLabel" style="font-size:13px;font-weight:600;color:#f87171;margin-top:2px;"></div>
+          <div style="font-size:9px;color:#7aacc8;margin-top:1px;">Норма ИЗА: до 4 (низкий)</div>
           <div style="font-size:11px;color:#7aacc8;margin-top:3px;">📍 Чирчик, Буйи 4</div>
           <div style="font-size:11px;color:#7aacc8;">Замер: <span id="aurisTime">—</span></div>
         </div>
@@ -1057,42 +1053,6 @@ function renderAuris(d) {
   document.getElementById('izaBadge').style.background = izaColor + '33';
   document.getElementById('izaLabel').textContent = izaLabel;
   document.getElementById('izaLabel').style.color = izaColor;
-
-  // AQI по PM2.5 (US EPA формула)
-  function pm25toAQI(pm) {
-    const bp = [
-      [0,    12,    0,   50],
-      [12.1, 35.4,  51,  100],
-      [35.5, 55.4,  101, 150],
-      [55.5, 150.4, 151, 200],
-      [150.5,250.4, 201, 300],
-      [250.5,350.4, 301, 400],
-      [350.5,500.4, 401, 500],
-    ];
-    for (const [cLow, cHigh, iLow, iHigh] of bp) {
-      if (pm <= cHigh) {
-        return Math.round((iHigh - iLow) / (cHigh - cLow) * (pm - cLow) + iLow);
-      }
-    }
-    return 500;
-  }
-  const pm25 = Number(d.pm25);
-  const aqi = isNaN(pm25) ? null : pm25toAQI(pm25);
-  let aqiColor, aqiLabel;
-  if (aqi === null)    { aqiColor = '#9ab4c4'; aqiLabel = '—'; }
-  else if (aqi <= 50)  { aqiColor = '#4ade80'; aqiLabel = 'Хорошее'; }
-  else if (aqi <= 100) { aqiColor = '#facc15'; aqiLabel = 'Умеренное'; }
-  else if (aqi <= 150) { aqiColor = '#fb923c'; aqiLabel = 'Вредно для чувствит.'; }
-  else if (aqi <= 200) { aqiColor = '#f87171'; aqiLabel = 'Вредно'; }
-  else if (aqi <= 300) { aqiColor = '#c084fc'; aqiLabel = 'Очень вредно'; }
-  else                 { aqiColor = '#be123c'; aqiLabel = 'Опасно'; }
-
-  document.getElementById('aqiValue').textContent = aqi !== null ? aqi : '—';
-  document.getElementById('aqiValue').style.color = aqiColor;
-  document.getElementById('aqiBadge').style.borderColor = aqiColor;
-  document.getElementById('aqiBadge').style.background = aqiColor + '22';
-  document.getElementById('aqiLabel').textContent = aqi !== null ? 'AQI: ' + aqiLabel : '';
-  document.getElementById('aqiLabel').style.color = aqiColor;
 
   // Загрязняющие вещества + статус
   function setAirCell(id, val, norm, digits) {
