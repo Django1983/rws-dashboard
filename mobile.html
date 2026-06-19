@@ -423,7 +423,96 @@
   </div>
 </div>
 
-<div class="page" id="page-onec">
+<!-- ЭЛЕКТРОЭНЕРГИЯ -->
+<div class="page" id="page-power">
+  <div class="section">
+    <div class="sec-header">⚡ Электроэнергия — ф.Optimum-1
+      <span class="sec-badge" id="powerStatus">—</span>
+    </div>
+    <div style="padding:10px 8px;">
+
+      <!-- Потребление: сутки / месяц -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+        <div class="weather-cell">
+          <div class="weather-cell-label">За сутки</div>
+          <div class="weather-cell-val" style="color:#4ade80;"><span id="powerToday">—</span><span class="weather-cell-unit"> кВт·ч</span></div>
+        </div>
+        <div class="weather-cell">
+          <div class="weather-cell-label">За месяц</div>
+          <div class="weather-cell-val" style="color:#60a5fa;"><span id="powerMonth">—</span><span class="weather-cell-unit"> кВт·ч</span></div>
+        </div>
+      </div>
+
+      <!-- Всего с начала учёта + реактивная -->
+      <div class="air-section-title">Накопленная энергия</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+        <div class="weather-cell">
+          <div class="weather-cell-label">Всего, кВт·ч</div>
+          <div class="weather-cell-val" style="color:#a78bfa;font-size:18px;"><span id="powerTotal">—</span></div>
+        </div>
+        <div class="weather-cell">
+          <div class="weather-cell-label">Реактивная всего, квар·ч</div>
+          <div class="weather-cell-val" style="color:#34d399;font-size:18px;"><span id="powerReactTotal">—</span></div>
+        </div>
+      </div>
+
+      <!-- Ток / Напряжение по фазам -->
+      <div class="air-section-title">Показания по фазам</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px;">
+        <div class="air-cell">
+          <div class="air-cell-label">Ток A</div>
+          <div class="air-cell-val" id="powerAmpA" style="color:#fbbf24;">—</div>
+          <div class="air-cell-unit">А</div>
+        </div>
+        <div class="air-cell">
+          <div class="air-cell-label">Ток B</div>
+          <div class="air-cell-val" id="powerAmpB" style="color:#fbbf24;">—</div>
+          <div class="air-cell-unit">А</div>
+        </div>
+        <div class="air-cell">
+          <div class="air-cell-label">Ток C</div>
+          <div class="air-cell-val" id="powerAmpC" style="color:#fbbf24;">—</div>
+          <div class="air-cell-unit">А</div>
+        </div>
+        <div class="air-cell">
+          <div class="air-cell-label">Напряж. A</div>
+          <div class="air-cell-val" id="powerVoltA" style="color:#fb923c;">—</div>
+          <div class="air-cell-unit">В</div>
+        </div>
+        <div class="air-cell">
+          <div class="air-cell-label">Напряж. B</div>
+          <div class="air-cell-val" id="powerVoltB" style="color:#fb923c;">—</div>
+          <div class="air-cell-unit">В</div>
+        </div>
+        <div class="air-cell">
+          <div class="air-cell-label">Напряж. C</div>
+          <div class="air-cell-val" id="powerVoltC" style="color:#fb923c;">—</div>
+          <div class="air-cell-unit">В</div>
+        </div>
+      </div>
+
+      <!-- Доп. информация -->
+      <div class="air-section-title">Прибор учёта</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div class="weather-cell">
+          <div class="weather-cell-label">Частота сети</div>
+          <div class="weather-cell-val" style="color:#9ab4c4;"><span id="powerFreq">—</span><span class="weather-cell-unit"> Гц</span></div>
+        </div>
+        <div class="weather-cell">
+          <div class="weather-cell-label">Модель / номер</div>
+          <div style="font-size:11px;color:#9ab4c4;margin-top:4px;line-height:1.4;">
+            <span id="powerDevice">—</span><br>№ <span id="powerNumber">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="font-size:11px;color:#7aacc8;margin-top:10px;text-align:right;">Обновлено: <span id="powerTime">—</span></div>
+
+    </div>
+  </div>
+</div>
+
+
   <div class="section">
     <div class="sec-header"><svg width="16" height="16" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:4px"><circle cx="11" cy="11" r="10" fill="#e8000d"/><text x="11" y="15" text-anchor="middle" font-size="10" font-weight="900" font-family="Arial" fill="white">1С</text></svg> Остатки сырья (1С)</div>
     <div id="onecInner">
@@ -505,6 +594,9 @@
   </div>
   <div class="nav-tab" onclick="switchTab('air',this)">
     <div class="icon">🌬️</div>Воздух
+  </div>
+  <div class="nav-tab" onclick="switchTab('power',this)">
+    <div class="icon">⚡</div>Эл-во
   </div>
   <div class="nav-tab" onclick="switchTab('onec',this)">
     <div class="icon"><svg width="22" height="22" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
@@ -1055,6 +1147,43 @@ function renderAuris(d) {
   document.getElementById('aurisTime').textContent = measured;
 }
 
+// ── RENDER ЭЛЕКТРОЭНЕРГИЯ (RadioMer) ─────────────────────────────────────────
+function renderPower(d) {
+  const statusEl = document.getElementById('powerStatus');
+  if (!d || d.error) {
+    if (statusEl) statusEl.textContent = '⚠ Ошибка';
+    return;
+  }
+
+  if (statusEl) statusEl.textContent = d.status ? '🟢 Онлайн' : '🔴 Офлайн';
+
+  document.getElementById('powerToday').textContent = (d.consumedToday ?? '—');
+  document.getElementById('powerMonth').textContent = (d.consumedMonth ?? '—');
+  document.getElementById('powerTotal').textContent = (d.wtotal ?? '—');
+  document.getElementById('powerReactTotal').textContent = (d.qtotal ?? '—');
+
+  document.getElementById('powerAmpA').textContent = (d.ampA ?? '—');
+  document.getElementById('powerAmpB').textContent = (d.ampB ?? '—');
+  document.getElementById('powerAmpC').textContent = (d.ampC ?? '—');
+  document.getElementById('powerVoltA').textContent = (d.voltA ?? '—');
+  document.getElementById('powerVoltB').textContent = (d.voltB ?? '—');
+  document.getElementById('powerVoltC').textContent = (d.voltC ?? '—');
+
+  document.getElementById('powerFreq').textContent = (d.frequency ?? '—');
+  document.getElementById('powerDevice').textContent = (d.deviceType ?? '—');
+  document.getElementById('powerNumber').textContent = (d.number ?? '—');
+
+  // время последнего обновления (формат ГГГГММДДЧЧММСС -> ДД.ММ ЧЧ:ММ)
+  let timeStr = '—';
+  if (d.lastTime) {
+    const s = String(d.lastTime);
+    if (s.length >= 14) {
+      timeStr = s.slice(6,8) + '.' + s.slice(4,6) + ' ' + s.slice(8,10) + ':' + s.slice(10,12);
+    }
+  }
+  document.getElementById('powerTime').textContent = timeStr;
+}
+
 // ── RENDER 1С ─────────────────────────────────────────────────────────────────
 function renderOnec(rows) {
   const inner = document.getElementById('onecInner');
@@ -1113,6 +1242,7 @@ async function loadData() {
     { sheet: 'Солнечные',  render: renderSolar },
     { sheet: '1С_Остатки', render: renderOnec },
     { sheet: 'Auris',      render: renderAuris },
+    { sheet: 'Radiomer',   render: renderPower },
   ];
 
   await Promise.allSettled(tasks.map(async t => {
@@ -1123,6 +1253,7 @@ async function loadData() {
     } catch(e) {
       fail++;
       if (t.sheet === 'Auris') renderAuris({ error: e.message || String(e) });
+      if (t.sheet === 'Radiomer') renderPower({ error: e.message || String(e) });
     }
   }));
 
