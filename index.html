@@ -65,6 +65,23 @@
   .section-solar  { grid-column: 2 / 4; grid-row: 3; }
   /* IQAir — отдельная колонка, вся высота */
   .section-iqair  { grid-column: 4; grid-row: 1 / 4; }
+
+  /* Компактные заголовки для узких блоков, где текст перестаёт помещаться */
+  .section-pc .section-header,
+  .section-bsu .section-header,
+  .section-otg .section-header,
+  .section-ok .section-header {
+    font-size: 10.5px;
+    padding: 5px 8px;
+    gap: 5px;
+  }
+  .section-pc .section-badge,
+  .section-bsu .section-badge,
+  .section-otg .section-badge,
+  .section-ok .section-badge {
+    font-size: 9px;
+    padding: 1px 6px;
+  }
   /* RadioMer — узкая колонка справа от Auris, вся высота */
   .section-power  { grid-column: 5; grid-row: 1 / 4; }
 
