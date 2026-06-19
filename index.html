@@ -43,7 +43,7 @@
     flex: 1;
     display: grid;
     grid-template-columns: minmax(0,1fr) minmax(0,1.4fr) minmax(0,0.9fr) minmax(0,0.85fr);
-    grid-template-rows: minmax(0,1fr) minmax(0,1fr) minmax(0,0.65fr);
+    grid-template-rows: minmax(0,1fr) minmax(0,1fr) minmax(0,0.65fr) minmax(0,56px);
     gap: 8px;
     padding: 8px;
     overflow: hidden;
@@ -65,6 +65,8 @@
   .section-solar  { grid-column: 2 / 4; grid-row: 3; }
   /* IQAir — отдельная колонка, вся высота */
   .section-iqair  { grid-column: 4; grid-row: 1 / 4; }
+  /* RadioMer — узкая полоса электроэнергии, во всю ширину снизу */
+  .section-power  { grid-column: 1 / 5; grid-row: 4; }
 
   /* Расход: вертикальная таблица карточек */
   .rashod-inner {
@@ -734,6 +736,52 @@
     </div>
   </div>
 
+  <!-- Электроэнергия — RadioMer (узкая полоса снизу, во всю ширину) -->
+  <div class="section section-power" style="background:linear-gradient(135deg,#0a1e2e 0%,#1a3a52 100%);border:1px solid #2a5a78;display:flex;align-items:center;gap:0;overflow:hidden;">
+    <div style="display:flex;align-items:center;gap:6px;padding:0 12px;height:100%;border-right:1px solid #1e3a52;flex-shrink:0;background:#0f1e30;">
+      <span style="font-size:14px;">⚡</span>
+      <div style="line-height:1.2;">
+        <div style="font-size:11px;font-weight:700;color:#facc15;white-space:nowrap;">Электроэнергия</div>
+        <div style="font-size:9px;color:#7aacc8;white-space:nowrap;">ф.Optimum-1 · RadioMer</div>
+      </div>
+      <span id="powerStatusDot" style="width:6px;height:6px;border-radius:50%;background:#7aacc8;flex-shrink:0;margin-left:2px;"></span>
+    </div>
+
+    <div style="display:flex;align-items:center;flex:1;overflow-x:auto;height:100%;">
+
+      <div style="display:flex;flex-direction:column;justify-content:center;padding:0 14px;height:100%;border-right:1px solid #1e3a52;flex-shrink:0;">
+        <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">За сутки</div>
+        <div style="font-size:16px;font-weight:700;color:#4ade80;line-height:1.2;white-space:nowrap;"><span id="powerToday">—</span> кВт·ч</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;justify-content:center;padding:0 14px;height:100%;border-right:1px solid #1e3a52;flex-shrink:0;">
+        <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">За месяц</div>
+        <div style="font-size:16px;font-weight:700;color:#60a5fa;line-height:1.2;white-space:nowrap;"><span id="powerMonth">—</span> кВт·ч</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;justify-content:center;padding:0 14px;height:100%;border-right:1px solid #1e3a52;flex-shrink:0;">
+        <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">Ток, А (A / B / C)</div>
+        <div style="font-size:13px;font-weight:600;color:#fbbf24;line-height:1.2;white-space:nowrap;"><span id="powerAmps">— / — / —</span></div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;justify-content:center;padding:0 14px;height:100%;border-right:1px solid #1e3a52;flex-shrink:0;">
+        <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">Напряж., В (A / B / C)</div>
+        <div style="font-size:13px;font-weight:600;color:#fb923c;line-height:1.2;white-space:nowrap;"><span id="powerVolts">— / — / —</span></div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;justify-content:center;padding:0 14px;height:100%;border-right:1px solid #1e3a52;flex-shrink:0;">
+        <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">Частота</div>
+        <div style="font-size:13px;font-weight:600;color:#9ab4c4;line-height:1.2;white-space:nowrap;"><span id="powerFreq">—</span> Гц</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;justify-content:center;padding:0 14px;height:100%;flex-shrink:0;">
+        <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">Обновлено</div>
+        <div style="font-size:13px;font-weight:600;color:#9ab4c4;line-height:1.2;white-space:nowrap;"><span id="powerTime">—</span></div>
+      </div>
+
+    </div>
+  </div>
+
 </div>
 
 <!-- Панели настроек поверх контента -->
@@ -1383,6 +1431,10 @@ async function loadData() {
   fetchAirQuality();
   setInterval(fetchAirQuality, 10 * 60 * 1000); // обновление каждые 10 минут
 
+  // Электроэнергия (RadioMer)
+  fetchRadiomer();
+  setInterval(fetchRadiomer, 5 * 60 * 1000); // обновление каждые 5 минут
+
   if (pcOk && bsuOk && otgOk && okOk) {
     status('Данные успешно загружены через Apps Script', 'ok');
   } else if (!pcOk && !bsuOk && !otgOk && !okOk) {
@@ -1520,6 +1572,41 @@ async function fetchAirQuality() {
     dbg('Качество воздуха (Auris): данные загружены', 'ok');
   } catch(e) {
     dbg('Качество воздуха (Auris): ошибка — ' + e.message, 'err');
+  }
+}
+
+// ── ЭЛЕКТРОЭНЕРГИЯ (RadioMer) ────────────────────────────────────────────────
+async function fetchRadiomer() {
+  try {
+    const { url } = getConfig();
+    const fetchUrl = url + '?sheet=Radiomer&t=' + Date.now();
+    const r = await fetch(fetchUrl);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const d = await r.json();
+    if (d.error) throw new Error('Apps Script: ' + d.error);
+
+    document.getElementById('powerToday').textContent = (d.consumedToday ?? '—');
+    document.getElementById('powerMonth').textContent = (d.consumedMonth ?? '—');
+    document.getElementById('powerAmps').textContent =
+      (d.ampA ?? '—') + ' / ' + (d.ampB ?? '—') + ' / ' + (d.ampC ?? '—');
+    document.getElementById('powerVolts').textContent =
+      (d.voltA ?? '—') + ' / ' + (d.voltB ?? '—') + ' / ' + (d.voltC ?? '—');
+    document.getElementById('powerFreq').textContent = (d.frequency ?? '—');
+
+    const dot = document.getElementById('powerStatusDot');
+    if (dot) dot.style.background = d.status ? '#4ade80' : '#dc2626';
+
+    // время последнего обновления (формат ГГГГММДДЧЧММСС -> ЧЧ:ММ)
+    let timeStr = '—';
+    if (d.lastTime) {
+      const s = String(d.lastTime);
+      if (s.length >= 14) timeStr = s.slice(8,10) + ':' + s.slice(10,12);
+    }
+    document.getElementById('powerTime').textContent = timeStr;
+
+    dbg('Электроэнергия (RadioMer): данные загружены', 'ok');
+  } catch(e) {
+    dbg('Электроэнергия (RadioMer): ошибка — ' + e.message, 'err');
   }
 }
 
