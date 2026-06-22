@@ -1765,7 +1765,6 @@ async function fetchRadiomer() {
 
     document.getElementById('powerToday').textContent = (d.wtotal ?? '—');
     document.getElementById('powerMonth').textContent = (d.consumedMonth ?? '—');
-    document.getElementById('powerTotal').textContent = (d.wtotal ?? '—');
     document.getElementById('powerReactMonth').textContent =
       (d.qtotal != null && d.firstQtotal != null) ? (d.qtotal - d.firstQtotal).toFixed(2) : '—';
     document.getElementById('powerReactTotal').textContent = (d.qtotal ?? '—');
