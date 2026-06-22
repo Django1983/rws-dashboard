@@ -70,11 +70,11 @@
   .section-iqair  { grid-column: 4; grid-row: 1 / 4; }
 
   /* Диаграмма солнечных по дням */
-  .solar-day-bar { flex:1; background:#4ade80; border-radius:2px 2px 0 0; min-width:3px; max-width:16px; position:relative; cursor:default; transition:opacity 0.2s; }
+  .solar-day-bar { flex:1; background:#4ade80; border-radius:2px 2px 0 0; min-width:3px; max-width:16px; position:relative; cursor:default; transition:opacity 0.2s; overflow:visible; }
   .solar-day-bar:hover { opacity:0.8; }
   .solar-day-bar-today { background:#facc15; }
   .solar-day-label { position:absolute; bottom:-13px; left:50%; transform:translateX(-50%); font-size:6px; color:#4a6a88; white-space:nowrap; }
-  .solar-day-val { position:absolute; top:-14px; left:50%; transform:translateX(-50%); font-size:6px; color:#86efac; white-space:nowrap; }
+  .solar-day-val { position:absolute; top:-14px; left:50%; transform:translateX(-50%); font-size:6.5px; color:#86efac; white-space:nowrap; font-weight:600; }
 
   /* Тарифная диаграмма в блоке электроэнергии */
   .tarif-row { display:flex; align-items:center; gap:5px; }
@@ -703,7 +703,7 @@
     <!-- Диаграмма выработки по дням за месяц -->
     <div style="padding:4px 10px 8px;border-top:1px solid #1e3a52;">
       <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">📊 Выработка по дням за месяц, кВт·ч</div>
-      <div id="solarDailyChart" style="display:flex;align-items:flex-end;gap:2px;height:60px;overflow:hidden;margin-top:14px;margin-bottom:14px;">
+      <div id="solarDailyChart" style="display:flex;align-items:flex-end;gap:2px;height:55px;overflow:visible;margin-top:18px;margin-bottom:14px;">
         <div style="color:#4a6a88;font-size:9px;align-self:center;">Загрузка...</div>
       </div>
       <div id="solarDailyTotal" style="font-size:9px;color:#4ade80;margin-top:3px;text-align:right;"></div>
