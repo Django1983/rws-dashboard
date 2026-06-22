@@ -827,11 +827,23 @@
 
       <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:6px 8px;">
         <div style="font-size:10px;color:#7aacc8;text-transform:uppercase;margin-bottom:6px;">Тарифы за месяц, кВт·ч</div>
-        <div id="tarifChart" style="display:flex;flex-direction:column;gap:4px;">
-          <div class="tarif-row"><span class="tarif-label">T1 пик</span><div class="tarif-bar-wrap"><div class="tarif-bar" id="barT1" style="background:#f87171;"></div></div><span class="tarif-val" id="valT1">—</span></div>
-          <div class="tarif-row"><span class="tarif-label">T2 полупик</span><div class="tarif-bar-wrap"><div class="tarif-bar" id="barT2" style="background:#fbbf24;"></div></div><span class="tarif-val" id="valT2">—</span></div>
-          <div class="tarif-row"><span class="tarif-label">T3 ночь</span><div class="tarif-bar-wrap"><div class="tarif-bar" id="barT3" style="background:#4ade80;"></div></div><span class="tarif-val" id="valT3">—</span></div>
-          <div class="tarif-row"><span class="tarif-label">T4 прочие</span><div class="tarif-bar-wrap"><div class="tarif-bar" id="barT4" style="background:#60a5fa;"></div></div><span class="tarif-val" id="valT4">—</span></div>
+        <div id="tarifChart" style="display:flex;flex-direction:column;gap:6px;">
+          <div>
+            <div class="tarif-row"><span class="tarif-label">T1 пик</span><div class="tarif-bar-wrap"><div class="tarif-bar" id="barT1" style="background:#f87171;"></div></div><span class="tarif-val" id="valT1">—</span></div>
+            <div style="font-size:8px;color:#4a6a88;margin-left:63px;line-height:1.3;">Дневные часы — самый дорогой тариф</div>
+          </div>
+          <div>
+            <div class="tarif-row"><span class="tarif-label">T2 полупик</span><div class="tarif-bar-wrap"><div class="tarif-bar" id="barT2" style="background:#fbbf24;"></div></div><span class="tarif-val" id="valT2">—</span></div>
+            <div style="font-size:8px;color:#4a6a88;margin-left:63px;line-height:1.3;">Переходные часы — средний тариф</div>
+          </div>
+          <div>
+            <div class="tarif-row"><span class="tarif-label">T3 ночь</span><div class="tarif-bar-wrap"><div class="tarif-bar" id="barT3" style="background:#4ade80;"></div></div><span class="tarif-val" id="valT3">—</span></div>
+            <div style="font-size:8px;color:#4a6a88;margin-left:63px;line-height:1.3;">Ночные часы — льготный тариф</div>
+          </div>
+          <div>
+            <div class="tarif-row"><span class="tarif-label">T4 прочие</span><div class="tarif-bar-wrap"><div class="tarif-bar" id="barT4" style="background:#60a5fa;"></div></div><span class="tarif-val" id="valT4">—</span></div>
+            <div style="font-size:8px;color:#4a6a88;margin-left:63px;line-height:1.3;">Выходные и праздничные дни</div>
+          </div>
         </div>
       </div>
 
