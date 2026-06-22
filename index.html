@@ -66,7 +66,14 @@
   /* IQAir — отдельная колонка, вся высота */
   .section-iqair  { grid-column: 4; grid-row: 1 / 4; }
 
-  /* Компактные заголовки для узких блоков, где текст перестаёт помещаться */
+  /* Тарифная диаграмма в блоке электроэнергии */
+  .tarif-row { display:flex; align-items:center; gap:5px; }
+  .tarif-label { font-size:9px; color:#7aacc8; width:58px; flex-shrink:0; white-space:nowrap; }
+  .tarif-bar-wrap { flex:1; height:8px; background:#1e3a52; border-radius:4px; overflow:hidden; }
+  .tarif-bar { height:100%; border-radius:4px; width:0%; transition:width 0.6s ease; }
+  .tarif-val { font-size:9px; color:#9ab4c4; width:36px; text-align:right; flex-shrink:0; }
+
+, где текст перестаёт помещаться */
   .section-pc .section-header,
   .section-bsu .section-header,
   .section-otg .section-header,
@@ -815,6 +822,16 @@
         <div>
           <div style="font-size:10px;color:#7aacc8;text-transform:uppercase;">Частота</div>
           <div style="font-size:13px;font-weight:600;color:#9ab4c4;line-height:1.3;"><span id="powerFreq">—</span> Гц</div>
+        </div>
+      </div>
+
+      <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:6px 8px;">
+        <div style="font-size:10px;color:#7aacc8;text-transform:uppercase;margin-bottom:6px;">Тарифы за месяц, кВт·ч</div>
+        <div id="tarifChart" style="display:flex;flex-direction:column;gap:4px;">
+          <div class="tarif-row"><span class="tarif-label">T1 пик</span><div class="tarif-bar-wrap"><div class="tarif-bar" id="barT1" style="background:#f87171;"></div></div><span class="tarif-val" id="valT1">—</span></div>
+          <div class="tarif-row"><span class="tarif-label">T2 полупик</span><div class="tarif-bar-wrap"><div class="tarif-bar" id="barT2" style="background:#fbbf24;"></div></div><span class="tarif-val" id="valT2">—</span></div>
+          <div class="tarif-row"><span class="tarif-label">T3 ночь</span><div class="tarif-bar-wrap"><div class="tarif-bar" id="barT3" style="background:#4ade80;"></div></div><span class="tarif-val" id="valT3">—</span></div>
+          <div class="tarif-row"><span class="tarif-label">T4 прочие</span><div class="tarif-bar-wrap"><div class="tarif-bar" id="barT4" style="background:#60a5fa;"></div></div><span class="tarif-val" id="valT4">—</span></div>
         </div>
       </div>
 
@@ -1650,6 +1667,20 @@ async function fetchRadiomer() {
       if (s.length >= 14) timeStr = s.slice(8,10) + ':' + s.slice(10,12);
     }
     document.getElementById('powerTime').textContent = timeStr;
+
+    // Тарифная диаграмма
+    if (d.tarif) {
+      const t = d.tarif;
+      const vals = [t.t1_month||0, t.t2_month||0, t.t3_month||0, t.t4_month||0];
+      const maxVal = Math.max(...vals, 0.01);
+      const ids = ['T1','T2','T3','T4'];
+      ids.forEach((id, i) => {
+        const bar = document.getElementById('bar'+id);
+        const val = document.getElementById('val'+id);
+        if (bar) bar.style.width = (vals[i]/maxVal*100).toFixed(1) + '%';
+        if (val) val.textContent = vals[i] > 0 ? vals[i] : '0';
+      });
+    }
 
     dbg('Электроэнергия (RadioMer): данные загружены', 'ok');
   } catch(e) {
