@@ -650,49 +650,48 @@
       <span class="auto-badge" style="background:rgba(74,222,128,0.15);color:#4ade80;border:1px solid rgba(74,222,128,0.3);">● Авто</span>
       <span class="section-badge" id="solarDate" style="background:#0f3020;color:#4ade80;border:1px solid #2a7a45;">—</span>
     </div>
-    <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr 1fr;gap:8px;padding:8px 10px;align-items:stretch;">
+    <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr 1fr;gap:6px;padding:6px 8px;">
 
       <!-- Мощность сейчас — большая зелёная -->
-      <div style="background:linear-gradient(135deg,#0f3020,#1a5a30);border:1px solid #2a7a45;border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:4px;">
-        <div style="font-size:9px;color:#86efac;text-transform:uppercase;letter-spacing:0.06em;display:flex;align-items:center;gap:4px;">⚡ Мощность сейчас</div>
-        <div style="font-size:26px;font-weight:600;color:#4ade80;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarPowerKw">—</span><span style="font-size:12px;color:#86efac;margin-left:3px;">кВт</span></div>
-        <div style="font-size:11px;color:#86efac;" id="solarStatus">Загрузка...</div>
-        <div style="font-size:9px;color:#4a7a5a;margin-top:2px;" id="solarLoad">Установлено: 400 кВт</div>
+      <div style="background:linear-gradient(135deg,#0f3020,#1a5a30);border:1px solid #2a7a45;border-radius:8px;padding:7px 10px;display:flex;flex-direction:column;gap:2px;">
+        <div style="font-size:8px;color:#86efac;text-transform:uppercase;letter-spacing:0.06em;display:flex;align-items:center;gap:4px;">⚡ Мощность сейчас</div>
+        <div style="font-size:22px;font-weight:600;color:#4ade80;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarPowerKw">—</span><span style="font-size:11px;color:#86efac;margin-left:3px;">кВт</span></div>
+        <div style="font-size:10px;color:#86efac;" id="solarStatus">Загрузка...</div>
+        <div style="font-size:8px;color:#4a7a5a;" id="solarLoad">Установлено: 400 кВт</div>
       </div>
 
       <!-- За сегодня -->
-      <div style="background:linear-gradient(135deg,#1a3a52,#1e4d6b);border:1px solid #2a5a78;border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:4px;">
-        <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;">📅 За сегодня</div>
-        <div style="font-size:20px;font-weight:600;color:#fff;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarDay">—</span></div>
-        <div style="font-size:10px;color:#7aacc8;">кВт·ч</div>
-        <div style="font-size:10px;color:#4a8aaa;" id="solarDayMwh"></div>
+      <div style="background:linear-gradient(135deg,#1a3a52,#1e4d6b);border:1px solid #2a5a78;border-radius:8px;padding:7px 10px;display:flex;flex-direction:column;gap:2px;">
+        <div style="font-size:8px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;">📅 За сегодня</div>
+        <div style="font-size:18px;font-weight:600;color:#fff;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarDay">—</span></div>
+        <div style="font-size:9px;color:#7aacc8;">кВт·ч</div>
+        <div style="font-size:9px;color:#4a8aaa;" id="solarDayMwh"></div>
       </div>
 
       <!-- За месяц -->
-      <div style="background:linear-gradient(135deg,#1a3a52,#1e4d6b);border:1px solid #2a5a78;border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:4px;">
-        <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;">📆 За месяц</div>
-        <div style="font-size:20px;font-weight:600;color:#fff;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarMonth">—</span></div>
-        <div style="font-size:10px;color:#7aacc8;">кВт·ч</div>
-        <div style="font-size:10px;color:#4a8aaa;" id="solarMonthMwh"></div>
-        <div style="font-size:9px;margin-top:2px;" id="solarDiff"></div>
-        <div style="font-size:9px;color:#a3e635;margin-top:1px;">💰 <span id="solarSavingsMonth">—</span></div>
+      <div style="background:linear-gradient(135deg,#1a3a52,#1e4d6b);border:1px solid #2a5a78;border-radius:8px;padding:7px 10px;display:flex;flex-direction:column;gap:2px;">
+        <div style="font-size:8px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;">📆 За месяц</div>
+        <div style="font-size:18px;font-weight:600;color:#fff;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarMonth">—</span></div>
+        <div style="font-size:9px;color:#7aacc8;">кВт·ч</div>
+        <div style="font-size:9px;" id="solarDiff"></div>
+        <div style="font-size:9px;color:#a3e635;">💰 <span id="solarSavingsMonth">—</span></div>
       </div>
 
       <!-- Прошлый месяц -->
-      <div style="background:linear-gradient(135deg,#1a3a52,#1e4d6b);border:1px solid #2a5a78;border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:4px;">
-        <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;">📅 Прошлый месяц</div>
-        <div style="font-size:20px;font-weight:600;color:#b0d4ea;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarPrevMonth">—</span></div>
-        <div style="font-size:10px;color:#7aacc8;">кВт·ч</div>
-        <div style="font-size:10px;color:#4a8aaa;" id="solarPrevMonthMwh"></div>
+      <div style="background:linear-gradient(135deg,#1a3a52,#1e4d6b);border:1px solid #2a5a78;border-radius:8px;padding:7px 10px;display:flex;flex-direction:column;gap:2px;">
+        <div style="font-size:8px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;">📅 Прошлый месяц</div>
+        <div style="font-size:18px;font-weight:600;color:#b0d4ea;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarPrevMonth">—</span></div>
+        <div style="font-size:9px;color:#7aacc8;">кВт·ч</div>
+        <div style="font-size:9px;color:#4a8aaa;" id="solarPrevMonthMwh"></div>
       </div>
 
       <!-- Всего выработано -->
-      <div style="background:linear-gradient(135deg,#1a2a1a,#2a4a20);border:1px solid #3a6a2a;border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:4px;">
-        <div style="font-size:9px;color:#a3e635;text-transform:uppercase;letter-spacing:0.06em;">🏆 Всего выработано</div>
-        <div style="font-size:20px;font-weight:600;color:#d9f99d;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarTotal">—</span></div>
-        <div style="font-size:10px;color:#a3e635;">МВт·ч</div>
-        <div style="font-size:9px;color:#4a7a2a;">с начала эксплуатации</div>
-        <div style="font-size:9px;color:#a3e635;margin-top:1px;">💰 <span id="solarSavingsTotal">—</span></div>
+      <div style="background:linear-gradient(135deg,#1a2a1a,#2a4a20);border:1px solid #3a6a2a;border-radius:8px;padding:7px 10px;display:flex;flex-direction:column;gap:2px;">
+        <div style="font-size:8px;color:#a3e635;text-transform:uppercase;letter-spacing:0.06em;">🏆 Всего выработано</div>
+        <div style="font-size:18px;font-weight:600;color:#d9f99d;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarTotal">—</span></div>
+        <div style="font-size:9px;color:#a3e635;">МВт·ч</div>
+        <div style="font-size:8px;color:#4a7a2a;">с начала эксплуатации</div>
+        <div style="font-size:9px;color:#a3e635;">💰 <span id="solarSavingsTotal">—</span></div>
       </div>
 
     </div>
