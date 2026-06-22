@@ -66,6 +66,12 @@
   /* IQAir — отдельная колонка, вся высота */
   .section-iqair  { grid-column: 4; grid-row: 1 / 4; }
 
+  /* Диаграмма солнечных по дням */
+  .solar-day-bar { flex:1; background:#4ade80; border-radius:2px 2px 0 0; min-width:4px; max-width:18px; position:relative; cursor:default; transition:opacity 0.2s; }
+  .solar-day-bar:hover { opacity:0.8; }
+  .solar-day-bar-today { background:#facc15; }
+  .solar-day-label { position:absolute; bottom:-14px; left:50%; transform:translateX(-50%); font-size:7px; color:#4a6a88; white-space:nowrap; }
+
   /* Тарифная диаграмма в блоке электроэнергии */
   .tarif-row { display:flex; align-items:center; gap:5px; }
   .tarif-label { font-size:9px; color:#7aacc8; width:58px; flex-shrink:0; white-space:nowrap; }
@@ -690,9 +696,16 @@
       </div>
 
     </div>
-  </div>
 
-  <!-- Качество воздуха — строка 3 право -->
+    <!-- Диаграмма выработки по дням за месяц -->
+    <div style="padding:4px 10px 8px;border-top:1px solid #1e3a52;">
+      <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">📊 Выработка по дням за месяц, кВт·ч</div>
+      <div id="solarDailyChart" style="display:flex;align-items:flex-end;gap:2px;height:50px;overflow:hidden;">
+        <div style="color:#4a6a88;font-size:9px;align-self:center;">Загрузка...</div>
+      </div>
+      <div id="solarDailyTotal" style="font-size:9px;color:#4ade80;margin-top:3px;text-align:right;"></div>
+    </div>
+  </div>
   <div class="section section-iqair" style="background:linear-gradient(135deg,#0a1e2e 0%,#1a3a52 100%);border:1px solid #2a5a78;">
     <div class="section-header" style="background:linear-gradient(90deg,#0f1e30,#1a3a52);border-bottom:1px solid #2a5a78;padding:5px 10px;">
       🌬️ Качество воздуха — ENE04588 (Auris)
@@ -1526,6 +1539,10 @@ async function loadData() {
   fetchRadiomer();
   setInterval(fetchRadiomer, 5 * 60 * 1000); // обновление каждые 5 минут
 
+  // История солнечных по дням
+  fetchSolarHistory();
+  setInterval(fetchSolarHistory, 15 * 60 * 1000); // каждые 15 минут
+
   if (pcOk && bsuOk && otgOk && okOk) {
     status('Данные успешно загружены через Apps Script', 'ok');
   } else if (!pcOk && !bsuOk && !otgOk && !okOk) {
@@ -1754,7 +1771,43 @@ async function fetchRadiomer() {
   }
 }
 
-// ── РЕНДЕР 1С ОСТАТКИ ────────────────────────────────────────────────────────
+// ── ДИАГРАММА СОЛНЕЧНЫХ ПО ДНЯМ ──────────────────────────────────────────────
+async function fetchSolarHistory() {
+  try {
+    const { url } = getConfig();
+    const r = await fetch(url + '?sheet=SolarHistory&t=' + Date.now());
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const days = await r.json();
+    if (!Array.isArray(days) || days.length === 0) return;
+
+    const chart = document.getElementById('solarDailyChart');
+    const totalEl = document.getElementById('solarDailyTotal');
+    if (!chart) return;
+
+    const maxKwh = Math.max(...days.map(d => d.kwh), 0.01);
+    const today = new Date().getDate();
+    const totalKwh = days.reduce((s, d) => s + d.kwh, 0).toFixed(1);
+
+    let html = '';
+    days.forEach(d => {
+      const pct = Math.round(d.kwh / maxKwh * 100);
+      const isToday = d.day === today;
+      const cls = isToday ? 'solar-day-bar solar-day-bar-today' : 'solar-day-bar';
+      const title = `${d.day}: ${d.kwh} кВт·ч`;
+      html += `<div class="${cls}" style="height:${pct}%;" title="${title}">
+        <span class="solar-day-label">${d.day}</span>
+      </div>`;
+    });
+    chart.innerHTML = html;
+    if (totalEl) totalEl.textContent = `Итого за месяц: ${totalKwh} кВт·ч`;
+
+    dbg('Солнечные история: загружено ' + days.length + ' дней', 'ok');
+  } catch(e) {
+    dbg('Солнечные история: ошибка — ' + e.message, 'err');
+  }
+}
+
+
 function renderOnec(rows) {
   const body    = document.getElementById('onecBody');
   const updated = document.getElementById('onecUpdated');
