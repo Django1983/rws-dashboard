@@ -648,7 +648,7 @@
   </div>
 
   <!-- Солнечные панели — строка 3, центр+право -->
-  <div class="section section-solar" style="background:linear-gradient(135deg,#0a1e2e 0%,#1a3a52 100%);border:1px solid #2a5a78;">
+  <div class="section section-solar" style="background:linear-gradient(135deg,#0a1e2e 0%,#1a3a52 100%);border:1px solid #2a5a78;display:flex;flex-direction:column;">
     <div class="section-header" style="background:linear-gradient(90deg,#0f3020,#1a3a52);border-bottom:1px solid #2a5a78;">
       ☀️ Солнечная энергия — RWS Solar
       <span class="auto-badge" style="background:rgba(74,222,128,0.15);color:#4ade80;border:1px solid rgba(74,222,128,0.3);">● Авто</span>
@@ -701,12 +701,12 @@
     </div>
 
     <!-- Диаграмма выработки по дням за месяц -->
-    <div style="padding:4px 10px 8px;border-top:1px solid #1e3a52;">
-      <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">📊 Выработка по дням за месяц, кВт·ч</div>
-      <div id="solarDailyChart" style="display:flex;align-items:flex-end;gap:2px;height:55px;overflow:visible;margin-top:18px;margin-bottom:14px;">
+    <div style="padding:4px 10px 6px;border-top:1px solid #1e3a52;flex:1;display:flex;flex-direction:column;min-height:0;">
+      <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;flex-shrink:0;">📊 Выработка по дням за месяц, кВт·ч</div>
+      <div id="solarDailyChart" style="display:flex;align-items:flex-end;gap:2px;flex:1;min-height:0;overflow:visible;margin-top:18px;margin-bottom:14px;">
         <div style="color:#4a6a88;font-size:9px;align-self:center;">Загрузка...</div>
       </div>
-      <div id="solarDailyTotal" style="font-size:9px;color:#4ade80;margin-top:3px;text-align:right;"></div>
+      <div id="solarDailyTotal" style="font-size:9px;color:#4ade80;text-align:right;flex-shrink:0;"></div>
     </div>
   </div>
   <div class="section section-iqair" style="background:linear-gradient(135deg,#0a1e2e 0%,#1a3a52 100%);border:1px solid #2a5a78;">
