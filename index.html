@@ -76,10 +76,11 @@
 
   /* Тарифная диаграмма в блоке электроэнергии */
   .tarif-row { display:flex; align-items:center; gap:5px; }
-  .tarif-label { font-size:9px; color:#7aacc8; width:58px; flex-shrink:0; white-space:nowrap; }
-  .tarif-bar-wrap { flex:1; height:8px; background:#1e3a52; border-radius:4px; overflow:hidden; }
+  .tarif-label { font-size:11px; font-weight:600; color:#7aacc8; flex-shrink:0; white-space:nowrap; }
+  .tarif-desc { font-size:10px; color:#4a7a9a; line-height:1.3; margin:1px 0 4px; }
+  .tarif-bar-wrap { width:100%; height:6px; background:#1e3a52; border-radius:4px; overflow:hidden; }
   .tarif-bar { height:100%; border-radius:4px; width:0%; transition:width 0.6s ease; }
-  .tarif-val { font-size:9px; color:#9ab4c4; width:36px; text-align:right; flex-shrink:0; }
+  .tarif-val { font-size:12px; font-weight:600; color:#fff; flex-shrink:0; }
 
 , где текст перестаёт помещаться */
   .section-pc .section-header,
@@ -830,96 +831,129 @@
       ⚡ Электроэнергия
       <span class="auto-badge" style="background:rgba(74,222,128,0.15);color:#4ade80;border:1px solid rgba(74,222,128,0.3);">● Авто</span>
     </div>
-    <div style="padding:6px 8px;height:calc(100% - 26px);display:flex;flex-direction:column;gap:5px;overflow:hidden;">
+    <div style="padding:5px 8px;height:calc(100% - 26px);display:flex;flex-direction:column;gap:4px;overflow:hidden;">
 
-      <div style="font-size:10px;color:#7aacc8;">ф.Optimum-1 <span id="powerStatusDot" style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#7aacc8;margin-left:4px;"></span></div>
-
-      <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:6px 8px;">
-        <div style="font-size:10px;color:#7aacc8;text-transform:uppercase;">За сутки</div>
-        <div style="font-size:20px;font-weight:700;color:#4ade80;line-height:1.2;"><span id="powerToday">—</span> <span style="font-size:11px;font-weight:400;">кВт·ч</span></div>
+      <!-- Строка: фаза + статус -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+        <div style="font-size:10px;color:#7aacc8;">ф.Optimum-1</div>
+        <span id="powerStatusDot" style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#7aacc8;"></span>
       </div>
 
-      <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:6px 8px;">
-        <div style="font-size:10px;color:#7aacc8;text-transform:uppercase;">За месяц</div>
-        <div style="font-size:20px;font-weight:700;color:#60a5fa;line-height:1.2;"><span id="powerMonth">—</span> <span style="font-size:11px;font-weight:400;">кВт·ч</span></div>
-      </div>
-
-      <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:6px 8px;">
-        <div style="font-size:10px;color:#7aacc8;text-transform:uppercase;">Всего с начала учёта</div>
-        <div style="font-size:16px;font-weight:700;color:#a78bfa;line-height:1.2;"><span id="powerTotal">—</span> <span style="font-size:10px;font-weight:400;">кВт·ч</span></div>
-      </div>
-
-      <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:6px 8px;">
-        <div style="font-size:10px;color:#7aacc8;text-transform:uppercase;">Реактивная энергия</div>
-        <div style="font-size:13px;font-weight:600;color:#34d399;line-height:1.3;">за месяц: <span id="powerReactMonth">—</span> квар·ч</div>
-        <div style="font-size:13px;font-weight:600;color:#34d399;line-height:1.3;">всего: <span id="powerReactTotal">—</span> квар·ч</div>
-        <div style="font-size:9px;color:#4a6a88;margin-top:4px;line-height:1.4;">
-          Энергия, которую потребляют двигатели и трансформаторы для создания магнитного поля — в полезную работу не переходит. Чем меньше это значение относительно активной (кВт·ч) — тем эффективнее работает оборудование.
+      <!-- За сутки + За месяц в одну строку -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;flex-shrink:0;">
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 7px;">
+          <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;">За сутки</div>
+          <div style="font-size:16px;font-weight:700;color:#4ade80;line-height:1.2;"><span id="powerToday">—</span></div>
+          <div style="font-size:9px;color:#4a6a88;">кВт·ч</div>
+        </div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 7px;">
+          <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;">За месяц</div>
+          <div style="font-size:16px;font-weight:700;color:#60a5fa;line-height:1.2;"><span id="powerMonth">—</span></div>
+          <div style="font-size:9px;color:#4a6a88;">кВт·ч</div>
         </div>
       </div>
 
-      <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:6px 8px;">
-        <div style="font-size:10px;color:#7aacc8;text-transform:uppercase;">Коэффициент мощности cos φ</div>
-        <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
-          <div style="font-size:22px;font-weight:700;line-height:1;" id="cosPhi">—</div>
-          <div id="cosPhiBadge" style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:#1e3a52;color:#9ab4c4;">—</div>
+      <!-- Всего с начала + Прибор учёта в одну строку -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;flex-shrink:0;">
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 7px;">
+          <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;">Всего</div>
+          <div style="font-size:13px;font-weight:700;color:#a78bfa;line-height:1.2;"><span id="powerTotal">—</span></div>
+          <div style="font-size:9px;color:#4a6a88;">кВт·ч</div>
         </div>
-        <!-- Индикаторная шкала -->
-        <div style="margin-top:6px;position:relative;height:6px;border-radius:3px;background:linear-gradient(to right,#dc2626 0%,#f97316 30%,#facc15 50%,#4ade80 80%,#22c55e 100%);overflow:hidden;">
-          <div id="cosPhiMarker" style="position:absolute;top:-2px;width:10px;height:10px;border-radius:50%;background:#fff;border:2px solid #0f1e30;transform:translateX(-50%);left:50%;transition:left 0.6s ease;"></div>
-        </div>
-        <div style="display:flex;justify-content:space-between;font-size:8px;color:#4a6a88;margin-top:2px;">
-          <span>0.5</span><span>0.7</span><span>0.85</span><span>0.95</span><span>1.0</span>
-        </div>
-        <div style="font-size:9px;color:#4a6a88;margin-top:4px;line-height:1.4;" id="cosPhiDesc">
-          Показывает насколько эффективно используется электроэнергия. Норма: выше 0.9
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 7px;overflow:hidden;">
+          <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;">Прибор</div>
+          <div style="font-size:10px;font-weight:600;color:#9ab4c4;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><span id="powerDevice">—</span></div>
+          <div style="font-size:9px;color:#4a6a88;">№ <span id="powerNumber">—</span></div>
         </div>
       </div>
 
-      <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:6px 8px;">
-        <div style="font-size:10px;color:#7aacc8;text-transform:uppercase;">Прибор учёта</div>
-        <div style="font-size:11px;font-weight:600;color:#9ab4c4;line-height:1.4;"><span id="powerDevice">—</span></div>
-        <div style="font-size:11px;color:#7aacc8;line-height:1.4;">№ <span id="powerNumber">—</span></div>
-      </div>
-
-      <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:6px 8px;flex:1;display:flex;flex-direction:column;justify-content:center;gap:4px;">
-        <div>
-          <div style="font-size:10px;color:#7aacc8;text-transform:uppercase;">Ток, А (A/B/C)</div>
-          <div style="font-size:13px;font-weight:600;color:#fbbf24;line-height:1.3;"><span id="powerAmps">— / — / —</span></div>
-        </div>
-        <div>
-          <div style="font-size:10px;color:#7aacc8;text-transform:uppercase;">Напряж., В (A/B/C)</div>
-          <div style="font-size:13px;font-weight:600;color:#fb923c;line-height:1.3;"><span id="powerVolts">— / — / —</span></div>
-        </div>
-        <div>
-          <div style="font-size:10px;color:#7aacc8;text-transform:uppercase;">Частота</div>
-          <div style="font-size:13px;font-weight:600;color:#9ab4c4;line-height:1.3;"><span id="powerFreq">—</span> Гц</div>
+      <!-- Реактивная энергия — компактно -->
+      <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 7px;flex-shrink:0;">
+        <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;margin-bottom:2px;">Реактивная энергия</div>
+        <div style="display:flex;gap:8px;">
+          <div style="font-size:11px;font-weight:600;color:#34d399;">мес: <span id="powerReactMonth">—</span> <span style="font-size:9px;font-weight:400;color:#4a6a88;">квар·ч</span></div>
+          <div style="font-size:11px;font-weight:600;color:#34d399;">всего: <span id="powerReactTotal">—</span> <span style="font-size:9px;font-weight:400;color:#4a6a88;">квар·ч</span></div>
         </div>
       </div>
 
-      <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:6px 8px;">
-        <div style="font-size:10px;color:#7aacc8;text-transform:uppercase;margin-bottom:6px;">Тарифы за месяц, кВт·ч</div>
-        <div id="tarifChart" style="display:flex;flex-direction:column;gap:6px;">
+      <!-- cos φ — компактно -->
+      <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 7px;flex-shrink:0;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+          <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;">cos φ</div>
+          <div id="cosPhiBadge" style="font-size:9px;font-weight:700;padding:1px 7px;border-radius:10px;background:#1e3a52;color:#9ab4c4;">—</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="font-size:20px;font-weight:700;line-height:1;color:#fff;" id="cosPhi">—</div>
+          <div style="flex:1;">
+            <div style="position:relative;height:6px;border-radius:3px;background:linear-gradient(to right,#dc2626 0%,#f97316 30%,#facc15 50%,#4ade80 80%,#22c55e 100%);overflow:hidden;">
+              <div id="cosPhiMarker" style="position:absolute;top:-2px;width:10px;height:10px;border-radius:50%;background:#fff;border:2px solid #0f1e30;transform:translateX(-50%);left:50%;transition:left 0.6s ease;"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:8px;color:#4a6a88;margin-top:2px;">
+              <span>0.5</span><span>0.85</span><span>1.0</span>
+            </div>
+          </div>
+        </div>
+        <div style="font-size:9px;color:#4a6a88;margin-top:2px;line-height:1.3;" id="cosPhiDesc">Норма: выше 0.9</div>
+      </div>
+
+      <!-- Ток / Напряжение / Частота — компактно в одну строку -->
+      <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 7px;flex-shrink:0;">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;">
           <div>
-            <div class="tarif-row"><span class="tarif-label">T1 пик</span><div class="tarif-bar-wrap"><div class="tarif-bar" id="barT1" style="background:#f87171;"></div></div><span class="tarif-val" id="valT1">—</span></div>
-            <div style="font-size:8px;color:#4a6a88;margin-left:63px;line-height:1.3;">Дневные часы — самый дорогой тариф</div>
+            <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;">Ток А/В/С</div>
+            <div style="font-size:11px;font-weight:600;color:#fbbf24;line-height:1.3;"><span id="powerAmps">—/—/—</span></div>
           </div>
           <div>
-            <div class="tarif-row"><span class="tarif-label">T2 полупик</span><div class="tarif-bar-wrap"><div class="tarif-bar" id="barT2" style="background:#fbbf24;"></div></div><span class="tarif-val" id="valT2">—</span></div>
-            <div style="font-size:8px;color:#4a6a88;margin-left:63px;line-height:1.3;">Переходные часы — средний тариф</div>
+            <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;">Напряж В/В/С</div>
+            <div style="font-size:11px;font-weight:600;color:#fb923c;line-height:1.3;"><span id="powerVolts">—/—/—</span></div>
           </div>
           <div>
-            <div class="tarif-row"><span class="tarif-label">T3 ночь</span><div class="tarif-bar-wrap"><div class="tarif-bar" id="barT3" style="background:#4ade80;"></div></div><span class="tarif-val" id="valT3">—</span></div>
-            <div style="font-size:8px;color:#4a6a88;margin-left:63px;line-height:1.3;">Ночные часы — льготный тариф</div>
-          </div>
-          <div>
-            <div class="tarif-row"><span class="tarif-label">T4 прочие</span><div class="tarif-bar-wrap"><div class="tarif-bar" id="barT4" style="background:#60a5fa;"></div></div><span class="tarif-val" id="valT4">—</span></div>
-            <div style="font-size:8px;color:#4a6a88;margin-left:63px;line-height:1.3;">Выходные и праздничные дни</div>
+            <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;">Частота</div>
+            <div style="font-size:11px;font-weight:600;color:#9ab4c4;line-height:1.3;"><span id="powerFreq">—</span> Гц</div>
           </div>
         </div>
       </div>
 
-      <div style="font-size:10px;color:#7aacc8;">Обновлено: <span id="powerTime">—</span></div>
+      <!-- ТАРИФЫ — занимают всё оставшееся место -->
+      <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:8px 10px;flex:1;display:flex;flex-direction:column;min-height:0;">
+        <div style="font-size:10px;color:#7aacc8;text-transform:uppercase;margin-bottom:6px;flex-shrink:0;">Тарифы за месяц, кВт·ч</div>
+        <div id="tarifChart" style="display:flex;flex-direction:column;gap:0;flex:1;justify-content:space-evenly;">
+          <div style="padding:3px 0;">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1px;">
+              <span class="tarif-label">T1 пик</span>
+              <span class="tarif-val" id="valT1">—</span>
+            </div>
+            <div class="tarif-desc">Дневные часы — самый дорогой тариф</div>
+            <div class="tarif-bar-wrap"><div class="tarif-bar" id="barT1" style="background:#f87171;"></div></div>
+          </div>
+          <div style="padding:3px 0;">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1px;">
+              <span class="tarif-label">T2 полупик</span>
+              <span class="tarif-val" id="valT2">—</span>
+            </div>
+            <div class="tarif-desc">Переходные часы — средний тариф</div>
+            <div class="tarif-bar-wrap"><div class="tarif-bar" id="barT2" style="background:#fbbf24;"></div></div>
+          </div>
+          <div style="padding:3px 0;">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1px;">
+              <span class="tarif-label">T3 ночь</span>
+              <span class="tarif-val" id="valT3">—</span>
+            </div>
+            <div class="tarif-desc">Ночные часы — льготный тариф</div>
+            <div class="tarif-bar-wrap"><div class="tarif-bar" id="barT3" style="background:#4ade80;"></div></div>
+          </div>
+          <div style="padding:3px 0;">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1px;">
+              <span class="tarif-label">T4 прочие</span>
+              <span class="tarif-val" id="valT4">—</span>
+            </div>
+            <div class="tarif-desc">Выходные и праздничные дни</div>
+            <div class="tarif-bar-wrap"><div class="tarif-bar" id="barT4" style="background:#60a5fa;"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="font-size:10px;color:#7aacc8;flex-shrink:0;">Обновлено: <span id="powerTime">—</span></div>
 
     </div>
   </div>
