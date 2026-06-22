@@ -842,7 +842,7 @@
       <!-- За сутки + За месяц в одну строку -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;flex-shrink:0;">
         <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 7px;">
-          <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;">За сутки</div>
+          <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;">Показания</div>
           <div style="font-size:16px;font-weight:700;color:#4ade80;line-height:1.2;"><span id="powerToday">—</span></div>
           <div style="font-size:9px;color:#4a6a88;">кВт·ч</div>
         </div>
@@ -1770,7 +1770,7 @@ async function fetchRadiomer() {
     const d = await r.json();
     if (d.error) throw new Error('Apps Script: ' + d.error);
 
-    document.getElementById('powerToday').textContent = (d.consumedToday ?? '—');
+    document.getElementById('powerToday').textContent = (d.wtotal ?? '—');
     document.getElementById('powerMonth').textContent = (d.consumedMonth ?? '—');
     document.getElementById('powerTotal').textContent = (d.wtotal ?? '—');
     document.getElementById('powerReactMonth').textContent =
