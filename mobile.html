@@ -187,6 +187,10 @@
   .weather-cell-val { font-size: 22px; font-weight: 600; line-height: 1; }
   .weather-cell-unit { font-size: 9px; color: #4a6a88; }
   .air-section-title { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.05em; margin: 10px 0 6px; }
+  .msolar-bar { flex:1; background:#4ade80; border-radius:2px 2px 0 0; min-width:4px; position:relative; cursor:default; overflow:visible; }
+  .msolar-bar-today { background:#facc15; }
+  .msolar-bar-label { position:absolute; bottom:-14px; left:50%; transform:translateX(-50%); font-size:7px; color:#4a6a88; white-space:nowrap; }
+  .msolar-bar-val { position:absolute; top:-15px; left:50%; transform:translateX(-50%); font-size:7px; color:#86efac; white-space:nowrap; font-weight:600; }
 </style>
 </head>
 <body>
@@ -489,6 +493,59 @@
           <div class="air-cell-label">Напряж. C</div>
           <div class="air-cell-val" id="powerVoltC" style="color:#fb923c;">—</div>
           <div class="air-cell-unit">В</div>
+        </div>
+      </div>
+
+      <!-- Коэффициент мощности -->
+      <div class="air-section-title">Коэффициент мощности cos φ</div>
+      <div class="weather-cell" style="margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+          <div style="font-size:26px;font-weight:700;" id="mCosPhi">—</div>
+          <div id="mCosPhiBadge" style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:#1e3a52;color:#9ab4c4;">—</div>
+        </div>
+        <div style="height:8px;border-radius:4px;background:linear-gradient(to right,#dc2626 0%,#f97316 30%,#facc15 50%,#4ade80 80%,#22c55e 100%);position:relative;overflow:hidden;margin-bottom:4px;">
+          <div id="mCosPhiMarker" style="position:absolute;top:-1px;width:10px;height:10px;border-radius:50%;background:#fff;border:2px solid #0f1e30;transform:translateX(-50%);left:50%;transition:left 0.6s ease;"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:8px;color:#4a6a88;margin-bottom:6px;">
+          <span>0.5</span><span>0.7</span><span>0.85</span><span>0.95</span><span>1.0</span>
+        </div>
+        <div style="font-size:9px;color:#4a6a88;line-height:1.4;" id="mCosPhiDesc">Показывает насколько эффективно используется электроэнергия. Норма: выше 0.9</div>
+      </div>
+
+      <!-- Тарифы -->
+      <div class="air-section-title">Тарифы за месяц, кВт·ч</div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;">
+        <div>
+          <div style="display:flex;align-items:center;gap:5px;">
+            <span style="font-size:9px;color:#7aacc8;width:70px;flex-shrink:0;">T1 пик</span>
+            <div style="flex:1;height:8px;background:#1e3a52;border-radius:4px;overflow:hidden;"><div id="mBarT1" style="height:100%;background:#f87171;border-radius:4px;width:0%;transition:width 0.6s;"></div></div>
+            <span style="font-size:9px;color:#9ab4c4;width:40px;text-align:right;" id="mValT1">—</span>
+          </div>
+          <div style="font-size:8px;color:#4a6a88;margin-left:75px;line-height:1.3;">Дневные часы — самый дорогой тариф</div>
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;gap:5px;">
+            <span style="font-size:9px;color:#7aacc8;width:70px;flex-shrink:0;">T2 полупик</span>
+            <div style="flex:1;height:8px;background:#1e3a52;border-radius:4px;overflow:hidden;"><div id="mBarT2" style="height:100%;background:#fbbf24;border-radius:4px;width:0%;transition:width 0.6s;"></div></div>
+            <span style="font-size:9px;color:#9ab4c4;width:40px;text-align:right;" id="mValT2">—</span>
+          </div>
+          <div style="font-size:8px;color:#4a6a88;margin-left:75px;line-height:1.3;">Переходные часы — средний тариф</div>
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;gap:5px;">
+            <span style="font-size:9px;color:#7aacc8;width:70px;flex-shrink:0;">T3 ночь</span>
+            <div style="flex:1;height:8px;background:#1e3a52;border-radius:4px;overflow:hidden;"><div id="mBarT3" style="height:100%;background:#4ade80;border-radius:4px;width:0%;transition:width 0.6s;"></div></div>
+            <span style="font-size:9px;color:#9ab4c4;width:40px;text-align:right;" id="mValT3">—</span>
+          </div>
+          <div style="font-size:8px;color:#4a6a88;margin-left:75px;line-height:1.3;">Ночные часы — льготный тариф</div>
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;gap:5px;">
+            <span style="font-size:9px;color:#7aacc8;width:70px;flex-shrink:0;">T4 прочие</span>
+            <div style="flex:1;height:8px;background:#1e3a52;border-radius:4px;overflow:hidden;"><div id="mBarT4" style="height:100%;background:#60a5fa;border-radius:4px;width:0%;transition:width 0.6s;"></div></div>
+            <span style="font-size:9px;color:#9ab4c4;width:40px;text-align:right;" id="mValT4">—</span>
+          </div>
+          <div style="font-size:8px;color:#4a6a88;margin-left:75px;line-height:1.3;">Выходные и праздничные дни</div>
         </div>
       </div>
 
@@ -1001,6 +1058,15 @@ function renderSolar(rows) {
         </div>
       </div>
       <div style="font-size:9px;color:#9ab4c4;padding:8px 0 0;text-align:center;">Обновлено: ${displayDate}</div>
+
+      <!-- Диаграмма по дням -->
+      <div style="margin-top:10px;">
+        <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;margin-bottom:6px;">📊 Выработка по дням за месяц, кВт·ч</div>
+        <div id="mobileSolarChart" style="display:flex;align-items:flex-end;gap:2px;height:70px;overflow:visible;margin-top:16px;margin-bottom:16px;">
+          <div style="font-size:9px;color:#4a6a88;align-self:center;">Загрузка...</div>
+        </div>
+        <div id="mobileSolarTotal" style="font-size:10px;color:#4ade80;text-align:right;"></div>
+      </div>
     </div>
   `;
 }
@@ -1149,6 +1215,42 @@ function renderPower(d) {
     }
   }
   document.getElementById('powerTime').textContent = timeStr;
+
+  // Коэффициент мощности cos φ
+  const P = d.consumedMonth || 0;
+  const Q = (d.qtotal != null && d.firstQtotal != null) ? +(d.qtotal - d.firstQtotal).toFixed(2) : 0;
+  const cosPhiEl = document.getElementById('mCosPhi');
+  const cosPhiBadge = document.getElementById('mCosPhiBadge');
+  const cosPhiMarker = document.getElementById('mCosPhiMarker');
+  const cosPhiDesc = document.getElementById('mCosPhiDesc');
+  if (P > 0 && cosPhiEl) {
+    const cosPhi = +(P / Math.sqrt(P*P + Q*Q)).toFixed(3);
+    cosPhiEl.textContent = cosPhi;
+    const pct = Math.min(100, Math.max(0, (cosPhi - 0.5) / 0.5 * 100));
+    if (cosPhiMarker) cosPhiMarker.style.left = pct + '%';
+    let color, label, desc;
+    if (cosPhi >= 0.95)      { color='#22c55e'; label='✅ Отлично'; desc='Оборудование работает очень эффективно'; }
+    else if (cosPhi >= 0.9)  { color='#4ade80'; label='✅ Норма';   desc='Коэффициент мощности в норме'; }
+    else if (cosPhi >= 0.8)  { color='#facc15'; label='⚠️ Допустимо'; desc='Рекомендуется компенсация реактивной мощности'; }
+    else if (cosPhi >= 0.7)  { color='#f97316'; label='⚠️ Низкий';  desc='Возможны штрафы от энергоснабжающей компании'; }
+    else                     { color='#dc2626'; label='🚨 Критично'; desc='Требуется установка конденсаторных батарей'; }
+    cosPhiEl.style.color = color;
+    if (cosPhiBadge) { cosPhiBadge.textContent = label; cosPhiBadge.style.background = color+'33'; cosPhiBadge.style.color = color; }
+    if (cosPhiDesc) cosPhiDesc.textContent = desc;
+  }
+
+  // Тарифная диаграмма
+  if (d.tarif) {
+    const t = d.tarif;
+    const vals = [t.t1_month||0, t.t2_month||0, t.t3_month||0, t.t4_month||0];
+    const maxVal = Math.max(...vals, 0.01);
+    ['T1','T2','T3','T4'].forEach((id, i) => {
+      const bar = document.getElementById('mBar'+id);
+      const val = document.getElementById('mVal'+id);
+      if (bar) bar.style.width = (vals[i]/maxVal*100).toFixed(1) + '%';
+      if (val) val.textContent = vals[i] > 0 ? vals[i] : '0';
+    });
+  }
 }
 
 // ── RENDER 1С ─────────────────────────────────────────────────────────────────
@@ -1232,6 +1334,44 @@ async function loadData() {
 }
 
 loadData();
+
+// ── ДИАГРАММА СОЛНЕЧНЫХ ПО ДНЯМ (мобильная) ──────────────────────────────────
+async function fetchMobileSolarHistory() {
+  try {
+    const url = DEFAULT_APPS_SCRIPT_URL + '?sheet=SolarHistory&t=' + Date.now();
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const days = await r.json();
+    if (!Array.isArray(days) || days.length === 0) return;
+
+    const chart = document.getElementById('mobileSolarChart');
+    const totalEl = document.getElementById('mobileSolarTotal');
+    if (!chart) return;
+
+    const maxKwh = Math.max(...days.map(d => d.kwh), 0.01);
+    const today = new Date().getDate();
+    const totalKwh = days.reduce((s, d) => s + d.kwh, 0).toFixed(1);
+
+    let html = '';
+    days.forEach(d => {
+      const pct = Math.round(d.kwh / maxKwh * 100);
+      const isToday = d.day === today;
+      const cls = isToday ? 'msolar-bar msolar-bar-today' : 'msolar-bar';
+      const valColor = isToday ? '#facc15' : '#86efac';
+      const kwh = d.kwh >= 1000 ? (d.kwh/1000).toFixed(1)+'М' : d.kwh;
+      html += `<div class="${cls}" style="height:${pct}%;" title="${d.day}: ${d.kwh} кВт·ч">
+        <span class="msolar-bar-val" style="color:${valColor};">${kwh}</span>
+        <span class="msolar-bar-label">${d.day}</span>
+      </div>`;
+    });
+    chart.innerHTML = html;
+    if (totalEl) totalEl.textContent = `Итого за месяц: ${totalKwh} кВт·ч`;
+  } catch(e) {
+    console.error('Solar history error:', e.message);
+  }
+}
+fetchMobileSolarHistory();
+setInterval(fetchMobileSolarHistory, 15 * 60 * 1000);
 setInterval(loadData, 5 * 60 * 1000);
 </script>
 </body>
