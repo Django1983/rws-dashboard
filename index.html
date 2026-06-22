@@ -808,6 +808,24 @@
       </div>
 
       <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:6px 8px;">
+        <div style="font-size:10px;color:#7aacc8;text-transform:uppercase;">Коэффициент мощности cos φ</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+          <div style="font-size:22px;font-weight:700;line-height:1;" id="cosPhi">—</div>
+          <div id="cosPhiBadge" style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:#1e3a52;color:#9ab4c4;">—</div>
+        </div>
+        <!-- Индикаторная шкала -->
+        <div style="margin-top:6px;position:relative;height:6px;border-radius:3px;background:linear-gradient(to right,#dc2626 0%,#f97316 30%,#facc15 50%,#4ade80 80%,#22c55e 100%);overflow:hidden;">
+          <div id="cosPhiMarker" style="position:absolute;top:-2px;width:10px;height:10px;border-radius:50%;background:#fff;border:2px solid #0f1e30;transform:translateX(-50%);left:50%;transition:left 0.6s ease;"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:8px;color:#4a6a88;margin-top:2px;">
+          <span>0.5</span><span>0.7</span><span>0.85</span><span>0.95</span><span>1.0</span>
+        </div>
+        <div style="font-size:9px;color:#4a6a88;margin-top:4px;line-height:1.4;" id="cosPhiDesc">
+          Показывает насколько эффективно используется электроэнергия. Норма: выше 0.9
+        </div>
+      </div>
+
+      <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:6px 8px;">
         <div style="font-size:10px;color:#7aacc8;text-transform:uppercase;">Прибор учёта</div>
         <div style="font-size:11px;font-weight:600;color:#9ab4c4;line-height:1.4;"><span id="powerDevice">—</span></div>
         <div style="font-size:11px;color:#7aacc8;line-height:1.4;">№ <span id="powerNumber">—</span></div>
@@ -1664,6 +1682,39 @@ async function fetchRadiomer() {
     document.getElementById('powerReactMonth').textContent =
       (d.qtotal != null && d.firstQtotal != null) ? (d.qtotal - d.firstQtotal).toFixed(2) : '—';
     document.getElementById('powerReactTotal').textContent = (d.qtotal ?? '—');
+
+    // Коэффициент мощности cos φ = P / √(P² + Q²)
+    const P = d.consumedMonth || 0;  // активная за месяц кВт·ч
+    const Q = (d.qtotal != null && d.firstQtotal != null) ? +(d.qtotal - d.firstQtotal).toFixed(2) : 0;
+    const cosPhiEl = document.getElementById('cosPhi');
+    const cosPhiBadge = document.getElementById('cosPhiBadge');
+    const cosPhiMarker = document.getElementById('cosPhiMarker');
+    const cosPhiDesc = document.getElementById('cosPhiDesc');
+    if (P > 0) {
+      const cosPhi = +(P / Math.sqrt(P*P + Q*Q)).toFixed(3);
+      cosPhiEl.textContent = cosPhi;
+      // Позиция маркера на шкале (от 0.5 до 1.0)
+      const pct = Math.min(100, Math.max(0, (cosPhi - 0.5) / 0.5 * 100));
+      if (cosPhiMarker) cosPhiMarker.style.left = pct + '%';
+      // Статус
+      let color, label, desc;
+      if (cosPhi >= 0.95) {
+        color='#22c55e'; label='✅ Отлично'; desc='Оборудование работает очень эффективно';
+      } else if (cosPhi >= 0.9) {
+        color='#4ade80'; label='✅ Норма'; desc='Коэффициент мощности в норме';
+      } else if (cosPhi >= 0.8) {
+        color='#facc15'; label='⚠️ Допустимо'; desc='Рекомендуется компенсация реактивной мощности';
+      } else if (cosPhi >= 0.7) {
+        color='#f97316'; label='⚠️ Низкий'; desc='Возможны штрафы от энергоснабжающей компании';
+      } else {
+        color='#dc2626'; label='🚨 Критично'; desc='Требуется срочная установка конденсаторных батарей';
+      }
+      cosPhiEl.style.color = color;
+      if (cosPhiBadge) { cosPhiBadge.textContent = label; cosPhiBadge.style.background = color+'33'; cosPhiBadge.style.color = color; }
+      if (cosPhiDesc) cosPhiDesc.textContent = desc;
+    } else {
+      cosPhiEl.textContent = '—';
+    }
     document.getElementById('powerDevice').textContent = (d.deviceType ?? '—');
     document.getElementById('powerNumber').textContent = (d.number ?? '—');
     document.getElementById('powerAmps').textContent =
