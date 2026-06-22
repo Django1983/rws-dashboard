@@ -67,10 +67,11 @@
   .section-iqair  { grid-column: 4; grid-row: 1 / 4; }
 
   /* Диаграмма солнечных по дням */
-  .solar-day-bar { flex:1; background:#4ade80; border-radius:2px 2px 0 0; min-width:4px; max-width:18px; position:relative; cursor:default; transition:opacity 0.2s; }
+  .solar-day-bar { flex:1; background:#4ade80; border-radius:2px 2px 0 0; min-width:3px; max-width:16px; position:relative; cursor:default; transition:opacity 0.2s; }
   .solar-day-bar:hover { opacity:0.8; }
   .solar-day-bar-today { background:#facc15; }
-  .solar-day-label { position:absolute; bottom:-14px; left:50%; transform:translateX(-50%); font-size:7px; color:#4a6a88; white-space:nowrap; }
+  .solar-day-label { position:absolute; bottom:-13px; left:50%; transform:translateX(-50%); font-size:6px; color:#4a6a88; white-space:nowrap; }
+  .solar-day-val { position:absolute; top:-14px; left:50%; transform:translateX(-50%); font-size:6px; color:#86efac; white-space:nowrap; }
 
   /* Тарифная диаграмма в блоке электроэнергии */
   .tarif-row { display:flex; align-items:center; gap:5px; }
@@ -699,7 +700,7 @@
     <!-- Диаграмма выработки по дням за месяц -->
     <div style="padding:4px 10px 8px;border-top:1px solid #1e3a52;">
       <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">📊 Выработка по дням за месяц, кВт·ч</div>
-      <div id="solarDailyChart" style="display:flex;align-items:flex-end;gap:2px;height:50px;overflow:hidden;">
+      <div id="solarDailyChart" style="display:flex;align-items:flex-end;gap:2px;height:60px;overflow:hidden;margin-top:14px;margin-bottom:14px;">
         <div style="color:#4a6a88;font-size:9px;align-self:center;">Загрузка...</div>
       </div>
       <div id="solarDailyTotal" style="font-size:9px;color:#4ade80;margin-top:3px;text-align:right;"></div>
@@ -1792,8 +1793,10 @@ async function fetchSolarHistory() {
       const pct = Math.round(d.kwh / maxKwh * 100);
       const isToday = d.day === today;
       const cls = isToday ? 'solar-day-bar solar-day-bar-today' : 'solar-day-bar';
-      const title = `${d.day}: ${d.kwh} кВт·ч`;
-      html += `<div class="${cls}" style="height:${pct}%;" title="${title}">
+      const valColor = isToday ? '#facc15' : '#86efac';
+      const kwh = d.kwh >= 1000 ? (d.kwh/1000).toFixed(1)+'М' : d.kwh;
+      html += `<div class="${cls}" style="height:${pct}%;" title="${d.day}: ${d.kwh} кВт·ч">
+        <span class="solar-day-val" style="color:${valColor};">${kwh}</span>
         <span class="solar-day-label">${d.day}</span>
       </div>`;
     });
@@ -1952,6 +1955,8 @@ const origRenderPC = typeof renderPC === 'function' ? renderPC : null;
 const origRenderBSU = typeof renderBSU === 'function' ? renderBSU : null;
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Автомасштаб 90% для лучшего отображения всех блоков
+  document.body.style.zoom = '90%';
   animateSections();
   setTimeout(animateCards, 300);
 });
