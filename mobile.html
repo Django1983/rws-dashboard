@@ -189,8 +189,8 @@
   .air-section-title { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.05em; margin: 10px 0 6px; }
   .msolar-bar { flex:1; background:#4ade80; border-radius:2px 2px 0 0; min-width:4px; position:relative; cursor:default; overflow:visible; }
   .msolar-bar-today { background:#facc15; }
-  .msolar-bar-label { position:absolute; bottom:-14px; left:50%; transform:translateX(-50%); font-size:7px; color:#4a6a88; white-space:nowrap; }
-  .msolar-bar-val { position:absolute; top:-15px; left:50%; transform:translateX(-50%); font-size:7px; color:#86efac; white-space:nowrap; font-weight:600; }
+  .msolar-bar-label { position:absolute; bottom:-14px; left:50%; transform:translateX(-50%); font-size:7px; color:#000; white-space:nowrap; }
+  .msolar-bar-val { position:absolute; top:-15px; left:50%; transform:translateX(-50%); font-size:7px; color:#000; white-space:nowrap; font-weight:600; }
 </style>
 </head>
 <body>
@@ -1362,7 +1362,7 @@ async function fetchMobileSolarHistory() {
       const pct = Math.round(d.kwh / maxKwh * 100);
       const isToday = d.day === today;
       const cls = isToday ? 'msolar-bar msolar-bar-today' : 'msolar-bar';
-      const valColor = isToday ? '#facc15' : '#86efac';
+      const valColor = '#000';
       const kwh = d.kwh >= 1000 ? (d.kwh/1000).toFixed(1)+'М' : d.kwh;
       html += `<div class="${cls}" style="height:${pct}%;" title="${d.day}: ${d.kwh} кВт·ч">
         <span class="msolar-bar-val" style="color:${valColor};">${kwh}</span>
