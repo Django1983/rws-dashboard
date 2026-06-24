@@ -387,6 +387,10 @@
   .tab-btn { padding:9px 28px; font-size:13px; font-weight:700; color:#4a6a88; background:none; border:none; border-bottom:3px solid transparent; cursor:pointer; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:-2px; transition:color 0.15s; }
   .tab-btn:hover { color:#7aacc8; }
   .tab-btn.active { color:#4ade80; border-bottom-color:#4ade80; }
+
+  /* Вкладка 2 — скрыты по умолчанию */
+  .section-solar { display: none !important; }
+  .section-iqair { display: none !important; }
 </style>
 </head>
 <body>
@@ -2080,13 +2084,13 @@ document.addEventListener('DOMContentLoaded', () => {
     show.forEach(function(s) {
       var el = document.querySelector('.' + s.cls);
       if (!el) return;
-      el.style.display = 'flex';
+      el.style.setProperty('display', 'flex', 'important');
       el.style.gridColumn = s.col;
       el.style.gridRow    = s.row;
     });
     hide.forEach(function(s) {
       var el = document.querySelector('.' + s.cls);
-      if (el) el.style.display = 'none';
+      if (el) el.style.setProperty('display', 'none', 'important');
     });
   }
 
