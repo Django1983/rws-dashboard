@@ -6,8 +6,8 @@
 <title>RWS Optimum — Производство ЖБ Шпал</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { zoom: 90%; }
-  body { font-family: 'Segoe UI', Arial, sans-serif; background: #071220; color: #c8dde8; height: 100vh; overflow: hidden; display: flex; flex-direction: column; font-size: 13px; }
+  html { zoom: 100%; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #071220; color: #c8dde8; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
   .header {
     display: flex; align-items: center; justify-content: space-between;
     padding: 7px 18px; background: #1a3a52;
@@ -43,12 +43,29 @@
   .content {
     flex: 1;
     display: grid;
-    gap: 10px;
-    padding: 10px;
+    grid-template-columns: minmax(0,1fr) minmax(0,1.4fr) minmax(0,0.9fr) minmax(0,0.7fr) minmax(0,0.45fr);
+    grid-template-rows: minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);
+    gap: 8px;
+    padding: 8px;
     overflow: hidden;
   }
 
-  /* grid-позиции секций управляются через JS showTab() */
+  /* Отгрузка — только верхняя строка центр */
+  .section-otg    { grid-column: 2; grid-row: 1; }
+  /* ОК — 2 строки, своя колонка */
+  .section-ok     { grid-column: 3; grid-row: 1 / 3; }
+  /* ПЦ вверху слева */
+  .section-pc     { grid-column: 1; grid-row: 1; }
+  /* БСУ — строка 2 слева */
+  .section-bsu    { grid-column: 1; grid-row: 2; }
+  /* 1С — строка 3 слева */
+  .section-1c     { grid-column: 1; grid-row: 3; }
+  /* Расход — строка 2 центр */
+  .section-rashod { grid-column: 2; grid-row: 2; }
+  /* Солнечные — строка 3 центр */
+  .section-solar  { grid-column: 2 / 4; grid-row: 3; }
+  /* IQAir — отдельная колонка, вся высота */
+  .section-iqair  { grid-column: 4; grid-row: 1 / 4; }
 
   /* Диаграмма солнечных по дням */
   .solar-day-bar { flex:1; background:#4ade80; border-radius:2px 2px 0 0; min-width:3px; max-width:16px; position:relative; cursor:default; transition:opacity 0.2s; overflow:visible; }
@@ -94,7 +111,8 @@
   .section-ok .section-badge {
     margin-left: auto;
   }
-  /* section-power: позиция через JS */
+  /* RadioMer — узкая колонка справа от Auris, вся высота */
+  .section-power  { grid-column: 5; grid-row: 1 / 4; }
 
   /* Расход: вертикальная таблица карточек */
   .rashod-inner {
@@ -365,28 +383,10 @@
 
 
   /* ── ТАБЫ ── */
-  .tabs-bar {
-    display: flex;
-    background: #071220;
-    border-bottom: 2px solid #1e3a52;
-    padding: 0 10px;
-    flex-shrink: 0;
-  }
-  .tab-btn {
-    padding: 8px 24px;
-    font-size: 13px;
-    font-weight: 700;
-    color: #4a6a88;
-    background: none;
-    border: none;
-    border-bottom: 3px solid transparent;
-    cursor: pointer;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    margin-bottom: -2px;
-  }
-  .tab-btn.active { color: #4ade80; border-bottom-color: #4ade80; }
-  .tab-btn:hover { color: #7aacc8; }
+  .tabs-bar { display:flex; background:#0a1828; border-bottom:2px solid #1e3a52; padding:0 12px; flex-shrink:0; }
+  .tab-btn { padding:9px 28px; font-size:13px; font-weight:700; color:#4a6a88; background:none; border:none; border-bottom:3px solid transparent; cursor:pointer; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:-2px; transition:color 0.15s; }
+  .tab-btn:hover { color:#7aacc8; }
+  .tab-btn.active { color:#4ade80; border-bottom-color:#4ade80; }
 </style>
 </head>
 <body>
@@ -465,6 +465,7 @@
   <button class="tab-btn active" id="btnTab1" onclick="showTab(1)">🏭 Производство</button>
   <button class="tab-btn" id="btnTab2" onclick="showTab(2)">📊 Показатели</button>
 </div>
+
 <div class="content" id="mainContent">
 
   <!-- ПЦ — верх слева -->
@@ -2041,73 +2042,54 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-  // ── Переключение вкладок ──
-  var TAB1_SECTIONS = ['section-pc','section-bsu','section-1c','section-otg','section-rashod','section-ok','section-power'];
-  var TAB2_SECTIONS = ['section-solar','section-iqair'];
-
-  // Сетки для каждой вкладки
-  var TAB1_GRID = {
-    columns: 'minmax(0,1fr) minmax(0,1.5fr) minmax(0,1fr) minmax(0,0.5fr)',
-    rows: 'minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)'
-  };
-  var TAB2_GRID = {
-    columns: 'minmax(0,1.6fr) minmax(0,1fr)',
-    rows: '1fr'
-  };
-
-  // Позиции секций в гриде вкладки 1
-  var TAB1_POS = {
-    'section-pc':     {col:'1',row:'1'},
-    'section-bsu':    {col:'1',row:'2'},
-    'section-1c':     {col:'1',row:'3'},
-    'section-otg':    {col:'2',row:'1'},
-    'section-rashod': {col:'2',row:'2/4'},
-    'section-ok':     {col:'3',row:'1/4'},
-    'section-power':  {col:'4',row:'1/4'}
-  };
-  // Позиции секций в гриде вкладки 2
-  var TAB2_POS = {
-    'section-solar': {col:'1',row:'1'},
-    'section-iqair': {col:'2',row:'1'}
-  };
-
+  /* ── Переключение вкладок ── */
   function showTab(n) {
+    // Кнопки
+    document.getElementById('btnTab1').classList.toggle('active', n===1);
+    document.getElementById('btnTab2').classList.toggle('active', n===2);
+
     var grid = document.getElementById('mainContent');
-    var btn1 = document.getElementById('btnTab1');
-    var btn2 = document.getElementById('btnTab2');
 
-    // Сброс кнопок
-    btn1.classList.toggle('active', n===1);
-    btn2.classList.toggle('active', n===2);
+    // Секции вкладки 1
+    var s1 = [
+      {cls:'section-pc',     col:'1',   row:'1'},
+      {cls:'section-bsu',    col:'1',   row:'2'},
+      {cls:'section-1c',     col:'1',   row:'3'},
+      {cls:'section-otg',    col:'2',   row:'1'},
+      {cls:'section-rashod', col:'2',   row:'2 / 4'},
+      {cls:'section-ok',     col:'3',   row:'1 / 4'},
+      {cls:'section-power',  col:'4',   row:'1 / 4'}
+    ];
+    // Секции вкладки 2
+    var s2 = [
+      {cls:'section-solar',  col:'1',   row:'1'},
+      {cls:'section-iqair',  col:'2',   row:'1'}
+    ];
 
-    var showSections = n===1 ? TAB1_SECTIONS : TAB2_SECTIONS;
-    var hideSections = n===1 ? TAB2_SECTIONS : TAB1_SECTIONS;
-    var pos = n===1 ? TAB1_POS : TAB2_POS;
-    var g = n===1 ? TAB1_GRID : TAB2_GRID;
+    var show = n===1 ? s1 : s2;
+    var hide = n===1 ? s2 : s1;
 
-    // Обновить грид
-    grid.style.gridTemplateColumns = g.columns;
-    grid.style.gridTemplateRows = g.rows;
+    if (n===1) {
+      grid.style.gridTemplateColumns = 'minmax(0,1fr) minmax(0,1.5fr) minmax(0,1.1fr) minmax(0,0.5fr)';
+      grid.style.gridTemplateRows    = 'minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)';
+    } else {
+      grid.style.gridTemplateColumns = 'minmax(0,1.6fr) minmax(0,1fr)';
+      grid.style.gridTemplateRows    = '1fr';
+    }
 
-    // Показать нужные секции с правильными позициями
-    showSections.forEach(function(cls) {
-      var el = document.querySelector('.' + cls);
+    show.forEach(function(s) {
+      var el = document.querySelector('.' + s.cls);
       if (!el) return;
       el.style.display = 'flex';
-      if (pos[cls]) {
-        el.style.gridColumn = pos[cls].col;
-        el.style.gridRow = pos[cls].row;
-      }
+      el.style.gridColumn = s.col;
+      el.style.gridRow    = s.row;
     });
-
-    // Скрыть ненужные
-    hideSections.forEach(function(cls) {
-      var el = document.querySelector('.' + cls);
+    hide.forEach(function(s) {
+      var el = document.querySelector('.' + s.cls);
       if (el) el.style.display = 'none';
     });
   }
 
-  // Инициализация при загрузке
   document.addEventListener('DOMContentLoaded', function() { showTab(1); });
 
 </script>
