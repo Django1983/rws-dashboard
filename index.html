@@ -21,7 +21,7 @@
   .header-time { font-size: 16px; font-weight: 300; color: #b0d4ea; font-variant-numeric: tabular-nums; }
   .header-controls { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; flex-shrink: 0; }
   .btn {
-    padding: 4px 11px; font-size: 11px; border-radius: 5px; cursor: pointer;
+    padding: 4px 11px; font-size: 13px; border-radius: 5px; cursor: pointer;
     border: 1px solid #2e5c7a; background: #244a62; color: #b0d4ea;
     display: inline-flex; align-items: center; gap: 5px; transition: background 0.15s;
   }
@@ -39,11 +39,14 @@
   .dot.ok { background: #16a34a; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-  /* ── ГЛАВНАЯ ОБЁРТКА (теперь flex для табов) ── */
+  /* ── ОБЁРТКА ВКЛАДКИ ── */
   .content {
     flex: 1;
     overflow: hidden;
-    display: none; /* tab-panel управляет видимостью */
+    display: none;
+  }
+  .content.active {
+    display: grid;
   }
 
   /* Диаграмма солнечных по дням */
@@ -386,15 +389,15 @@
   .tab-btn:hover { color: #7aacc8; }
   .tab-btn.active { color: #4ade80; border-bottom-color: #4ade80; }
 
-  .tab-panel { display: none; flex: 1; overflow: hidden; }
-  .tab-panel.active { display: grid; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: grid; flex: 1; overflow: hidden; }
 
-  /* Сетка вкладки 1 — Производство (7 блоков) */
+  /* Сетка вкладки 1 — Производство */
   .tab-production {
-    grid-template-columns: minmax(0,1fr) minmax(0,1.4fr) minmax(0,0.9fr) minmax(0,0.45fr);
+    grid-template-columns: minmax(0,1fr) minmax(0,1.5fr) minmax(0,1fr) minmax(0,0.55fr);
     grid-template-rows: minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);
-    gap: 8px;
-    padding: 8px;
+    gap: 10px;
+    padding: 10px;
   }
   .tab-production .section-pc     { grid-column: 1; grid-row: 1; }
   .tab-production .section-bsu    { grid-column: 1; grid-row: 2; }
@@ -406,10 +409,10 @@
 
   /* Сетка вкладки 2 — Показатели */
   .tab-indicators {
-    grid-template-columns: minmax(0,1fr) minmax(0,0.6fr);
+    grid-template-columns: minmax(0,1.6fr) minmax(0,1fr);
     grid-template-rows: 1fr;
-    gap: 8px;
-    padding: 8px;
+    gap: 10px;
+    padding: 10px;
   }
   .tab-indicators .section-solar  { grid-column: 1; grid-row: 1; }
   .tab-indicators .section-iqair  { grid-column: 2; grid-row: 1; }
@@ -494,7 +497,7 @@
   <button class="tab-btn" onclick="switchTab('indicators', this)">📊 Показатели</button>
 </div>
 
-<div id="tabProduction" class="content tab-panel tab-production active">
+<div id="tabProduction" class="content tab-production active">
 <!-- TAB1 -->
 
   <!-- ПЦ — верх слева -->
@@ -690,7 +693,7 @@
 
 </div><!-- /tab-production -->
 
-<div id="tabIndicators" class="content tab-panel tab-indicators">
+<div id="tabIndicators" class="content tab-indicators">
 <!-- TAB2 -->
   <div class="section section-solar" style="background:linear-gradient(135deg,#0a1e2e 0%,#1a3a52 100%);border:1px solid #2a5a78;display:flex;flex-direction:column;">
     <div class="section-header" style="background:linear-gradient(90deg,#0f3020,#1a3a52);border-bottom:1px solid #2a5a78;">
@@ -2077,7 +2080,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   function switchTab(name, btn) {
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.content').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('tab' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('active');
     btn.classList.add('active');
