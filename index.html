@@ -7,7 +7,7 @@
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { zoom: 90%; }
-  body { font-family: 'Segoe UI', Arial, sans-serif; background: #071220; color: #c8dde8; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #071220; color: #c8dde8; height: 100vh; overflow: hidden; display: flex; flex-direction: column; font-size: 13px; }
   .header {
     display: flex; align-items: center; justify-content: space-between;
     padding: 7px 18px; background: #1a3a52;
@@ -21,7 +21,7 @@
   .header-time { font-size: 16px; font-weight: 300; color: #b0d4ea; font-variant-numeric: tabular-nums; }
   .header-controls { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; flex-shrink: 0; }
   .btn {
-    padding: 4px 11px; font-size: 13px; border-radius: 5px; cursor: pointer;
+    padding: 4px 11px; font-size: 11px; border-radius: 5px; cursor: pointer;
     border: 1px solid #2e5c7a; background: #244a62; color: #b0d4ea;
     display: inline-flex; align-items: center; gap: 5px; transition: background 0.15s;
   }
@@ -39,17 +39,16 @@
   .dot.ok { background: #16a34a; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-  /* ── ОБЁРТКА ВКЛАДКИ ── */
+  /* ── ГЛАВНАЯ СЕТКА ── */
   .content {
-    display: none;
-    overflow: hidden;
-  }
-  .content.active {
-    display: grid;
     flex: 1;
-    min-height: 0;
+    display: grid;
+    gap: 10px;
+    padding: 10px;
     overflow: hidden;
   }
+
+  /* grid-позиции секций управляются через JS showTab() */
 
   /* Диаграмма солнечных по дням */
   .solar-day-bar { flex:1; background:#4ade80; border-radius:2px 2px 0 0; min-width:3px; max-width:16px; position:relative; cursor:default; transition:opacity 0.2s; overflow:visible; }
@@ -95,7 +94,7 @@
   .section-ok .section-badge {
     margin-left: auto;
   }
-  /* section-power позиция — задана в .tab-production */
+  /* section-power: позиция через JS */
 
   /* Расход: вертикальная таблица карточек */
   .rashod-inner {
@@ -368,57 +367,26 @@
   /* ── ТАБЫ ── */
   .tabs-bar {
     display: flex;
-    gap: 0;
     background: #071220;
     border-bottom: 2px solid #1e3a52;
-    padding: 0 8px;
+    padding: 0 10px;
     flex-shrink: 0;
   }
   .tab-btn {
-    padding: 7px 20px;
-    font-size: 12px;
-    font-weight: 600;
+    padding: 8px 24px;
+    font-size: 13px;
+    font-weight: 700;
     color: #4a6a88;
     background: none;
     border: none;
     border-bottom: 3px solid transparent;
     cursor: pointer;
-    letter-spacing: 0.04em;
-    transition: color 0.15s, border-color 0.15s;
-    margin-bottom: -2px;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
+    margin-bottom: -2px;
   }
-  .tab-btn:hover { color: #7aacc8; }
   .tab-btn.active { color: #4ade80; border-bottom-color: #4ade80; }
-
-  .tab-panel { display: none; }
-  .tab-panel.active { display: grid; flex: 1; overflow: hidden; }
-
-  /* Сетка вкладки 1 — Производство */
-  .tab-production {
-    grid-template-columns: minmax(0,1fr) minmax(0,1.5fr) minmax(0,1fr) minmax(0,0.55fr);
-    grid-template-rows: minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);
-    gap: 10px;
-    padding: 10px;
-  }
-  .tab-production .section-pc     { grid-column: 1; grid-row: 1; }
-  .tab-production .section-bsu    { grid-column: 1; grid-row: 2; }
-  .tab-production .section-1c     { grid-column: 1; grid-row: 3; }
-  .tab-production .section-otg    { grid-column: 2; grid-row: 1; }
-  .tab-production .section-rashod { grid-column: 2; grid-row: 2 / 4; }
-  .tab-production .section-ok     { grid-column: 3; grid-row: 1 / 4; }
-  .tab-production .section-power  { grid-column: 4; grid-row: 1 / 4; }
-
-  /* Сетка вкладки 2 — Показатели */
-  .tab-indicators {
-    grid-template-columns: minmax(0,1.6fr) minmax(0,1fr);
-    grid-template-rows: 1fr;
-    gap: 10px;
-    padding: 10px;
-  }
-  .tab-indicators .section-solar  { grid-column: 1; grid-row: 1; }
-  .tab-indicators .section-iqair  { grid-column: 2; grid-row: 1; }
-
+  .tab-btn:hover { color: #7aacc8; }
 </style>
 </head>
 <body>
@@ -493,15 +461,11 @@
   <span style="margin-left:auto;" id="lastUpdate"></span>
 </div>
 
-
-<div style="flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;">
 <div class="tabs-bar">
-  <button class="tab-btn active" onclick="switchTab('production', this)">🏭 Производство</button>
-  <button class="tab-btn" onclick="switchTab('indicators', this)">📊 Показатели</button>
+  <button class="tab-btn active" id="btnTab1" onclick="showTab(1)">🏭 Производство</button>
+  <button class="tab-btn" id="btnTab2" onclick="showTab(2)">📊 Показатели</button>
 </div>
-
-<div id="tabProduction" class="content tab-production active">
-<!-- TAB1 -->
+<div class="content" id="mainContent">
 
   <!-- ПЦ — верх слева -->
   <div class="section section-pc">
@@ -693,11 +657,6 @@
   </div>
 
   <!-- Солнечные панели — строка 3, центр+право -->
-
-</div><!-- /tab-production -->
-
-<div id="tabIndicators" class="content tab-indicators">
-<!-- TAB2 -->
   <div class="section section-solar" style="background:linear-gradient(135deg,#0a1e2e 0%,#1a3a52 100%);border:1px solid #2a5a78;display:flex;flex-direction:column;">
     <div class="section-header" style="background:linear-gradient(90deg,#0f3020,#1a3a52);border-bottom:1px solid #2a5a78;">
       ☀️ Солнечная энергия — RWS Solar
@@ -1002,8 +961,7 @@
     </div>
   </div>
 
-</div><!-- /tab-indicators -->
-</div><!-- /tabs-wrapper -->
+</div>
 
 <!-- Панели настроек поверх контента -->
 <div class="overlay-panels" id="overlayPanels">
@@ -2083,12 +2041,74 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-  function switchTab(name, btn) {
-    document.querySelectorAll('.content').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('tab' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('active');
-    btn.classList.add('active');
+  // ── Переключение вкладок ──
+  var TAB1_SECTIONS = ['section-pc','section-bsu','section-1c','section-otg','section-rashod','section-ok','section-power'];
+  var TAB2_SECTIONS = ['section-solar','section-iqair'];
+
+  // Сетки для каждой вкладки
+  var TAB1_GRID = {
+    columns: 'minmax(0,1fr) minmax(0,1.5fr) minmax(0,1fr) minmax(0,0.5fr)',
+    rows: 'minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)'
+  };
+  var TAB2_GRID = {
+    columns: 'minmax(0,1.6fr) minmax(0,1fr)',
+    rows: '1fr'
+  };
+
+  // Позиции секций в гриде вкладки 1
+  var TAB1_POS = {
+    'section-pc':     {col:'1',row:'1'},
+    'section-bsu':    {col:'1',row:'2'},
+    'section-1c':     {col:'1',row:'3'},
+    'section-otg':    {col:'2',row:'1'},
+    'section-rashod': {col:'2',row:'2/4'},
+    'section-ok':     {col:'3',row:'1/4'},
+    'section-power':  {col:'4',row:'1/4'}
+  };
+  // Позиции секций в гриде вкладки 2
+  var TAB2_POS = {
+    'section-solar': {col:'1',row:'1'},
+    'section-iqair': {col:'2',row:'1'}
+  };
+
+  function showTab(n) {
+    var grid = document.getElementById('mainContent');
+    var btn1 = document.getElementById('btnTab1');
+    var btn2 = document.getElementById('btnTab2');
+
+    // Сброс кнопок
+    btn1.classList.toggle('active', n===1);
+    btn2.classList.toggle('active', n===2);
+
+    var showSections = n===1 ? TAB1_SECTIONS : TAB2_SECTIONS;
+    var hideSections = n===1 ? TAB2_SECTIONS : TAB1_SECTIONS;
+    var pos = n===1 ? TAB1_POS : TAB2_POS;
+    var g = n===1 ? TAB1_GRID : TAB2_GRID;
+
+    // Обновить грид
+    grid.style.gridTemplateColumns = g.columns;
+    grid.style.gridTemplateRows = g.rows;
+
+    // Показать нужные секции с правильными позициями
+    showSections.forEach(function(cls) {
+      var el = document.querySelector('.' + cls);
+      if (!el) return;
+      el.style.display = 'flex';
+      if (pos[cls]) {
+        el.style.gridColumn = pos[cls].col;
+        el.style.gridRow = pos[cls].row;
+      }
+    });
+
+    // Скрыть ненужные
+    hideSections.forEach(function(cls) {
+      var el = document.querySelector('.' + cls);
+      if (el) el.style.display = 'none';
+    });
   }
+
+  // Инициализация при загрузке
+  document.addEventListener('DOMContentLoaded', function() { showTab(1); });
 
 </script>
 </body>
