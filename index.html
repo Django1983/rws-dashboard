@@ -2040,62 +2040,60 @@ const origRenderBSU = typeof renderBSU === 'function' ? renderBSU : null;
 
 document.addEventListener('DOMContentLoaded', () => {
   // Автомасштаб 90% для лучшего отображения всех блоков
-  document.body.style.zoom = '90%';
   animateSections();
   setTimeout(animateCards, 300);
 });
 
 
-  /* ── Переключение вкладок ── */
-  function showTab(n) {
-    // Кнопки
-    document.getElementById('btnTab1').classList.toggle('active', n===1);
-    document.getElementById('btnTab2').classList.toggle('active', n===2);
+</script>
 
-    var grid = document.getElementById('mainContent');
+<script>
+function showTab(n) {
+  document.getElementById('btnTab1').classList.toggle('active', n===1);
+  document.getElementById('btnTab2').classList.toggle('active', n===2);
 
-    // Секции вкладки 1
-    var s1 = [
-      {cls:'section-pc',     col:'1',   row:'1'},
-      {cls:'section-bsu',    col:'1',   row:'2'},
-      {cls:'section-1c',     col:'1',   row:'3'},
-      {cls:'section-otg',    col:'2',   row:'1'},
-      {cls:'section-rashod', col:'2',   row:'2 / 4'},
-      {cls:'section-ok',     col:'3',   row:'1 / 4'},
-      {cls:'section-power',  col:'4',   row:'1 / 4'}
-    ];
-    // Секции вкладки 2
-    var s2 = [
-      {cls:'section-solar',  col:'1',   row:'1'},
-      {cls:'section-iqair',  col:'2',   row:'1'}
-    ];
+  var grid = document.getElementById('mainContent');
 
-    var show = n===1 ? s1 : s2;
-    var hide = n===1 ? s2 : s1;
+  var s1 = [
+    {cls:'section-pc',     col:'1', row:'1'},
+    {cls:'section-bsu',    col:'1', row:'2'},
+    {cls:'section-1c',     col:'1', row:'3'},
+    {cls:'section-otg',    col:'2', row:'1'},
+    {cls:'section-rashod', col:'2', row:'2 / 4'},
+    {cls:'section-ok',     col:'3', row:'1 / 4'},
+    {cls:'section-power',  col:'4', row:'1 / 4'}
+  ];
+  var s2 = [
+    {cls:'section-solar', col:'1', row:'1'},
+    {cls:'section-iqair', col:'2', row:'1'}
+  ];
 
-    if (n===1) {
-      grid.style.gridTemplateColumns = 'minmax(0,1fr) minmax(0,1.5fr) minmax(0,1.1fr) minmax(0,0.5fr)';
-      grid.style.gridTemplateRows    = 'minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)';
-    } else {
-      grid.style.gridTemplateColumns = 'minmax(0,1.6fr) minmax(0,1fr)';
-      grid.style.gridTemplateRows    = '1fr';
-    }
+  var show = n===1 ? s1 : s2;
+  var hide = n===1 ? s2 : s1;
 
-    show.forEach(function(s) {
-      var el = document.querySelector('.' + s.cls);
-      if (!el) return;
-      el.style.setProperty('display', 'flex', 'important');
-      el.style.gridColumn = s.col;
-      el.style.gridRow    = s.row;
-    });
-    hide.forEach(function(s) {
-      var el = document.querySelector('.' + s.cls);
-      if (el) el.style.setProperty('display', 'none', 'important');
-    });
+  if (n===1) {
+    grid.style.gridTemplateColumns = 'minmax(0,1fr) minmax(0,1.5fr) minmax(0,1.1fr) minmax(0,0.5fr)';
+    grid.style.gridTemplateRows    = 'minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)';
+  } else {
+    grid.style.gridTemplateColumns = 'minmax(0,1.6fr) minmax(0,1fr)';
+    grid.style.gridTemplateRows    = '1fr';
   }
 
-  document.addEventListener('DOMContentLoaded', function() { showTab(1); });
+  show.forEach(function(s) {
+    var el = document.querySelector('.' + s.cls);
+    if (!el) return;
+    el.style.setProperty('display', 'flex', 'important');
+    el.style.gridColumn = s.col;
+    el.style.gridRow    = s.row;
+  });
+  hide.forEach(function(s) {
+    var el = document.querySelector('.' + s.cls);
+    if (el) el.style.setProperty('display', 'none', 'important');
+  });
+}
 
+document.addEventListener('DOMContentLoaded', function() { showTab(1); });
 </script>
+
 </body>
 </html>
