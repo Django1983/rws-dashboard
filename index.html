@@ -686,10 +686,10 @@
       <span class="auto-badge" style="background:rgba(74,222,128,0.15);color:#4ade80;border:1px solid rgba(74,222,128,0.3);">● Авто</span>
       <span class="section-badge" id="solarDate" style="background:#0f3020;color:#4ade80;border:1px solid #2a7a45;">—</span>
     </div>
-    <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr 1fr;gap:6px;padding:6px 8px;">
+    <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr 1fr;gap:10px;padding:14px 14px;">
 
       <!-- Мощность сейчас — большая зелёная -->
-      <div style="background:linear-gradient(135deg,#0f3020,#1a5a30);border:1px solid #2a7a45;border-radius:8px;padding:7px 10px;display:flex;flex-direction:column;gap:2px;">
+      <div style="background:linear-gradient(135deg,#0f3020,#1a5a30);border:1px solid #2a7a45;border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:4px;">
         <div style="font-size:8px;color:#86efac;text-transform:uppercase;letter-spacing:0.06em;display:flex;align-items:center;gap:4px;">⚡ Мощность сейчас</div>
         <div style="font-size:22px;font-weight:600;color:#4ade80;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarPowerKw">—</span><span style="font-size:11px;color:#86efac;margin-left:3px;">кВт</span></div>
         <div style="font-size:10px;color:#86efac;" id="solarStatus">Загрузка...</div>
@@ -697,7 +697,7 @@
       </div>
 
       <!-- За сегодня -->
-      <div style="background:linear-gradient(135deg,#1a3a52,#1e4d6b);border:1px solid #2a5a78;border-radius:8px;padding:7px 10px;display:flex;flex-direction:column;gap:2px;">
+      <div style="background:linear-gradient(135deg,#1a3a52,#1e4d6b);border:1px solid #2a5a78;border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:4px;">
         <div style="font-size:8px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;">📅 За сегодня</div>
         <div style="font-size:18px;font-weight:600;color:#fff;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarDay">—</span></div>
         <div style="font-size:9px;color:#7aacc8;">кВт·ч</div>
@@ -705,7 +705,7 @@
       </div>
 
       <!-- За месяц -->
-      <div style="background:linear-gradient(135deg,#1a3a52,#1e4d6b);border:1px solid #2a5a78;border-radius:8px;padding:7px 10px;display:flex;flex-direction:column;gap:2px;">
+      <div style="background:linear-gradient(135deg,#1a3a52,#1e4d6b);border:1px solid #2a5a78;border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:4px;">
         <div style="font-size:8px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;">📆 За месяц</div>
         <div style="font-size:18px;font-weight:600;color:#fff;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarMonth">—</span></div>
         <div style="font-size:9px;color:#7aacc8;">кВт·ч</div>
@@ -715,7 +715,7 @@
       </div>
 
       <!-- Прошлый месяц -->
-      <div style="background:linear-gradient(135deg,#1a3a52,#1e4d6b);border:1px solid #2a5a78;border-radius:8px;padding:7px 10px;display:flex;flex-direction:column;gap:2px;">
+      <div style="background:linear-gradient(135deg,#1a3a52,#1e4d6b);border:1px solid #2a5a78;border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:4px;">
         <div style="font-size:8px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;">📅 Прошлый месяц</div>
         <div style="font-size:18px;font-weight:600;color:#b0d4ea;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarPrevMonth">—</span></div>
         <div style="font-size:9px;color:#7aacc8;">кВт·ч</div>
@@ -723,7 +723,7 @@
       </div>
 
       <!-- Всего выработано -->
-      <div style="background:linear-gradient(135deg,#1a2a1a,#2a4a20);border:1px solid #3a6a2a;border-radius:8px;padding:7px 10px;display:flex;flex-direction:column;gap:2px;">
+      <div style="background:linear-gradient(135deg,#1a2a1a,#2a4a20);border:1px solid #3a6a2a;border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:4px;">
         <div style="font-size:8px;color:#a3e635;text-transform:uppercase;letter-spacing:0.06em;">🏆 Всего выработано</div>
         <div style="font-size:18px;font-weight:600;color:#d9f99d;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarTotal">—</span></div>
         <div style="font-size:9px;color:#a3e635;">МВт·ч</div>
@@ -734,9 +734,9 @@
     </div>
 
     <!-- Диаграмма выработки по дням за месяц -->
-    <div style="padding:4px 10px 6px;border-top:1px solid #1e3a52;flex:1;display:flex;flex-direction:column;min-height:0;">
+    <div style="padding:4px 10px 6px;border-top:1px solid #1e3a52;height:180px;flex-shrink:0;display:flex;flex-direction:column;">
       <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;flex-shrink:0;">📊 Выработка по дням за месяц, кВт·ч</div>
-      <div id="solarDailyChart" style="display:flex;align-items:flex-end;gap:2px;flex:1;min-height:0;overflow:visible;margin-top:18px;margin-bottom:14px;">
+      <div id="solarDailyChart" style="display:flex;align-items:flex-end;gap:2px;flex:1;min-height:0;overflow:visible;margin-top:16px;margin-bottom:12px;">
         <div style="color:#4a6a88;font-size:9px;align-self:center;">Загрузка...</div>
       </div>
       <div id="solarDailyTotal" style="font-size:9px;color:#4ade80;text-align:right;flex-shrink:0;"></div>
@@ -802,18 +802,9 @@
           <div style="font-size:10px;color:#7aacc8;line-height:1.3;">Угарный газ — опасен при высоких концентрациях</div>
         </div>
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
-          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🔵 O₃ <span style="font-size:9px;color:#4a6a82;text-transform:none;">(норма ≤100)</span></div>
-          <div style="font-size:22px;font-weight:600;color:#60a5fa;line-height:1.2;"><span id="o3Value">—</span></div>
-          <div id="o3Status" style="font-size:11px;font-weight:700;white-space:nowrap;"></div>
-          <div style="font-size:10px;color:#7aacc8;line-height:1.3;">Озон — раздражает дыхательные пути</div>
-        </div>
+        
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
-          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🌡️ Темп. <span style="font-size:9px;color:#4a6a82;text-transform:none;">(норма ≤35)</span></div>
-          <div style="font-size:22px;font-weight:600;color:#f87171;line-height:1.2;"><span id="tempValue">—</span>°C</div>
-          <div style="font-size:10px;color:#7aacc8;line-height:1.3;">Температура воздуха на улице</div>
-        </div>
+        
 
         <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
           <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">💧 Влажн. <span style="font-size:9px;color:#4a6a82;text-transform:none;">(норма ≤90)</span></div>
@@ -828,19 +819,9 @@
           <div style="font-size:10px;color:#7aacc8;line-height:1.3;">Аммиак — резкий запах, раздражает слизистые</div>
         </div>
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
-          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🟤 H₂S <span style="font-size:9px;color:#4a6a82;text-transform:none;">(норма ≤4)</span></div>
-          <div style="font-size:22px;font-weight:600;color:#d97706;line-height:1.2;"><span id="h2sValue">—</span></div>
-          <div id="h2sStatus" style="font-size:11px;font-weight:700;white-space:nowrap;"></div>
-          <div style="font-size:10px;color:#7aacc8;line-height:1.3;">Сероводород — запах тухлых яиц, токсичен</div>
-        </div>
+        
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
-          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🟢 VOC <span style="font-size:9px;color:#4a6a82;text-transform:none;">(норма ≤200)</span></div>
-          <div style="font-size:22px;font-weight:600;color:#4ade80;line-height:1.2;"><span id="vocValue">—</span></div>
-          <div id="vocStatus" style="font-size:11px;font-weight:700;white-space:nowrap;"></div>
-          <div style="font-size:10px;color:#7aacc8;line-height:1.3;">Летучие орг. соединения — растворители, краски</div>
-        </div>
+        
 
         <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
           <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🔵 Давл. <span style="font-size:9px;color:#4a6a82;text-transform:none;">(гПа)</span></div>
