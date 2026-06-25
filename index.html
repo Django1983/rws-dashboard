@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=1.0">
 <title>RWS Optimum — Производство ЖБ Шпал</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -15,12 +15,12 @@
   }
   .header-logo { flex-shrink: 0; }
   .header-center { flex: 1; text-align: center; }
-  .logo-text { font-size: 20px; font-weight: 700; color: #fff; letter-spacing: 0.08em; }
-  .logo-sub { font-size:14px; color: #7aacc8; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 1px; }
-  .header-time { font-size: 18px; font-weight: 300; color: #b0d4ea; font-variant-numeric: tabular-nums; }
+  .logo-text { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: 0.08em; }
+  .logo-sub { font-size: 10px; color: #7aacc8; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 1px; }
+  .header-time { font-size: 16px; font-weight: 300; color: #b0d4ea; font-variant-numeric: tabular-nums; }
   .header-controls { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; flex-shrink: 0; }
   .btn {
-    padding: 6px 14px; font-size:14px; border-radius: 5px; cursor: pointer;
+    padding: 4px 11px; font-size: 11px; border-radius: 5px; cursor: pointer;
     border: 1px solid #2e5c7a; background: #244a62; color: #b0d4ea;
     display: inline-flex; align-items: center; gap: 5px; transition: background 0.15s;
   }
@@ -29,8 +29,8 @@
   .btn-primary:hover { background: #278ac0; }
   .status-bar {
     display: flex; align-items: center; gap: 10px;
-    padding: 4px 18px; background: #0a1828;
-    border-bottom: 1px solid #1e3a52; font-size:14px; color:#7aacc8; color: #4a7fa5; flex-shrink: 0;
+    padding: 3px 18px; background: #e2ecf4;
+    border-bottom: 1px solid #c8dce8; font-size: 10px; color: #4a7fa5; flex-shrink: 0;
   }
   .dot { width: 6px; height: 6px; border-radius: 50%; background: #16a34a; flex-shrink: 0; }
   .dot.loading { background: #d97706; animation: pulse 1.2s infinite; }
@@ -70,23 +70,23 @@
   .solar-day-bar { flex:1; background:#4ade80; border-radius:2px 2px 0 0; min-width:3px; max-width:16px; position:relative; cursor:default; transition:opacity 0.2s; overflow:visible; }
   .solar-day-bar:hover { opacity:0.8; }
   .solar-day-bar-today { background:#facc15; }
-  .solar-day-label { position:absolute; bottom:-15px; left:50%; transform:translateX(-50%); font-size:8px; color:#4a6a88; white-space:nowrap; }
-  .solar-day-val { position:absolute; top:-16px; left:50%; transform:translateX(-50%); font-size:8px; color:#86efac; white-space:nowrap; font-weight:600; }
+  .solar-day-label { position:absolute; bottom:-13px; left:50%; transform:translateX(-50%); font-size:6px; color:#4a6a88; white-space:nowrap; }
+  .solar-day-val { position:absolute; top:-14px; left:50%; transform:translateX(-50%); font-size:6.5px; color:#86efac; white-space:nowrap; font-weight:600; }
 
   /* Тарифная диаграмма в блоке электроэнергии */
   .tarif-row { display:flex; align-items:center; gap:5px; }
-  .tarif-label { font-size:15px; font-weight:600; color:#7aacc8; flex-shrink:0; white-space:nowrap; }
-  .tarif-desc { font-size:14px; color:#4a7a9a; line-height:1.3; margin:1px 0 4px; }
+  .tarif-label { font-size:11px; font-weight:600; color:#7aacc8; flex-shrink:0; white-space:nowrap; }
+  .tarif-desc { font-size:10px; color:#4a7a9a; line-height:1.3; margin:1px 0 4px; }
   .tarif-bar-wrap { width:100%; height:6px; background:#1e3a52; border-radius:4px; overflow:hidden; }
   .tarif-bar { height:100%; border-radius:4px; width:0%; transition:width 0.6s ease; }
-  .tarif-val { font-size:15px; font-weight:600; color:#fff; flex-shrink:0; }
+  .tarif-val { font-size:12px; font-weight:600; color:#fff; flex-shrink:0; }
 
 , где текст перестаёт помещаться */
   .section-pc .section-header,
   .section-bsu .section-header,
   .section-otg .section-header,
   .section-ok .section-header {
-    font-size:14px;
+    font-size: 9px;
     padding: 4px 6px;
     gap: 3px;
     flex-wrap: wrap;
@@ -100,7 +100,7 @@
   .section-bsu .section-badge,
   .section-otg .section-badge,
   .section-ok .section-badge {
-    font-size:14px;
+    font-size: 8px;
     padding: 1px 4px;
     flex-shrink: 0;
   }
@@ -120,7 +120,7 @@
   }
   .rashod-item {
     flex: 1; display: grid;
-    grid-template-columns: 1fr 70px 130px 130px 110px;
+    grid-template-columns: 1fr 60px 120px 120px 100px;
     align-items: center;
     padding: 4px 8px; border-radius: 5px;
     border: 1px solid #d0e4f0; background: #f8fbfd;
@@ -129,20 +129,20 @@
   .rashod-item.is-limit { background: #fff3cd; border-color: #ffc107; border-left: 4px solid #f59e0b; }
   .rashod-item.is-limit .rashod-label { color: #92400e; font-weight: 700; }
   .rashod-item.is-limit .rashod-ost   { color: #b45309; }
-  .rashod-label { font-size:14px; font-weight: 600; color: #1a3a52; }
-  .rashod-norm  { font-size:15px; color: #7aacc8; text-align:right; white-space:nowrap; }
-  .rashod-ost   { font-size:14px; font-weight: 600; color: #2277aa; text-align:right; white-space:nowrap; }
-  .rashod-count { font-size:15px; font-weight: 700; color: #16a34a; text-align:right; white-space:nowrap; min-width:60px; }
-  .rashod-unit  { font-size:14px; color: #7aacc8; }
+  .rashod-label { font-size: 11px; font-weight: 600; color: #1a3a52; }
+  .rashod-norm  { font-size: 10px; color: #7aacc8; text-align:right; white-space:nowrap; }
+  .rashod-ost   { font-size: 11px; font-weight: 600; color: #2277aa; text-align:right; white-space:nowrap; }
+  .rashod-count { font-size: 13px; font-weight: 700; color: #16a34a; text-align:right; white-space:nowrap; min-width:60px; }
+  .rashod-unit  { font-size: 9px; color: #7aacc8; }
   .rashod-min {
     display: flex; align-items: center; justify-content: space-between;
     padding: 6px 10px; background: #f0faf4;
     border: 2px solid #86efac; border-radius: 6px; flex-shrink: 0;
     margin-top: 2px;
   }
-  .rashod-min-label { font-size:15px; font-weight: 600; color: #16a34a; text-transform: uppercase; letter-spacing: 0.05em; }
+  .rashod-min-label { font-size: 10px; font-weight: 600; color: #16a34a; text-transform: uppercase; letter-spacing: 0.05em; }
   .rashod-min-val   { font-size: 22px; font-weight: 700; color: #15803d; }
-  .rashod-min-unit  { font-size:15px; color: #4ade80; margin-left: 3px; }
+  .rashod-min-unit  { font-size: 10px; color: #4ade80; margin-left: 3px; }
 
   .section {
     background: #fff; border: 1px solid #c8dce8; border-radius: 8px;
@@ -151,11 +151,11 @@
   }
   .section-header {
     display: flex; align-items: center; gap: 8px;
-    padding: 9px 14px; background: #1a5c8a; border-bottom: 1px solid #154e78;
-    font-size:14px; font-weight: 600; color: #ffffff; flex-shrink: 0;
+    padding: 6px 12px; background: #1a5c8a; border-bottom: 1px solid #154e78;
+    font-size: 12px; font-weight: 600; color: #ffffff; flex-shrink: 0;
   }
   .section-badge {
-    margin-left: auto; font-size:15px; padding: 1px 8px;
+    margin-left: auto; font-size: 10px; padding: 1px 8px;
     border-radius: 20px; background: rgba(255,255,255,0.15); color: #ffffff;
     border: 1px solid rgba(255,255,255,0.3); white-space: nowrap;
   }
@@ -165,14 +165,14 @@
     background: #f0f6fb;
   }
   .card { background: #ffffff; border: 1px solid #c8dce8; border-radius: 6px; padding: 6px 10px; }
-  .card-label { font-size:14px; color: #5a8aaa; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
-  .card-value { font-size: 28px; font-weight: 600; color: #1a5c8a; }
-  .card-unit { font-size:15px; color: #7aacc8; margin-left: 2px; }
+  .card-label { font-size: 9px; color: #5a8aaa; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
+  .card-value { font-size: 18px; font-weight: 500; color: #1a5c8a; }
+  .card-unit { font-size: 10px; color: #7aacc8; margin-left: 2px; }
 
   .table-wrap { overflow: hidden; flex: 1; min-height: 0; }
-  table { width: 100%; border-collapse: collapse; font-size:14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 11px; }
   th {
-    padding: 3px 4px; text-align: center; font-size:14px; font-weight: 700;
+    padding: 3px 4px; text-align: center; font-size: 8px; font-weight: 700;
     color: #ffffff; border-bottom: 2px solid #154e78; border-right: 1px solid #2a7ab0;
     text-transform: uppercase; letter-spacing: 0.01em; background: #1a5c8a;
     position: sticky; top: 0; z-index: 1; line-height: 1.2;
@@ -182,19 +182,19 @@
   td.name-col { text-align: left; }
   tr:last-child td { border-bottom: none; }
   tr:hover td { background: #f4f9fd; }
-  .num { text-align: center; font-variant-numeric: tabular-nums; font-size:14px; font-weight: 600; }
-  .n-num { color: #1a5c8a; font-weight: 700; font-size:14px; }
+  .num { text-align: center; font-variant-numeric: tabular-nums; font-size: 12px; font-weight: 600; }
+  .n-num { color: #1a5c8a; font-weight: 700; font-size: 12px; }
   .plus { color: #16a34a; font-weight: 500; }
   .minus { color: #dc2626; font-weight: 500; }
   .neutral { color: #9ab4c4; }
-  .row-num { color: #9ab4c4; font-size:15px; }
-  .empty { padding: 16px; text-align: center; color: #9ab4c4; font-size:14px; }
-  .auto-badge { font-size:14px; padding: 2px 9px; border-radius: 20px; background: rgba(255,255,255,0.15); color: #ffffff; border: 1px solid rgba(134,239,172,0.6); }
+  .row-num { color: #9ab4c4; font-size: 10px; }
+  .empty { padding: 16px; text-align: center; color: #9ab4c4; font-size: 12px; }
+  .auto-badge { font-size: 9px; padding: 1px 7px; border-radius: 20px; background: rgba(255,255,255,0.15); color: #ffffff; border: 1px solid rgba(134,239,172,0.6); }
 
   /* Debug panel */
   .debug-panel {
     display: none; background: #f8fbfd; border: 1px solid #c8dce8; border-radius: 8px;
-    padding: 12px; font-family: monospace; font-size:15px; color: #2277aa;
+    padding: 12px; font-family: monospace; font-size: 10px; color: #2277aa;
     max-height: 200px; overflow-y: auto; margin: 8px;
   }
   .debug-panel.visible { display: block; }
@@ -206,7 +206,7 @@
   /* Error block */
   .error-block {
     background: #fef2f2; border: 1px solid #fca5a5; border-radius: 6px;
-    padding: 10px; margin: 6px 10px; font-size:14px; color: #dc2626; display: none;
+    padding: 10px; margin: 6px 10px; font-size: 11px; color: #dc2626; display: none;
   }
   .error-block.visible { display: block; }
   .error-block h4 { margin-bottom: 6px; color: #b91c1c; }
@@ -219,17 +219,17 @@
     padding: 10px 12px; margin: 0 10px 10px; display: none;
   }
   .url-editor.visible { display: block; }
-  .url-editor label { font-size:14px; color: #5a8aaa; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 3px; }
+  .url-editor label { font-size: 9px; color: #5a8aaa; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 3px; }
   .url-editor input {
     width: 100%; background: #fff; border: 1px solid #c8dce8; border-radius: 4px;
-    padding: 5px 8px; color: #1a2e3b; font-size:15px; font-family: monospace; margin-bottom: 6px;
+    padding: 5px 8px; color: #1a2e3b; font-size: 10px; font-family: monospace; margin-bottom: 6px;
   }
   .url-editor input:focus { outline: none; border-color: #2277aa; }
 
   /* Панели настроек и диагностики — в попап поверх */
   .overlay-panels { position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; padding: 0 8px 4px; pointer-events: none; display: flex; gap: 6px; }
   .overlay-panels .section { pointer-events: all; flex: 1; }
-  .overlay-panels .section-header { padding: 6px 12px; font-size:15px; min-height: 0; }
+  .overlay-panels .section-header { padding: 3px 10px; font-size: 10px; min-height: 0; }
 
   @media print {
     body { overflow: visible; height: auto; }
@@ -254,7 +254,7 @@
     border: 1px solid #2a5a78;
   }
   .solar-card-label {
-    font-size:14px; color: #7aacc8;
+    font-size: 12px; color: #7aacc8;
     text-transform: uppercase; letter-spacing: 0.06em;
     display: flex; align-items: center; gap: 5px;
   }
@@ -262,8 +262,8 @@
     font-size: 30px; font-weight: 600; color: #fff;
     font-variant-numeric: tabular-nums; line-height: 1.1;
   }
-  .solar-card-unit { font-size:15px; color: #7aacc8; margin-left: 3px; }
-  .solar-card-sub { font-size:14px; color: #4a9a6a; margin-top: 2px; }
+  .solar-card-unit { font-size: 13px; color: #7aacc8; margin-left: 3px; }
+  .solar-card-sub { font-size: 12px; color: #4a9a6a; margin-top: 2px; }
   .solar-card.realtime { background: linear-gradient(135deg, #1a4a2a 0%, #1e6035 100%); border-color: #2a7a45; }
   .solar-card.realtime .solar-card-value { color: #4ade80; }
 
@@ -271,14 +271,14 @@
   .onec-inner { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
   .onec-header-row {
     display: grid; grid-template-columns: 1fr 90px 60px;
-    font-size:14px; font-weight: 700; color: #fff; text-transform: uppercase;
+    font-size: 9px; font-weight: 700; color: #fff; text-transform: uppercase;
     letter-spacing: 0.05em; padding: 4px 10px;
     background: #1a3a52; border-bottom: 1px solid #154e78;
   }
   .onec-row {
     display: grid; grid-template-columns: 1fr 90px 60px;
     align-items: center; padding: 3px 10px;
-    border-bottom: 1px solid #eaf2f8; font-size:14px; flex: 1; min-height: 0; max-height: 36px;
+    border-bottom: 1px solid #eaf2f8; font-size: 11px; flex: 1; min-height: 0; max-height: 36px;
   }
   .onec-row.is-total {
     background: #f0f6fb; border-top: 2px solid #c8dce8;
@@ -286,8 +286,8 @@
   }
   .onec-name  { color: #1a3a52; font-weight: 600; }
   .onec-qty   { text-align: right; font-weight: 700; color: #0e7490; font-variant-numeric: tabular-nums; }
-  .onec-unit  { text-align: right; font-size:15px; color: #9ab4c4; }
-  .onec-updated { font-size:14px; color: #9ab4c4; padding: 2px 10px; border-top: 1px solid #eaf2f8; flex-shrink: 0; }
+  .onec-unit  { text-align: right; font-size: 10px; color: #9ab4c4; }
+  .onec-updated { font-size: 9px; color: #9ab4c4; padding: 2px 10px; border-top: 1px solid #eaf2f8; flex-shrink: 0; }
 
 
   /* ── АНИМАЦИИ ─────────────────────────────────────────────────────── */
@@ -383,13 +383,32 @@
 
   /* ── ТАБЫ ── */
   .tabs-bar { display:flex; background:#0a1828; border-bottom:2px solid #1e3a52; padding:0 12px; flex-shrink:0; }
-  .tab-btn { padding:9px 28px; font-size:15px; font-weight:700; color:#4a6a88; background:none; border:none; border-bottom:3px solid transparent; cursor:pointer; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:-2px; transition:color 0.15s; }
+  .tab-btn { padding:9px 28px; font-size:13px; font-weight:700; color:#4a6a88; background:none; border:none; border-bottom:3px solid transparent; cursor:pointer; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:-2px; transition:color 0.15s; }
   .tab-btn:hover { color:#7aacc8; }
   .tab-btn.active { color:#4ade80; border-bottom-color:#4ade80; }
 
-  /* Вкладка 2 — скрыты по умолчанию */
-  .section-solar { display: none !important; }
-  .section-iqair { display: none !important; }
+  /* Скрыть solar/iqair/personnel по умолчанию */
+  .section-solar    { display:none !important; }
+  .section-iqair    { display:none !important; }
+  .section-personnel { display:none !important; }
+
+  /* Блок персонала */
+  .personnel-stat-card {
+    background:#0f1e30; border:1px solid #1e3a52; border-radius:8px;
+    padding:16px 20px; display:flex; flex-direction:column; gap:4px;
+  }
+  .personnel-stat-val  { font-size:42px; font-weight:700; line-height:1; }
+  .personnel-stat-label { font-size:13px; color:#7aacc8; text-transform:uppercase; letter-spacing:0.05em; }
+  .personnel-late-item {
+    display:flex; align-items:center; gap:8px;
+    padding:6px 10px; border-radius:6px; background:#0f1e30;
+    border-left:3px solid #f59e0b; font-size:13px; color:#c8dde8;
+  }
+  .personnel-early-item {
+    display:flex; align-items:center; gap:8px;
+    padding:6px 10px; border-radius:6px; background:#0f1e30;
+    border-left:3px solid #60a5fa; font-size:13px; color:#c8dde8;
+  }
 </style>
 </head>
 <body>
@@ -410,7 +429,7 @@
     <img src="data:image/png;base64,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"
       alt="RWS" style="height:44px; margin:0 auto 12px; display:block;">
     <div style="font-size:19px; font-weight:700; color:#fff; letter-spacing:0.08em;">RWS OPTIMUM</div>
-    <div style="font-size:14px; color:#7aacc8; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:24px;">Производство ЖБ Шпал</div>
+    <div style="font-size:11px; color:#7aacc8; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:24px;">Производство ЖБ Шпал</div>
     <input id="pwInput" type="password"
       placeholder="Введите пароль"
       onkeydown="if(event.key==='Enter') checkPassword()"
@@ -467,8 +486,8 @@
 <div class="tabs-bar">
   <button class="tab-btn active" id="btnTab1" onclick="showTab(1)">🏭 Производство</button>
   <button class="tab-btn" id="btnTab2" onclick="showTab(2)">📊 Показатели</button>
+  <button class="tab-btn" id="btnTab3" onclick="showTab(3)">👥 Персонал</button>
 </div>
-
 <div class="content" id="mainContent">
 
   <!-- ПЦ — верх слева -->
@@ -667,60 +686,60 @@
       <span class="auto-badge" style="background:rgba(74,222,128,0.15);color:#4ade80;border:1px solid rgba(74,222,128,0.3);">● Авто</span>
       <span class="section-badge" id="solarDate" style="background:#0f3020;color:#4ade80;border:1px solid #2a7a45;">—</span>
     </div>
-    <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr 1fr;gap:10px;padding:14px 14px;">
+    <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr 1fr;gap:6px;padding:6px 8px;">
 
       <!-- Мощность сейчас — большая зелёная -->
-      <div style="background:linear-gradient(135deg,#0f3020,#1a5a30);border:1px solid #2a7a45;border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;">
-        <div style="font-size:13px;color:#86efac;text-transform:uppercase;letter-spacing:0.06em;display:flex;align-items:center;gap:4px;">⚡ Мощность сейчас</div>
-        <div style="font-size:36px;font-weight:600;color:#4ade80;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarPowerKw">—</span><span style="font-size:14px;color:#86efac;margin-left:3px;">кВт</span></div>
-        <div style="font-size:13px;color:#86efac;" id="solarStatus">Загрузка...</div>
-        <div style="font-size:11px;color:#4a7a5a;" id="solarLoad">Установлено: 400 кВт</div>
+      <div style="background:linear-gradient(135deg,#0f3020,#1a5a30);border:1px solid #2a7a45;border-radius:8px;padding:7px 10px;display:flex;flex-direction:column;gap:2px;">
+        <div style="font-size:8px;color:#86efac;text-transform:uppercase;letter-spacing:0.06em;display:flex;align-items:center;gap:4px;">⚡ Мощность сейчас</div>
+        <div style="font-size:22px;font-weight:600;color:#4ade80;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarPowerKw">—</span><span style="font-size:11px;color:#86efac;margin-left:3px;">кВт</span></div>
+        <div style="font-size:10px;color:#86efac;" id="solarStatus">Загрузка...</div>
+        <div style="font-size:8px;color:#4a7a5a;" id="solarLoad">Установлено: 400 кВт</div>
       </div>
 
       <!-- За сегодня -->
-      <div style="background:linear-gradient(135deg,#1a3a52,#1e4d6b);border:1px solid #2a5a78;border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;">
-        <div style="font-size:13px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;">📅 За сегодня</div>
-        <div style="font-size:32px;font-weight:600;color:#fff;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarDay">—</span></div>
-        <div style="font-size:12px;color:#7aacc8;">кВт·ч</div>
-        <div style="font-size:12px;color:#4a8aaa;" id="solarDayMwh"></div>
+      <div style="background:linear-gradient(135deg,#1a3a52,#1e4d6b);border:1px solid #2a5a78;border-radius:8px;padding:7px 10px;display:flex;flex-direction:column;gap:2px;">
+        <div style="font-size:8px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;">📅 За сегодня</div>
+        <div style="font-size:18px;font-weight:600;color:#fff;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarDay">—</span></div>
+        <div style="font-size:9px;color:#7aacc8;">кВт·ч</div>
+        <div style="font-size:9px;color:#4a8aaa;" id="solarDayMwh"></div>
       </div>
 
       <!-- За месяц -->
-      <div style="background:linear-gradient(135deg,#1a3a52,#1e4d6b);border:1px solid #2a5a78;border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;">
-        <div style="font-size:13px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;">📆 За месяц</div>
-        <div style="font-size:32px;font-weight:600;color:#fff;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarMonth">—</span></div>
-        <div style="font-size:12px;color:#7aacc8;">кВт·ч</div>
-        <div style="font-size:12px;color:#4a8aaa;" id="solarMonthMwh"></div>
-        <div style="font-size:12px;" id="solarDiff"></div>
-        <div style="font-size:12px;color:#a3e635;">💰 <span id="solarSavingsMonth">—</span></div>
+      <div style="background:linear-gradient(135deg,#1a3a52,#1e4d6b);border:1px solid #2a5a78;border-radius:8px;padding:7px 10px;display:flex;flex-direction:column;gap:2px;">
+        <div style="font-size:8px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;">📆 За месяц</div>
+        <div style="font-size:18px;font-weight:600;color:#fff;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarMonth">—</span></div>
+        <div style="font-size:9px;color:#7aacc8;">кВт·ч</div>
+        <div style="font-size:9px;color:#4a8aaa;" id="solarMonthMwh"></div>
+        <div style="font-size:9px;" id="solarDiff"></div>
+        <div style="font-size:9px;color:#a3e635;">💰 <span id="solarSavingsMonth">—</span></div>
       </div>
 
       <!-- Прошлый месяц -->
-      <div style="background:linear-gradient(135deg,#1a3a52,#1e4d6b);border:1px solid #2a5a78;border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;">
-        <div style="font-size:13px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;">📅 Прошлый месяц</div>
-        <div style="font-size:32px;font-weight:600;color:#b0d4ea;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarPrevMonth">—</span></div>
-        <div style="font-size:12px;color:#7aacc8;">кВт·ч</div>
-        <div style="font-size:12px;color:#4a8aaa;" id="solarPrevMonthMwh"></div>
+      <div style="background:linear-gradient(135deg,#1a3a52,#1e4d6b);border:1px solid #2a5a78;border-radius:8px;padding:7px 10px;display:flex;flex-direction:column;gap:2px;">
+        <div style="font-size:8px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;">📅 Прошлый месяц</div>
+        <div style="font-size:18px;font-weight:600;color:#b0d4ea;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarPrevMonth">—</span></div>
+        <div style="font-size:9px;color:#7aacc8;">кВт·ч</div>
+        <div style="font-size:9px;color:#4a8aaa;" id="solarPrevMonthMwh"></div>
       </div>
 
       <!-- Всего выработано -->
-      <div style="background:linear-gradient(135deg,#1a2a1a,#2a4a20);border:1px solid #3a6a2a;border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;">
-        <div style="font-size:13px;color:#a3e635;text-transform:uppercase;letter-spacing:0.06em;">🏆 Всего выработано</div>
-        <div style="font-size:32px;font-weight:600;color:#d9f99d;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarTotal">—</span></div>
-        <div style="font-size:12px;color:#a3e635;">МВт·ч</div>
-        <div style="font-size:11px;color:#4a7a2a;">с начала эксплуатации</div>
-        <div style="font-size:12px;color:#a3e635;">💰 <span id="solarSavingsTotal">—</span></div>
+      <div style="background:linear-gradient(135deg,#1a2a1a,#2a4a20);border:1px solid #3a6a2a;border-radius:8px;padding:7px 10px;display:flex;flex-direction:column;gap:2px;">
+        <div style="font-size:8px;color:#a3e635;text-transform:uppercase;letter-spacing:0.06em;">🏆 Всего выработано</div>
+        <div style="font-size:18px;font-weight:600;color:#d9f99d;line-height:1;font-variant-numeric:tabular-nums;"><span id="solarTotal">—</span></div>
+        <div style="font-size:9px;color:#a3e635;">МВт·ч</div>
+        <div style="font-size:8px;color:#4a7a2a;">с начала эксплуатации</div>
+        <div style="font-size:9px;color:#a3e635;">💰 <span id="solarSavingsTotal">—</span></div>
       </div>
 
     </div>
 
     <!-- Диаграмма выработки по дням за месяц -->
-    <div style="padding:4px 10px 6px;border-top:1px solid #1e3a52;height:200px;flex-shrink:0;display:flex;flex-direction:column;">
-      <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;flex-shrink:0;">📊 Выработка по дням за месяц, кВт·ч</div>
-      <div id="solarDailyChart" style="display:flex;align-items:flex-end;gap:3px;flex:1;min-height:0;overflow:visible;margin-top:20px;margin-bottom:16px;">
-        <div style="color:#4a6a88;font-size:12px;align-self:center;">Загрузка...</div>
+    <div style="padding:4px 10px 6px;border-top:1px solid #1e3a52;flex:1;display:flex;flex-direction:column;min-height:0;">
+      <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;flex-shrink:0;">📊 Выработка по дням за месяц, кВт·ч</div>
+      <div id="solarDailyChart" style="display:flex;align-items:flex-end;gap:2px;flex:1;min-height:0;overflow:visible;margin-top:18px;margin-bottom:14px;">
+        <div style="color:#4a6a88;font-size:9px;align-self:center;">Загрузка...</div>
       </div>
-      <div id="solarDailyTotal" style="font-size:12px;color:#4ade80;text-align:right;flex-shrink:0;"></div>
+      <div id="solarDailyTotal" style="font-size:9px;color:#4ade80;text-align:right;flex-shrink:0;"></div>
     </div>
   </div>
   <div class="section section-iqair" style="background:linear-gradient(135deg,#0a1e2e 0%,#1a3a52 100%);border:1px solid #2a5a78;">
@@ -734,82 +753,105 @@
       <!-- ИЗА строка -->
       <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
         <div id="izaBadge" style="min-width:64px;height:64px;border-radius:11px;background:#1a4a2a;border:2px solid #2a7a45;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;flex-shrink:0;">
-          <div id="izaValue" style="font-size:34px;font-weight:700;color:#4ade80;line-height:1;">—</div>
-          <div style="font-size:13px;color:#86efac;letter-spacing:0.05em;">ИЗА</div>
+          <div id="izaValue" style="font-size:26px;font-weight:700;color:#4ade80;line-height:1;">—</div>
+          <div style="font-size:10px;color:#86efac;letter-spacing:0.05em;">ИЗА</div>
         </div>
         <div style="flex:1;min-width:0;">
-          <div id="izaLabel" style="font-size:22px;font-weight:600;color:#4ade80;line-height:1.3;">Загрузка...</div>
-          <div style="font-size:13px;color:#7aacc8;margin-top:1px;">Норма ИЗА: до 4 (низкий)</div>
-          <div style="font-size:14px;color:#7aacc8;margin-top:3px;">📍 Чирчик, Буйи 4</div>
-          <div style="font-size:14px;color:#7aacc8;">Замер: <span id="aqiTimeMeasured">—</span></div>
+          <div id="izaLabel" style="font-size:18px;font-weight:600;color:#4ade80;line-height:1.3;">Загрузка...</div>
+          <div style="font-size:10px;color:#7aacc8;margin-top:1px;">Норма ИЗА: до 4 (низкий)</div>
+          <div style="font-size:11px;color:#7aacc8;margin-top:3px;">📍 Чирчик, Буйи 4</div>
+          <div style="font-size:11px;color:#7aacc8;">Замер: <span id="aqiTimeMeasured">—</span></div>
         </div>
       </div>
 
       <!-- Сетка 2x... загрязнителей -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;flex:1;min-height:0;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;flex:1;min-height:0;">
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:3px;overflow:hidden;">
-          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🔴 PM2.5 <span style="font-size:12px;color:#4a6a82;text-transform:none;">(норма ≤35)</span></div>
-          <div style="font-size:26px;font-weight:600;color:#fbbf24;line-height:1.2;"><span id="pm25Value">—</span></div>
-          <div id="pm25Status" style="font-size:14px;font-weight:700;white-space:nowrap;"></div>
-          <div style="font-size:13px;color:#7aacc8;line-height:1.3;">Мелкая пыль — проникает в лёгкие</div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
+          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🔴 PM2.5 <span style="font-size:9px;color:#4a6a82;text-transform:none;">(норма ≤35)</span></div>
+          <div style="font-size:22px;font-weight:600;color:#fbbf24;line-height:1.2;"><span id="pm25Value">—</span></div>
+          <div id="pm25Status" style="font-size:11px;font-weight:700;white-space:nowrap;"></div>
+          <div style="font-size:10px;color:#7aacc8;line-height:1.3;">Мелкая пыль — проникает в лёгкие</div>
         </div>
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:3px;overflow:hidden;">
-          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🌫️ PM10 <span style="font-size:12px;color:#4a6a82;text-transform:none;">(норма ≤50)</span></div>
-          <div style="font-size:26px;font-weight:600;color:#fb923c;line-height:1.2;"><span id="pm10Value">—</span></div>
-          <div id="pm10Status" style="font-size:14px;font-weight:700;white-space:nowrap;"></div>
-          <div style="font-size:13px;color:#7aacc8;line-height:1.3;">Крупная пыль — раздражает дыхательные пути</div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
+          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🌫️ PM10 <span style="font-size:9px;color:#4a6a82;text-transform:none;">(норма ≤50)</span></div>
+          <div style="font-size:22px;font-weight:600;color:#fb923c;line-height:1.2;"><span id="pm10Value">—</span></div>
+          <div id="pm10Status" style="font-size:11px;font-weight:700;white-space:nowrap;"></div>
+          <div style="font-size:10px;color:#7aacc8;line-height:1.3;">Крупная пыль — раздражает дыхательные пути</div>
         </div>
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:3px;overflow:hidden;">
-          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🟡 SO₂ <span style="font-size:12px;color:#4a6a82;text-transform:none;">(норма ≤50)</span></div>
-          <div style="font-size:26px;font-weight:600;color:#fbbf24;line-height:1.2;"><span id="so2Value">—</span></div>
-          <div id="so2Status" style="font-size:14px;font-weight:700;white-space:nowrap;"></div>
-          <div style="font-size:13px;color:#7aacc8;line-height:1.3;">Диоксид серы — раздражает глаза и лёгкие</div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
+          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🟡 SO₂ <span style="font-size:9px;color:#4a6a82;text-transform:none;">(норма ≤50)</span></div>
+          <div style="font-size:22px;font-weight:600;color:#fbbf24;line-height:1.2;"><span id="so2Value">—</span></div>
+          <div id="so2Status" style="font-size:11px;font-weight:700;white-space:nowrap;"></div>
+          <div style="font-size:10px;color:#7aacc8;line-height:1.3;">Диоксид серы — раздражает глаза и лёгкие</div>
         </div>
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:3px;overflow:hidden;">
-          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🟤 NO₂ <span style="font-size:12px;color:#4a6a82;text-transform:none;">(норма ≤40)</span></div>
-          <div style="font-size:26px;font-weight:600;color:#fb923c;line-height:1.2;"><span id="no2Value">—</span></div>
-          <div id="no2Status" style="font-size:14px;font-weight:700;white-space:nowrap;"></div>
-          <div style="font-size:13px;color:#7aacc8;line-height:1.3;">Диоксид азота — выхлопы и промышленность</div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
+          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🟤 NO₂ <span style="font-size:9px;color:#4a6a82;text-transform:none;">(норма ≤40)</span></div>
+          <div style="font-size:22px;font-weight:600;color:#fb923c;line-height:1.2;"><span id="no2Value">—</span></div>
+          <div id="no2Status" style="font-size:11px;font-weight:700;white-space:nowrap;"></div>
+          <div style="font-size:10px;color:#7aacc8;line-height:1.3;">Диоксид азота — выхлопы и промышленность</div>
         </div>
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:3px;overflow:hidden;">
-          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">⚪ CO <span style="font-size:12px;color:#4a6a82;text-transform:none;">(норма ≤3)</span></div>
-          <div style="font-size:26px;font-weight:600;color:#a3a3a3;line-height:1.2;"><span id="coValue">—</span></div>
-          <div id="coStatus" style="font-size:14px;font-weight:700;white-space:nowrap;"></div>
-          <div style="font-size:13px;color:#7aacc8;line-height:1.3;">Угарный газ — опасен при высоких концентрациях</div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
+          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">⚪ CO <span style="font-size:9px;color:#4a6a82;text-transform:none;">(норма ≤3)</span></div>
+          <div style="font-size:22px;font-weight:600;color:#a3a3a3;line-height:1.2;"><span id="coValue">—</span></div>
+          <div id="coStatus" style="font-size:11px;font-weight:700;white-space:nowrap;"></div>
+          <div style="font-size:10px;color:#7aacc8;line-height:1.3;">Угарный газ — опасен при высоких концентрациях</div>
         </div>
 
-
-
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:3px;overflow:hidden;">
-          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">💧 Влажн. <span style="font-size:12px;color:#4a6a82;text-transform:none;">(норма ≤90)</span></div>
-          <div style="font-size:26px;font-weight:600;color:#60a5fa;line-height:1.2;"><span id="humidValue">—</span>%</div>
-          <div style="font-size:13px;color:#7aacc8;line-height:1.3;">Относительная влажность воздуха</div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
+          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🔵 O₃ <span style="font-size:9px;color:#4a6a82;text-transform:none;">(норма ≤100)</span></div>
+          <div style="font-size:22px;font-weight:600;color:#60a5fa;line-height:1.2;"><span id="o3Value">—</span></div>
+          <div id="o3Status" style="font-size:11px;font-weight:700;white-space:nowrap;"></div>
+          <div style="font-size:10px;color:#7aacc8;line-height:1.3;">Озон — раздражает дыхательные пути</div>
         </div>
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:3px;overflow:hidden;">
-          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🟣 NH₃ <span style="font-size:12px;color:#4a6a82;text-transform:none;">(норма ≤100)</span></div>
-          <div style="font-size:26px;font-weight:600;color:#c084fc;line-height:1.2;"><span id="nh3Value">—</span></div>
-          <div id="nh3Status" style="font-size:14px;font-weight:700;white-space:nowrap;"></div>
-          <div style="font-size:13px;color:#7aacc8;line-height:1.3;">Аммиак — резкий запах, раздражает слизистые</div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
+          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🌡️ Темп. <span style="font-size:9px;color:#4a6a82;text-transform:none;">(норма ≤35)</span></div>
+          <div style="font-size:22px;font-weight:600;color:#f87171;line-height:1.2;"><span id="tempValue">—</span>°C</div>
+          <div style="font-size:10px;color:#7aacc8;line-height:1.3;">Температура воздуха на улице</div>
         </div>
 
-
-
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:3px;overflow:hidden;">
-          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🔵 Давл. <span style="font-size:12px;color:#4a6a82;text-transform:none;">(гПа)</span></div>
-          <div style="font-size:26px;font-weight:600;color:#60a5fa;line-height:1.2;"><span id="pressValue">—</span></div>
-          <div style="font-size:13px;color:#7aacc8;line-height:1.3;">Атмосферное давление</div>
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
+          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">💧 Влажн. <span style="font-size:9px;color:#4a6a82;text-transform:none;">(норма ≤90)</span></div>
+          <div style="font-size:22px;font-weight:600;color:#60a5fa;line-height:1.2;"><span id="humidValue">—</span>%</div>
+          <div style="font-size:10px;color:#7aacc8;line-height:1.3;">Относительная влажность воздуха</div>
         </div>
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;grid-column:1/3;display:flex;flex-direction:column;justify-content:center;gap:3px;overflow:hidden;">
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
+          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🟣 NH₃ <span style="font-size:9px;color:#4a6a82;text-transform:none;">(норма ≤100)</span></div>
+          <div style="font-size:22px;font-weight:600;color:#c084fc;line-height:1.2;"><span id="nh3Value">—</span></div>
+          <div id="nh3Status" style="font-size:11px;font-weight:700;white-space:nowrap;"></div>
+          <div style="font-size:10px;color:#7aacc8;line-height:1.3;">Аммиак — резкий запах, раздражает слизистые</div>
+        </div>
+
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
+          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🟤 H₂S <span style="font-size:9px;color:#4a6a82;text-transform:none;">(норма ≤4)</span></div>
+          <div style="font-size:22px;font-weight:600;color:#d97706;line-height:1.2;"><span id="h2sValue">—</span></div>
+          <div id="h2sStatus" style="font-size:11px;font-weight:700;white-space:nowrap;"></div>
+          <div style="font-size:10px;color:#7aacc8;line-height:1.3;">Сероводород — запах тухлых яиц, токсичен</div>
+        </div>
+
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
+          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🟢 VOC <span style="font-size:9px;color:#4a6a82;text-transform:none;">(норма ≤200)</span></div>
+          <div style="font-size:22px;font-weight:600;color:#4ade80;line-height:1.2;"><span id="vocValue">—</span></div>
+          <div id="vocStatus" style="font-size:11px;font-weight:700;white-space:nowrap;"></div>
+          <div style="font-size:10px;color:#7aacc8;line-height:1.3;">Летучие орг. соединения — растворители, краски</div>
+        </div>
+
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
+          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🔵 Давл. <span style="font-size:9px;color:#4a6a82;text-transform:none;">(гПа)</span></div>
+          <div style="font-size:22px;font-weight:600;color:#60a5fa;line-height:1.2;"><span id="pressValue">—</span></div>
+          <div style="font-size:10px;color:#7aacc8;line-height:1.3;">Атмосферное давление</div>
+        </div>
+
+        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;grid-column:1/3;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
           <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">💨 Ветер</div>
           <div style="font-size:22px;font-weight:600;color:#34d399;line-height:1.2;"><span id="windValue">—</span> м/с</div>
-          <div style="font-size:13px;color:#7aacc8;line-height:1.3;">Скорость ветра на улице</div>
+          <div style="font-size:10px;color:#7aacc8;line-height:1.3;">Скорость ветра на улице</div>
         </div>
 
       </div>
@@ -826,81 +868,81 @@
 
       <!-- Строка: фаза + статус -->
       <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
-        <div style="font-size:13px;color:#7aacc8;">ф.Optimum-1</div>
+        <div style="font-size:10px;color:#7aacc8;">ф.Optimum-1</div>
         <span id="powerStatusDot" style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#7aacc8;"></span>
       </div>
 
       <!-- За сутки + За месяц в одну строку -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;flex-shrink:0;">
         <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 7px;">
-          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;">Показания</div>
-          <div style="font-size:20px;font-weight:700;color:#4ade80;line-height:1.2;"><span id="powerToday">—</span></div>
-          <div style="font-size:12px;color:#4a6a88;">кВт·ч</div>
+          <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;">Показания</div>
+          <div style="font-size:16px;font-weight:700;color:#4ade80;line-height:1.2;"><span id="powerToday">—</span></div>
+          <div style="font-size:9px;color:#4a6a88;">кВт·ч</div>
         </div>
         <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 7px;">
-          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;">За месяц</div>
-          <div style="font-size:20px;font-weight:700;color:#60a5fa;line-height:1.2;"><span id="powerMonth">—</span></div>
-          <div style="font-size:12px;color:#4a6a88;">кВт·ч</div>
+          <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;">За месяц</div>
+          <div style="font-size:16px;font-weight:700;color:#60a5fa;line-height:1.2;"><span id="powerMonth">—</span></div>
+          <div style="font-size:9px;color:#4a6a88;">кВт·ч</div>
         </div>
       </div>
 
       <!-- Прибор учёта -->
       <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 7px;overflow:hidden;flex-shrink:0;">
-        <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;">Прибор</div>
-        <div style="font-size:13px;font-weight:600;color:#9ab4c4;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><span id="powerDevice">—</span></div>
-        <div style="font-size:12px;color:#4a6a88;">№ <span id="powerNumber">—</span></div>
+        <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;">Прибор</div>
+        <div style="font-size:10px;font-weight:600;color:#9ab4c4;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><span id="powerDevice">—</span></div>
+        <div style="font-size:9px;color:#4a6a88;">№ <span id="powerNumber">—</span></div>
       </div>
 
       <!-- Реактивная энергия — компактно -->
       <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 7px;flex-shrink:0;">
-        <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;margin-bottom:2px;">Реактивная энергия</div>
+        <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;margin-bottom:2px;">Реактивная энергия</div>
         <div style="display:flex;gap:8px;">
-          <div style="font-size:14px;font-weight:600;color:#34d399;">мес: <span id="powerReactMonth">—</span> <span style="font-size:12px;font-weight:400;color:#4a6a88;">квар·ч</span></div>
-          <div style="font-size:14px;font-weight:600;color:#34d399;">всего: <span id="powerReactTotal">—</span> <span style="font-size:12px;font-weight:400;color:#4a6a88;">квар·ч</span></div>
+          <div style="font-size:11px;font-weight:600;color:#34d399;">мес: <span id="powerReactMonth">—</span> <span style="font-size:9px;font-weight:400;color:#4a6a88;">квар·ч</span></div>
+          <div style="font-size:11px;font-weight:600;color:#34d399;">всего: <span id="powerReactTotal">—</span> <span style="font-size:9px;font-weight:400;color:#4a6a88;">квар·ч</span></div>
         </div>
       </div>
 
       <!-- cos φ — компактно -->
       <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 7px;flex-shrink:0;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
-          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;">cos φ</div>
-          <div id="cosPhiBadge" style="font-size:12px;font-weight:700;padding:1px 7px;border-radius:10px;background:#1e3a52;color:#9ab4c4;">—</div>
+          <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;">cos φ</div>
+          <div id="cosPhiBadge" style="font-size:9px;font-weight:700;padding:1px 7px;border-radius:10px;background:#1e3a52;color:#9ab4c4;">—</div>
         </div>
         <div style="display:flex;align-items:center;gap:8px;">
-          <div style="font-size:26px;font-weight:700;line-height:1;color:#fff;" id="cosPhi">—</div>
+          <div style="font-size:20px;font-weight:700;line-height:1;color:#fff;" id="cosPhi">—</div>
           <div style="flex:1;">
             <div style="position:relative;height:6px;border-radius:3px;background:linear-gradient(to right,#dc2626 0%,#f97316 30%,#facc15 50%,#4ade80 80%,#22c55e 100%);overflow:hidden;">
               <div id="cosPhiMarker" style="position:absolute;top:-2px;width:10px;height:10px;border-radius:50%;background:#fff;border:2px solid #0f1e30;transform:translateX(-50%);left:50%;transition:left 0.6s ease;"></div>
             </div>
-            <div style="display:flex;justify-content:space-between;font-size:11px;color:#4a6a88;margin-top:2px;">
+            <div style="display:flex;justify-content:space-between;font-size:8px;color:#4a6a88;margin-top:2px;">
               <span>0.5</span><span>0.85</span><span>1.0</span>
             </div>
           </div>
         </div>
-        <div style="font-size:12px;color:#4a6a88;margin-top:2px;line-height:1.3;" id="cosPhiDesc">Норма: выше 0.9</div>
+        <div style="font-size:9px;color:#4a6a88;margin-top:2px;line-height:1.3;" id="cosPhiDesc">Норма: выше 0.9</div>
       </div>
 
       <!-- Ток / Напряжение / Частота — компактно в одну строку -->
       <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 7px;flex-shrink:0;">
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;">
           <div>
-            <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;">Ток А/В/С</div>
-            <div style="font-size:14px;font-weight:600;color:#fbbf24;line-height:1.3;"><span id="powerAmps">—/—/—</span></div>
+            <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;">Ток А/В/С</div>
+            <div style="font-size:11px;font-weight:600;color:#fbbf24;line-height:1.3;"><span id="powerAmps">—/—/—</span></div>
           </div>
           <div>
-            <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;">Напряж В/В/С</div>
-            <div style="font-size:14px;font-weight:600;color:#fb923c;line-height:1.3;"><span id="powerVolts">—/—/—</span></div>
+            <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;">Напряж В/В/С</div>
+            <div style="font-size:11px;font-weight:600;color:#fb923c;line-height:1.3;"><span id="powerVolts">—/—/—</span></div>
           </div>
           <div>
-            <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;">Частота</div>
-            <div style="font-size:14px;font-weight:600;color:#9ab4c4;line-height:1.3;"><span id="powerFreq">—</span> Гц</div>
+            <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;">Частота</div>
+            <div style="font-size:11px;font-weight:600;color:#9ab4c4;line-height:1.3;"><span id="powerFreq">—</span> Гц</div>
           </div>
         </div>
       </div>
 
       <!-- ТАРИФЫ — занимают всё оставшееся место -->
       <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:8px 10px;flex:1;display:flex;flex-direction:column;min-height:0;">
-        <div style="font-size:13px;color:#7aacc8;text-transform:uppercase;margin-bottom:6px;flex-shrink:0;">Тарифы за месяц, кВт·ч</div>
+        <div style="font-size:10px;color:#7aacc8;text-transform:uppercase;margin-bottom:6px;flex-shrink:0;">Тарифы за месяц, кВт·ч</div>
         <div id="tarifChart" style="display:flex;flex-direction:column;gap:0;flex:1;justify-content:space-evenly;">
           <div style="padding:3px 0;">
             <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1px;">
@@ -937,10 +979,67 @@
         </div>
       </div>
 
-      <div style="font-size:13px;color:#7aacc8;flex-shrink:0;">Обновлено: <span id="powerTime">—</span></div>
+      <div style="font-size:10px;color:#7aacc8;flex-shrink:0;">Обновлено: <span id="powerTime">—</span></div>
 
     </div>
   </div>
+
+  <!-- Персонал — посещаемость турникет -->
+  <div class="section section-personnel" style="background:linear-gradient(135deg,#0a1e2e 0%,#1a3a52 100%);border:1px solid #2a5a78;">
+    <div class="section-header" style="background:linear-gradient(90deg,#0f1e30,#1a3a52);border-bottom:1px solid #2a5a78;">
+      👥 Персонал — Посещаемость
+      <span class="auto-badge" style="background:rgba(74,222,128,0.15);color:#4ade80;border:1px solid rgba(74,222,128,0.3);">● Авто</span>
+      <span class="section-badge" id="personnelDate" style="background:#0f1e30;color:#7aacc8;border:1px solid #2a5a78;">—</span>
+    </div>
+    <div style="padding:12px;display:flex;flex-direction:column;gap:10px;flex:1;overflow:hidden;">
+
+      <!-- Карточки статистики -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;flex-shrink:0;">
+        <div class="personnel-stat-card">
+          <div class="personnel-stat-val" style="color:#4ade80;" id="pTotalIn">—</div>
+          <div class="personnel-stat-label">Всего пришло</div>
+        </div>
+        <div class="personnel-stat-card">
+          <div class="personnel-stat-val" style="color:#60a5fa;" id="pOnTime">—</div>
+          <div class="personnel-stat-label">✅ Вовремя</div>
+        </div>
+        <div class="personnel-stat-card">
+          <div class="personnel-stat-val" style="color:#f59e0b;" id="pLate">—</div>
+          <div class="personnel-stat-label">⏰ Опоздали</div>
+        </div>
+        <div class="personnel-stat-card">
+          <div class="personnel-stat-val" style="color:#f87171;" id="pEarlyLeave">—</div>
+          <div class="personnel-stat-label">🚪 Ушли раньше</div>
+        </div>
+      </div>
+
+      <!-- Списки -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1;min-height:0;">
+
+        <!-- Опоздавшие -->
+        <div style="background:#071220;border:1px solid #1e3a52;border-radius:8px;display:flex;flex-direction:column;overflow:hidden;">
+          <div style="padding:8px 14px;background:#1a2a1a;border-bottom:1px solid #2a5a78;font-size:13px;font-weight:700;color:#f59e0b;">
+            ⏰ Опоздавшие
+          </div>
+          <div id="pLateList" style="padding:8px;display:flex;flex-direction:column;gap:4px;overflow-y:auto;flex:1;">
+            <div style="color:#4a6a88;font-size:13px;padding:8px;">Загрузка...</div>
+          </div>
+        </div>
+
+        <!-- Ушли раньше -->
+        <div style="background:#071220;border:1px solid #1e3a52;border-radius:8px;display:flex;flex-direction:column;overflow:hidden;">
+          <div style="padding:8px 14px;background:#1a2030;border-bottom:1px solid #2a5a78;font-size:13px;font-weight:700;color:#60a5fa;">
+            🚪 Ушли раньше срока
+          </div>
+          <div id="pEarlyList" style="padding:8px;display:flex;flex-direction:column;gap:4px;overflow-y:auto;flex:1;">
+            <div style="color:#4a6a88;font-size:13px;padding:8px;">Загрузка...</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
 
 </div>
 
@@ -970,7 +1069,7 @@
         <button class="btn btn-primary" onclick="saveUrls()">✔ Сохранить и загрузить</button>
         <button class="btn" onclick="resetUrls()">↺ Сбросить на исходные</button>
       </div>
-      <div style="margin-top:10px; font-size:14px; color:#5a8aaa; line-height:1.6;">
+      <div style="margin-top:10px; font-size:11px; color:#5a8aaa; line-height:1.6;">
         💡 Укажите точные названия листов из вашей Google Таблицы (регистр важен).
       </div>
     </div>
@@ -1461,7 +1560,7 @@ function renderRashod(rows) {
 
   let html = `
     <div style="display:grid; grid-template-columns:1fr 60px 120px 130px 110px;
-      font-size:12px; font-weight:700; color:#ffffff; text-transform:uppercase;
+      font-size:9px; font-weight:700; color:#ffffff; text-transform:uppercase;
       letter-spacing:0.05em; padding:5px 10px; border-bottom:1px solid #1a5c8a;
       flex-shrink:0; background:#1a5c8a;">
       <div>Наименование сырья</div>
@@ -1478,7 +1577,7 @@ function renderRashod(rows) {
     const isMin = item.count !== null && item.count === minCount;
     html += `<div class="rashod-item${isMin ? ' is-limit' : ''}">
       <div class="rashod-label">${item.name}</div>
-      <div style="text-align:center; font-size:14px; color:#5a8aaa;">${item.unit}</div>
+      <div style="text-align:center; font-size:11px; color:#5a8aaa;">${item.unit}</div>
       <div class="rashod-norm" style="text-align:right;">${normStr} ${item.unit}</div>
       <div class="rashod-ost" style="text-align:right;">${ostStr}</div>
       <div class="rashod-count" style="text-align:right;">${countStr} <span class="rashod-unit">шт.</span></div>
@@ -1564,7 +1663,7 @@ async function loadData() {
     rashodOk = true;
     dbg('Расход: данные загружены из листа Расход', 'ok');
   } catch(e) {
-    document.getElementById('rashodInner').innerHTML = '<div style="margin:auto;color:#dc2626;font-size:14px;">Ошибка загрузки листа Расход</div>';
+    document.getElementById('rashodInner').innerHTML = '<div style="margin:auto;color:#dc2626;font-size:11px;">Ошибка загрузки листа Расход</div>';
     dbg('Расход: ошибка — ' + e.message, 'err');
   }
 
@@ -1594,6 +1693,10 @@ async function loadData() {
   // Электроэнергия (RadioMer)
   fetchRadiomer();
   setInterval(fetchRadiomer, 5 * 60 * 1000); // обновление каждые 5 минут
+
+  // Данные персонала (турникет)
+  fetchPersonnel();
+  setInterval(fetchPersonnel, 5 * 60 * 1000); // каждые 5 минут
 
   // История солнечных по дням
   fetchSolarHistory();
@@ -2016,17 +2119,19 @@ const origRenderBSU = typeof renderBSU === 'function' ? renderBSU : null;
 
 document.addEventListener('DOMContentLoaded', () => {
   // Автомасштаб 90% для лучшего отображения всех блоков
+  document.body.style.zoom = '90%';
   animateSections();
   setTimeout(animateCards, 300);
 });
 
-
 </script>
 
 <script>
+// ── Переключение вкладок ──────────────────────────────────────────────────
 function showTab(n) {
   document.getElementById('btnTab1').classList.toggle('active', n===1);
   document.getElementById('btnTab2').classList.toggle('active', n===2);
+  document.getElementById('btnTab3').classList.toggle('active', n===3);
 
   var grid = document.getElementById('mainContent');
 
@@ -2043,15 +2148,30 @@ function showTab(n) {
     {cls:'section-solar', col:'1', row:'1'},
     {cls:'section-iqair', col:'2', row:'1'}
   ];
+  var s3 = [
+    {cls:'section-personnel', col:'1', row:'1'}
+  ];
 
-  var show = n===1 ? s1 : s2;
-  var hide = n===1 ? s2 : s1;
+  var allSections = ['section-pc','section-bsu','section-1c','section-otg',
+    'section-rashod','section-ok','section-power','section-solar',
+    'section-iqair','section-personnel'];
+
+  // Скрываем все
+  allSections.forEach(function(cls) {
+    var el = document.querySelector('.' + cls);
+    if (el) el.style.setProperty('display', 'none', 'important');
+  });
+
+  var show = n===1 ? s1 : (n===2 ? s2 : s3);
 
   if (n===1) {
-    grid.style.gridTemplateColumns = 'minmax(0,1fr) minmax(0,1.5fr) minmax(0,1fr) minmax(0,0.55fr)';
+    grid.style.gridTemplateColumns = 'minmax(0,1fr) minmax(0,1.5fr) minmax(0,1fr) minmax(0,0.5fr)';
     grid.style.gridTemplateRows    = 'minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)';
-  } else {
+  } else if (n===2) {
     grid.style.gridTemplateColumns = 'minmax(0,1.7fr) minmax(0,1fr)';
+    grid.style.gridTemplateRows    = '1fr';
+  } else {
+    grid.style.gridTemplateColumns = '1fr';
     grid.style.gridTemplateRows    = '1fr';
   }
 
@@ -2062,13 +2182,78 @@ function showTab(n) {
     el.style.gridColumn = s.col;
     el.style.gridRow    = s.row;
   });
-  hide.forEach(function(s) {
-    var el = document.querySelector('.' + s.cls);
-    if (el) el.style.setProperty('display', 'none', 'important');
-  });
+}
+
+// ── Загрузка данных персонала ─────────────────────────────────────────────
+function renderPersonnel(d) {
+  if (!d || d.error) return;
+
+  // Карточки
+  var el = document.getElementById('pTotalIn');    if(el) el.textContent = d.total_in ?? '—';
+  el = document.getElementById('pOnTime');         if(el) el.textContent = d.on_time  ?? '—';
+  el = document.getElementById('pLate');           if(el) el.textContent = d.late     ?? '—';
+  el = document.getElementById('pEarlyLeave');     if(el) el.textContent = d.early_leave ?? '—';
+  el = document.getElementById('personnelDate');   if(el) el.textContent = d.date     ?? '—';
+
+  // Список опоздавших
+  var lateEl = document.getElementById('pLateList');
+  if (lateEl) {
+    if (d.late_list && d.late_list.trim()) {
+      var items = d.late_list.split(' | ').filter(Boolean);
+      lateEl.innerHTML = items.map(function(item) {
+        // Парсим "Имя Фамилия (Отдел, График) — пришёл HH:MM, опоздал на Xмин"
+        var match = item.match(/^(.+?)\s*—\s*пришёл (\S+),\s*опоздал на (.+)$/);
+        if (match) {
+          return '<div class="personnel-late-item">' +
+            '<span style="flex:1;">' + match[1] + '</span>' +
+            '<span style="color:#fbbf24;font-weight:600;white-space:nowrap;">' + match[2] + '</span>' +
+            '<span style="color:#f59e0b;font-size:12px;white-space:nowrap;">+' + match[3] + '</span>' +
+            '</div>';
+        }
+        return '<div class="personnel-late-item">' + item + '</div>';
+      }).join('');
+    } else {
+      lateEl.innerHTML = '<div style="color:#4ade80;font-size:14px;padding:12px;">✅ Все пришли вовремя!</div>';
+    }
+  }
+
+  // Список ушедших раньше
+  var earlyEl = document.getElementById('pEarlyList');
+  if (earlyEl) {
+    if (d.early_list && d.early_list.trim()) {
+      var items2 = d.early_list.split(' | ').filter(Boolean);
+      earlyEl.innerHTML = items2.map(function(item) {
+        var match2 = item.match(/^(.+?)\s*—\s*ушёл (\S+),\s*раньше на (.+)$/);
+        if (match2) {
+          return '<div class="personnel-early-item">' +
+            '<span style="flex:1;">' + match2[1] + '</span>' +
+            '<span style="color:#93c5fd;font-weight:600;white-space:nowrap;">' + match2[2] + '</span>' +
+            '<span style="color:#60a5fa;font-size:12px;white-space:nowrap;">-' + match2[3] + '</span>' +
+            '</div>';
+        }
+        return '<div class="personnel-early-item">' + item + '</div>';
+      }).join('');
+    } else {
+      earlyEl.innerHTML = '<div style="color:#4ade80;font-size:14px;padding:12px;">✅ Все ушли вовремя!</div>';
+    }
+  }
 }
 
 document.addEventListener('DOMContentLoaded', function() { showTab(1); });
+
+  // ── Загрузка данных персонала ─────────────────────────────────────────
+  async function fetchPersonnel() {
+    try {
+      const { url } = getConfig();
+      const r = await fetch(url + '?sheet=Turnstile&t=' + Date.now());
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const d = await r.json();
+      if (d && !d.error) renderPersonnel(d);
+    } catch(e) {
+      console.warn('Personnel fetch error:', e);
+    }
+  }
+
 </script>
 
 </body>
