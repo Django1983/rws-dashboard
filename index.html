@@ -410,6 +410,7 @@
     border-left:3px solid #60a5fa; font-size:13px; color:#c8dde8;
   }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -2423,31 +2424,111 @@ document.addEventListener('DOMContentLoaded', function() { showTab(1); });
       });
   }
 
-  function exportTabel() {
+  async function exportTabel() {
     var monthSel = document.getElementById('tabelMonth');
     var deptSel  = document.getElementById('tabelDept');
     var status   = document.getElementById('tabelStatus');
-
     if (!monthSel || !monthSel.value) return;
 
-    var parts  = monthSel.value.split('-');
-    var year   = parts[0];
-    var month  = parts[1];
-
+    var parts     = monthSel.value.split('-');
+    var year      = parts[0];
+    var month     = parts[1];
     var deptParts = (deptSel.value || '').split('|');
-    var deptId    = deptParts[0] || '';
-    var deptName  = deptParts[1] || 'Все';
+    var deptName  = deptParts[1] || '';
 
-    var url = TABEL_SERVER + '/tabel?year=' + year + '&month=' + month +
-              '&dept_id=' + encodeURIComponent(deptId) +
-              '&dept_name=' + encodeURIComponent(deptName);
+    status.textContent = '⏳ Загружаю данные...';
+    status.style.color = '#fbbf24';
 
-    // Открываем в новой вкладке — браузер сам скачает файл
-    window.open(url, '_blank');
+    try {
+      var { url } = getConfig();
+      var resp = await fetch(url + '?sheet=GenerateTabel&year=' + year + '&month=' + month + '&dept=' + encodeURIComponent(deptName) + '&t=' + Date.now());
+      var data = await resp.json();
 
-    status.textContent = '✅ Открыто в новой вкладке!';
-    status.style.color = '#4ade80';
-    setTimeout(function() { status.textContent = ''; }, 3000);
+      if (data.error) throw new Error(data.error);
+
+      status.textContent = '⏳ Генерирую Excel...';
+      buildTabelExcel(data, year, month, deptName || 'Все');
+
+      status.textContent = '✅ Файл скачан!';
+      status.style.color = '#4ade80';
+      setTimeout(function() { status.textContent = ''; }, 3000);
+    } catch(e) {
+      status.textContent = '❌ Ошибка: ' + e.message;
+      status.style.color = '#f87171';
+    }
+  }
+
+  function buildTabelExcel(data, year, month, deptName) {
+    var XLSX = window.XLSX;
+    if (!XLSX) { alert('SheetJS не загружен'); return; }
+
+    var months = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+    var monthName = months[parseInt(month)-1];
+    var daysInMonth = new Date(parseInt(year), parseInt(month), 0).getDate();
+    var dayNames = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+
+    var wb = XLSX.utils.book_new();
+    var ws_data = [];
+
+    // Заголовок
+    ws_data.push(['ТАБЕЛЬ УЧЁТА РАБОЧЕГО ВРЕМЕНИ — ' + monthName + ' ' + year + ' г.   Подразделение: ' + deptName]);
+    ws_data.push(['']);
+
+    // Шапка — номера дней
+    var header1 = ['№', 'Фамилия Имя', 'Отдел', 'Должность'];
+    for (var d = 1; d <= daysInMonth; d++) header1.push(d);
+    header1.push('ИТОГО');
+    ws_data.push(header1);
+
+    // Шапка — дни недели
+    var header2 = ['', '', '', ''];
+    for (var d = 1; d <= daysInMonth; d++) {
+      var wd = new Date(parseInt(year), parseInt(month)-1, d).getDay();
+      header2.push(dayNames[wd]);
+    }
+    header2.push('');
+    ws_data.push(header2);
+
+    // Группируем по отделам
+    var byDept = {};
+    (data.employees || []).forEach(function(emp) {
+      if (!byDept[emp.dept]) byDept[emp.dept] = [];
+      byDept[emp.dept].push(emp);
+    });
+
+    var num = 1;
+    Object.keys(byDept).sort().forEach(function(dept) {
+      // Строка отдела
+      ws_data.push([dept]);
+
+      byDept[dept].forEach(function(emp) {
+        var row = [num++, emp.surname + ' ' + emp.name, emp.dept, ''];
+        var total = 0;
+        for (var d = 1; d <= daysInMonth; d++) {
+          var day = emp.days[d];
+          if (day && day.hasData) {
+            var val = (day.arrival && day.departure) ? 8 : (day.arrival ? 4 : 0);
+            row.push(val || '');
+            total += val;
+          } else {
+            row.push('');
+          }
+        }
+        row.push(total);
+        ws_data.push(row);
+      });
+    });
+
+    var ws = XLSX.utils.aoa_to_sheet(ws_data);
+
+    // Ширины колонок
+    var cols = [{wch:4},{wch:24},{wch:18},{wch:14}];
+    for (var d = 0; d < daysInMonth; d++) cols.push({wch:4});
+    cols.push({wch:7});
+    ws['!cols'] = cols;
+
+    XLSX.utils.book_append_sheet(wb, ws, 'Табель');
+    XLSX.writeFile(wb, 'Tabel_' + monthName + '_' + year + '_' + deptName + '.xlsx');
   }
 
   // Инициализировать контролы табеля при загрузке вкладки Персонал
