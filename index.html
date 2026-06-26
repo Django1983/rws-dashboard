@@ -410,7 +410,7 @@
     border-left:3px solid #60a5fa; font-size:13px; color:#c8dde8;
   }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/xlsx-style@0.8.13/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -2469,50 +2469,15 @@ document.addEventListener('DOMContentLoaded', function() { showTab(1); });
 
     var wb = XLSX.utils.book_new();
     var ws_data = [];
-    var ws_styles = {}; // стили для ячеек
-
-    // Стили
-    var S = {
-      title:   {font:{bold:true,sz:12,color:{rgb:"FFFFFF"}}, fill:{fgColor:{rgb:"071220"}}, alignment:{horizontal:"left"}},
-      hdrBlue: {font:{bold:true,sz:10,color:{rgb:"FFFFFF"}}, fill:{fgColor:{rgb:"1A3A52"}}, alignment:{horizontal:"center"}},
-      hdrWknd: {font:{bold:true,sz:9, color:{rgb:"166534"}}, fill:{fgColor:{rgb:"C8F5D0"}}, alignment:{horizontal:"center"}},
-      hdrDay:  {font:{sz:8, color:{rgb:"7AACC8"}},           fill:{fgColor:{rgb:"1A3A52"}}, alignment:{horizontal:"center"}},
-      grpRow:  {font:{bold:true,sz:10,color:{rgb:"4ADE80"}}, fill:{fgColor:{rgb:"0F3020"}}, alignment:{horizontal:"left"}},
-      numOk:   {font:{bold:true,sz:9, color:{rgb:"1565C0"}}, alignment:{horizontal:"center"}, border:{top:{style:"thin",color:{rgb:"CCCCCC"}},bottom:{style:"thin",color:{rgb:"CCCCCC"}},left:{style:"thin",color:{rgb:"CCCCCC"}},right:{style:"thin",color:{rgb:"CCCCCC"}}}},
-      numHalf: {font:{bold:true,sz:9, color:{rgb:"F59E0B"}}, alignment:{horizontal:"center"}, border:{top:{style:"thin",color:{rgb:"CCCCCC"}},bottom:{style:"thin",color:{rgb:"CCCCCC"}},left:{style:"thin",color:{rgb:"CCCCCC"}},right:{style:"thin",color:{rgb:"CCCCCC"}}}},
-      numWknd: {font:{bold:true,sz:9, color:{rgb:"166534"}}, fill:{fgColor:{rgb:"DCFCE7"}}, alignment:{horizontal:"center"}, border:{top:{style:"thin",color:{rgb:"CCCCCC"}},bottom:{style:"thin",color:{rgb:"CCCCCC"}},left:{style:"thin",color:{rgb:"CCCCCC"}},right:{style:"thin",color:{rgb:"CCCCCC"}}}},
-      emptyWk: {fill:{fgColor:{rgb:"DCFCE7"}}, border:{top:{style:"thin",color:{rgb:"CCCCCC"}},bottom:{style:"thin",color:{rgb:"CCCCCC"}},left:{style:"thin",color:{rgb:"CCCCCC"}},right:{style:"thin",color:{rgb:"CCCCCC"}}}},
-      empty:   {border:{top:{style:"thin",color:{rgb:"CCCCCC"}},bottom:{style:"thin",color:{rgb:"CCCCCC"}},left:{style:"thin",color:{rgb:"CCCCCC"}},right:{style:"thin",color:{rgb:"CCCCCC"}}}},
-      total:   {font:{bold:true,sz:9, color:{rgb:"15803D"}}, alignment:{horizontal:"center"}, border:{top:{style:"thin",color:{rgb:"CCCCCC"}},bottom:{style:"thin",color:{rgb:"CCCCCC"}},left:{style:"thin",color:{rgb:"CCCCCC"}},right:{style:"thin",color:{rgb:"CCCCCC"}}}},
-      nameCell:{font:{sz:9}, alignment:{horizontal:"left"}, border:{top:{style:"thin",color:{rgb:"CCCCCC"}},bottom:{style:"thin",color:{rgb:"CCCCCC"}},left:{style:"thin",color:{rgb:"CCCCCC"}},right:{style:"thin",color:{rgb:"CCCCCC"}}}},
-    };
-
-    function setStyle(r, c, style) {
-      var addr = XLSX.utils.encode_cell({r:r, c:c});
-      ws_styles[addr] = style;
-    }
-
-    function isWeekend(d) {
-      var wd = new Date(parseInt(year), parseInt(month)-1, d).getDay();
-      return wd === 0 || wd === 6;
-    }
-
-    var rowIdx = 0;
 
     // Строка 1 — заголовок
-    var titleRow = ['ТАБЕЛЬ УЧЁТА РАБОЧЕГО ВРЕМЕНИ — ' + monthName + ' ' + year + ' г.   Подразделение: ' + deptName];
-    for(var i=1; i<4+daysInMonth+1; i++) titleRow.push('');
-    ws_data.push(titleRow);
-    for(var c=0; c<titleRow.length; c++) setStyle(rowIdx, c, S.title);
-    rowIdx++;
+    ws_data.push(['ТАБЕЛЬ УЧЁТА РАБОЧЕГО ВРЕМЕНИ — ' + monthName + ' ' + year + ' г.   Подразделение: ' + deptName]);
 
     // Строка 2 — номера дней
     var header1 = ['№', 'Фамилия Имя', 'Отдел', 'Должность'];
     for (var d = 1; d <= daysInMonth; d++) header1.push(d);
     header1.push('ИТОГО');
     ws_data.push(header1);
-    for(var c=0; c<header1.length; c++) setStyle(rowIdx, c, S.hdrBlue);
-    rowIdx++;
 
     // Строка 3 — дни недели
     var header2 = ['', '', '', ''];
@@ -2522,11 +2487,6 @@ document.addEventListener('DOMContentLoaded', function() { showTab(1); });
     }
     header2.push('');
     ws_data.push(header2);
-    for(var c=0; c<header2.length; c++) {
-      var d2 = c - 3;
-      setStyle(rowIdx, c, (d2 >= 1 && d2 <= daysInMonth && isWeekend(d2)) ? S.hdrWknd : S.hdrDay);
-    }
-    rowIdx++;
 
     // Группируем по отделам
     var byDept = {};
@@ -2537,68 +2497,33 @@ document.addEventListener('DOMContentLoaded', function() { showTab(1); });
 
     var num = 1;
     Object.keys(byDept).sort().forEach(function(dept) {
-      var grpRow = [dept];
-      for(var i=1; i<4+daysInMonth+1; i++) grpRow.push('');
-      ws_data.push(grpRow);
-      for(var c=0; c<grpRow.length; c++) setStyle(rowIdx, c, S.grpRow);
-      rowIdx++;
-
+      ws_data.push([dept]);
       byDept[dept].forEach(function(emp) {
         var row = [num++, emp.surname + ' ' + emp.name, emp.dept, ''];
         var total = 0;
         for (var d = 1; d <= daysInMonth; d++) {
           var day = emp.days[d];
-          var wknd = isWeekend(d);
           if (day && day.hasData) {
             var val = (day.arrival && day.departure) ? 8 : (day.arrival ? 4 : 0);
             row.push(val || '');
             total += val;
-            var ci = 3 + d;
-            setStyle(rowIdx, ci, val === 8 ? (wknd ? S.numWknd : S.numOk) : S.numHalf);
           } else {
             row.push('');
-            if (wknd) setStyle(rowIdx, 3+d, S.emptyWk);
-            else setStyle(rowIdx, 3+d, S.empty);
           }
         }
         row.push(total);
         ws_data.push(row);
-        setStyle(rowIdx, 0, S.nameCell);
-        setStyle(rowIdx, 1, S.nameCell);
-        setStyle(rowIdx, 2, S.nameCell);
-        setStyle(rowIdx, 3, S.empty);
-        setStyle(rowIdx, 4+daysInMonth, S.total);
-        rowIdx++;
       });
     });
 
     var ws = XLSX.utils.aoa_to_sheet(ws_data);
-
-    // Применяем стили
-    Object.keys(ws_styles).forEach(function(addr) {
-      if (!ws[addr]) ws[addr] = {t:'s', v:''};
-      ws[addr].s = ws_styles[addr];
-    });
-
-    // Ширины
     var cols = [{wch:4},{wch:24},{wch:18},{wch:14}];
     for (var d = 0; d < daysInMonth; d++) cols.push({wch:3.5});
     cols.push({wch:7});
     ws['!cols'] = cols;
 
-    // Заморозка
-    ws['!freeze'] = {xSplit:4, ySplit:3};
-
     XLSX.utils.book_append_sheet(wb, ws, 'Табель');
     XLSX.writeFile(wb, 'Tabel_' + monthName + '_' + year + '_' + deptName + '.xlsx');
   }
 
-  // Инициализировать контролы табеля при загрузке вкладки Персонал
-  document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(initTabelControls, 500);
-  });
 
-</script>
-
-</body>
-</html>
