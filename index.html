@@ -2438,26 +2438,16 @@ document.addEventListener('DOMContentLoaded', function() { showTab(1); });
     var deptId    = deptParts[0] || '';
     var deptName  = deptParts[1] || 'Все';
 
-    status.textContent = '⏳ Генерирую табель...';
-    status.style.color = '#fbbf24';
-
     var url = TABEL_SERVER + '/tabel?year=' + year + '&month=' + month +
               '&dept_id=' + encodeURIComponent(deptId) +
               '&dept_name=' + encodeURIComponent(deptName);
 
-    // Скачать файл
-    var a = document.createElement('a');
-    a.href = url;
-    a.download = '';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    // Открываем в новой вкладке — браузер сам скачает файл
+    window.open(url, '_blank');
 
-    setTimeout(function() {
-      status.textContent = '✅ Файл скачан!';
-      status.style.color = '#4ade80';
-      setTimeout(function() { status.textContent = ''; }, 3000);
-    }, 2000);
+    status.textContent = '✅ Открыто в новой вкладке!';
+    status.style.color = '#4ade80';
+    setTimeout(function() { status.textContent = ''; }, 3000);
   }
 
   // Инициализировать контролы табеля при загрузке вкладки Персонал
