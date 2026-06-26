@@ -994,8 +994,8 @@
         </div>
       </div>
 
-      <!-- Переключатель: сегодня / история -->
-      <div style="display:flex;gap:8px;flex-shrink:0;">
+      <!-- Переключатель: сегодня / история + Табель -->
+      <div style="display:flex;gap:8px;flex-shrink:0;align-items:center;flex-wrap:wrap;">
         <button id="pTabToday" onclick="showPersonnelTab('today')"
           style="padding:6px 18px;border-radius:6px;border:1px solid #4ade80;background:#0f3020;color:#4ade80;font-size:13px;font-weight:600;cursor:pointer;">
           📅 Сегодня
@@ -1004,6 +1004,22 @@
           style="padding:6px 18px;border-radius:6px;border:1px solid #1e3a52;background:#0f1e30;color:#7aacc8;font-size:13px;font-weight:600;cursor:pointer;">
           📋 История за месяц
         </button>
+
+        <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+          <!-- Выбор месяца -->
+          <select id="tabelMonth" style="padding:5px 10px;border-radius:6px;border:1px solid #2a5a78;background:#0f1e30;color:#c8dde8;font-size:13px;">
+          </select>
+          <!-- Выбор отдела -->
+          <select id="tabelDept" style="padding:5px 10px;border-radius:6px;border:1px solid #2a5a78;background:#0f1e30;color:#c8dde8;font-size:13px;">
+            <option value="">Все подразделения</option>
+          </select>
+          <!-- Кнопка экспорта -->
+          <button id="btnTabel" onclick="exportTabel()"
+            style="padding:6px 16px;border-radius:6px;border:1px solid #f59e0b;background:#1a2a0a;color:#f59e0b;font-size:13px;font-weight:600;cursor:pointer;">
+            📥 Скачать табель XLS
+          </button>
+          <span id="tabelStatus" style="font-size:12px;color:#7aacc8;"></span>
+        </div>
       </div>
 
       <!-- Списки сегодня -->
@@ -2352,6 +2368,86 @@ document.addEventListener('DOMContentLoaded', function() { showTab(1); });
 
     el.innerHTML = html;
   }
+
+
+  // ── Табель ────────────────────────────────────────────────────────────────
+  var TABEL_SERVER = 'http://localhost:5000';
+
+  function initTabelControls() {
+    // Заполнить месяцы
+    var sel = document.getElementById('tabelMonth');
+    if (!sel) return;
+    var now = new Date();
+    var months = ['Январь','Февраль','Март','Апрель','Май','Июнь',
+                  'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+    for (var i = 0; i < 6; i++) {
+      var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      var opt = document.createElement('option');
+      opt.value = d.getFullYear() + '-' + (d.getMonth()+1);
+      opt.text  = months[d.getMonth()] + ' ' + d.getFullYear();
+      if (i === 0) opt.selected = true;
+      sel.appendChild(opt);
+    }
+
+    // Загрузить подразделения
+    fetch(TABEL_SERVER + '/departments')
+      .then(r => r.json())
+      .then(function(depts) {
+        var dsel = document.getElementById('tabelDept');
+        depts.forEach(function(d) {
+          var opt = document.createElement('option');
+          opt.value = d.id + '|' + d.name;
+          opt.text  = d.name;
+          dsel.appendChild(opt);
+        });
+      })
+      .catch(function() {
+        document.getElementById('tabelStatus').textContent = '⚠️ Сервер табеля не запущен';
+        document.getElementById('tabelStatus').style.color = '#f87171';
+      });
+  }
+
+  function exportTabel() {
+    var monthSel = document.getElementById('tabelMonth');
+    var deptSel  = document.getElementById('tabelDept');
+    var status   = document.getElementById('tabelStatus');
+
+    if (!monthSel || !monthSel.value) return;
+
+    var parts  = monthSel.value.split('-');
+    var year   = parts[0];
+    var month  = parts[1];
+
+    var deptParts = (deptSel.value || '').split('|');
+    var deptId    = deptParts[0] || '';
+    var deptName  = deptParts[1] || 'Все';
+
+    status.textContent = '⏳ Генерирую табель...';
+    status.style.color = '#fbbf24';
+
+    var url = TABEL_SERVER + '/tabel?year=' + year + '&month=' + month +
+              '&dept_id=' + encodeURIComponent(deptId) +
+              '&dept_name=' + encodeURIComponent(deptName);
+
+    // Скачать файл
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = '';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    setTimeout(function() {
+      status.textContent = '✅ Файл скачан!';
+      status.style.color = '#4ade80';
+      setTimeout(function() { status.textContent = ''; }, 3000);
+    }, 2000);
+  }
+
+  // Инициализировать контролы табеля при загрузке вкладки Персонал
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(initTabelControls, 500);
+  });
 
 </script>
 
