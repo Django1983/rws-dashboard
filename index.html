@@ -994,8 +994,20 @@
         </div>
       </div>
 
-      <!-- Списки -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1;min-height:0;">
+      <!-- Переключатель: сегодня / история -->
+      <div style="display:flex;gap:8px;flex-shrink:0;">
+        <button id="pTabToday" onclick="showPersonnelTab('today')"
+          style="padding:6px 18px;border-radius:6px;border:1px solid #4ade80;background:#0f3020;color:#4ade80;font-size:13px;font-weight:600;cursor:pointer;">
+          📅 Сегодня
+        </button>
+        <button id="pTabHistory" onclick="showPersonnelTab('history')"
+          style="padding:6px 18px;border-radius:6px;border:1px solid #1e3a52;background:#0f1e30;color:#7aacc8;font-size:13px;font-weight:600;cursor:pointer;">
+          📋 История за месяц
+        </button>
+      </div>
+
+      <!-- Списки сегодня -->
+      <div id="pPanelToday" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1;min-height:0;">
 
         <!-- Опоздавшие -->
         <div style="background:#071220;border:1px solid #1e3a52;border-radius:8px;display:flex;flex-direction:column;overflow:hidden;">
