@@ -472,7 +472,6 @@
 <div class="tabs-bar">
   <button class="tab-btn active" id="btnTab1" onclick="showTab(1)">🏭 Производство</button>
   <button class="tab-btn" id="btnTab2" onclick="showTab(2)">📊 Показатели</button>
-  <button class="tab-btn" id="btnTab3" onclick="showTab(3)">👥 Персонал</button>
 </div>
 <div class="content" id="mainContent">
 
@@ -2109,7 +2108,6 @@ document.addEventListener('DOMContentLoaded', () => {
 function showTab(n) {
   document.getElementById('btnTab1').classList.toggle('active', n===1);
   document.getElementById('btnTab2').classList.toggle('active', n===2);
-  document.getElementById('btnTab3').classList.toggle('active', n===3);
   var grid = document.getElementById('mainContent');
   var allSections = ['section-pc','section-bsu','section-1c','section-otg','section-rashod','section-ok','section-power','section-solar','section-iqair','section-personnel'];
   allSections.forEach(function(cls) {
