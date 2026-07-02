@@ -6,8 +6,7 @@
 <title>RWS Optimum — Производство ЖБ Шпал</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { zoom: 90%; }
-  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f4f8; color: #1a2e3b; height: 109vh; overflow: hidden; display: flex; flex-direction: column; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #071220; color: #c8dde8; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
   .header {
     display: flex; align-items: center; justify-content: space-between;
     padding: 7px 18px; background: #1a3a52;
@@ -381,7 +380,22 @@
   /* Статус бар — плавное изменение */
   .status-bar { transition: background 0.5s ease; }
 
+
+  /* ── ТАБЫ ── */
+  .tabs-bar { display:flex; background:#0a1828; border-bottom:2px solid #1e3a52; padding:0 12px; flex-shrink:0; }
+  .tab-btn { padding:9px 28px; font-size:13px; font-weight:700; color:#4a6a88; background:none; border:none; border-bottom:3px solid transparent; cursor:pointer; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:-2px; transition:color 0.15s; }
+  .tab-btn:hover { color:#7aacc8; }
+  .tab-btn.active { color:#4ade80; border-bottom-color:#4ade80; }
+  .section-solar { display:none !important; }
+  .section-iqair { display:none !important; }
+  .section-personnel { display:none !important; }
+  .personnel-stat-card { background:#0f1e30; border:1px solid #1e3a52; border-radius:8px; padding:16px 20px; display:flex; flex-direction:column; gap:4px; }
+  .personnel-stat-val { font-size:42px; font-weight:700; line-height:1; }
+  .personnel-stat-label { font-size:13px; color:#7aacc8; text-transform:uppercase; letter-spacing:0.05em; }
+  .personnel-late-item { display:flex; align-items:center; gap:8px; padding:6px 10px; border-radius:6px; background:#0f1e30; border-left:3px solid #f59e0b; font-size:13px; color:#c8dde8; }
+  .personnel-early-item { display:flex; align-items:center; gap:8px; padding:6px 10px; border-radius:6px; background:#0f1e30; border-left:3px solid #60a5fa; font-size:13px; color:#c8dde8; }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -455,7 +469,11 @@
   <span style="margin-left:auto;" id="lastUpdate"></span>
 </div>
 
-<div class="content">
+<div class="tabs-bar">
+  <button class="tab-btn active" id="btnTab1" onclick="showTab(1)">🏭 Производство</button>
+  <button class="tab-btn" id="btnTab2" onclick="showTab(2)">📊 Показатели</button>
+</div>
+<div class="content" id="mainContent">
 
   <!-- ПЦ — верх слева -->
   <div class="section section-pc">
@@ -701,7 +719,7 @@
     </div>
 
     <!-- Диаграмма выработки по дням за месяц -->
-    <div style="padding:4px 10px 6px;border-top:1px solid #1e3a52;flex:1;display:flex;flex-direction:column;min-height:0;">
+    <div style="padding:4px 10px 6px;border-top:1px solid #1e3a52;height:180px;flex-shrink:0;display:flex;flex-direction:column;">
       <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;flex-shrink:0;">📊 Выработка по дням за месяц, кВт·ч</div>
       <div id="solarDailyChart" style="display:flex;align-items:flex-end;gap:2px;flex:1;min-height:0;overflow:visible;margin-top:18px;margin-bottom:14px;">
         <div style="color:#4a6a88;font-size:9px;align-self:center;">Загрузка...</div>
@@ -769,18 +787,9 @@
           <div style="font-size:10px;color:#7aacc8;line-height:1.3;">Угарный газ — опасен при высоких концентрациях</div>
         </div>
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
-          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🔵 O₃ <span style="font-size:9px;color:#4a6a82;text-transform:none;">(норма ≤100)</span></div>
-          <div style="font-size:22px;font-weight:600;color:#60a5fa;line-height:1.2;"><span id="o3Value">—</span></div>
-          <div id="o3Status" style="font-size:11px;font-weight:700;white-space:nowrap;"></div>
-          <div style="font-size:10px;color:#7aacc8;line-height:1.3;">Озон — раздражает дыхательные пути</div>
-        </div>
+        
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
-          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🌡️ Темп. <span style="font-size:9px;color:#4a6a82;text-transform:none;">(норма ≤35)</span></div>
-          <div style="font-size:22px;font-weight:600;color:#f87171;line-height:1.2;"><span id="tempValue">—</span>°C</div>
-          <div style="font-size:10px;color:#7aacc8;line-height:1.3;">Температура воздуха на улице</div>
-        </div>
+        
 
         <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
           <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">💧 Влажн. <span style="font-size:9px;color:#4a6a82;text-transform:none;">(норма ≤90)</span></div>
@@ -795,19 +804,9 @@
           <div style="font-size:10px;color:#7aacc8;line-height:1.3;">Аммиак — резкий запах, раздражает слизистые</div>
         </div>
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
-          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🟤 H₂S <span style="font-size:9px;color:#4a6a82;text-transform:none;">(норма ≤4)</span></div>
-          <div style="font-size:22px;font-weight:600;color:#d97706;line-height:1.2;"><span id="h2sValue">—</span></div>
-          <div id="h2sStatus" style="font-size:11px;font-weight:700;white-space:nowrap;"></div>
-          <div style="font-size:10px;color:#7aacc8;line-height:1.3;">Сероводород — запах тухлых яиц, токсичен</div>
-        </div>
+        
 
-        <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
-          <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🟢 VOC <span style="font-size:9px;color:#4a6a82;text-transform:none;">(норма ≤200)</span></div>
-          <div style="font-size:22px;font-weight:600;color:#4ade80;line-height:1.2;"><span id="vocValue">—</span></div>
-          <div id="vocStatus" style="font-size:11px;font-weight:700;white-space:nowrap;"></div>
-          <div style="font-size:10px;color:#7aacc8;line-height:1.3;">Летучие орг. соединения — растворители, краски</div>
-        </div>
+        
 
         <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden;">
           <div style="font-size:12px;color:#7aacc8;text-transform:uppercase;white-space:nowrap;">🔵 Давл. <span style="font-size:9px;color:#4a6a82;text-transform:none;">(гПа)</span></div>
@@ -948,6 +947,66 @@
 
       <div style="font-size:10px;color:#7aacc8;flex-shrink:0;">Обновлено: <span id="powerTime">—</span></div>
 
+    </div>
+  </div>
+
+  <!-- Персонал — посещаемость -->
+  <div class="section section-personnel" style="background:linear-gradient(135deg,#0a1e2e 0%,#1a3a52 100%);border:1px solid #2a5a78;">
+    <div class="section-header" style="background:linear-gradient(90deg,#0f1e30,#1a3a52);border-bottom:1px solid #2a5a78;">
+      👥 Персонал — Посещаемость
+      <span class="auto-badge" style="background:rgba(74,222,128,0.15);color:#4ade80;border:1px solid rgba(74,222,128,0.3);">● Авто</span>
+      <span class="section-badge" id="personnelDate" style="background:#0f1e30;color:#7aacc8;border:1px solid #2a5a78;">—</span>
+    </div>
+    <div style="padding:12px;display:flex;flex-direction:column;gap:10px;flex:1;overflow:hidden;">
+      <!-- Переключатель -->
+      <div style="display:flex;gap:8px;flex-shrink:0;align-items:center;flex-wrap:wrap;">
+        <button id="pTabToday" onclick="showPersonnelTab('today')"
+          style="padding:6px 18px;border-radius:6px;border:1px solid #4ade80;background:#0f3020;color:#4ade80;font-size:13px;font-weight:600;cursor:pointer;">
+          📅 Сегодня
+        </button>
+        <button id="pTabHistory" onclick="showPersonnelTab('history')"
+          style="padding:6px 18px;border-radius:6px;border:1px solid #1e3a52;background:#0f1e30;color:#7aacc8;font-size:13px;font-weight:600;cursor:pointer;">
+          📋 История за месяц
+        </button>
+        <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+          <select id="tabelMonth" style="padding:5px 10px;border-radius:6px;border:1px solid #2a5a78;background:#0f1e30;color:#c8dde8;font-size:13px;"></select>
+          <select id="tabelDept" style="padding:5px 10px;border-radius:6px;border:1px solid #2a5a78;background:#0f1e30;color:#c8dde8;font-size:13px;">
+            <option value="">Все подразделения</option>
+          </select>
+          <button id="btnTabel" onclick="exportTabel()"
+            style="padding:6px 16px;border-radius:6px;border:1px solid #f59e0b;background:#1a2a0a;color:#f59e0b;font-size:13px;font-weight:600;cursor:pointer;">
+            📥 Скачать табель XLS
+          </button>
+          <span id="tabelStatus" style="font-size:12px;color:#7aacc8;"></span>
+        </div>
+      </div>
+      <!-- Карточки -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;flex-shrink:0;">
+        <div class="personnel-stat-card"><div class="personnel-stat-val" style="color:#4ade80;" id="pTotalIn">—</div><div class="personnel-stat-label">Всего пришло</div></div>
+        <div class="personnel-stat-card"><div class="personnel-stat-val" style="color:#60a5fa;" id="pOnTime">—</div><div class="personnel-stat-label">✅ Вовремя</div></div>
+        <div class="personnel-stat-card"><div class="personnel-stat-val" style="color:#f59e0b;" id="pLate">—</div><div class="personnel-stat-label">⏰ Опоздали</div></div>
+        <div class="personnel-stat-card"><div class="personnel-stat-val" style="color:#f87171;" id="pEarlyLeave">—</div><div class="personnel-stat-label">🚪 Ушли раньше</div></div>
+      </div>
+      <!-- Сегодня -->
+      <div id="pPanelToday" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1;min-height:0;">
+        <div style="background:#071220;border:1px solid #1e3a52;border-radius:8px;display:flex;flex-direction:column;overflow:hidden;">
+          <div style="padding:8px 14px;background:#1a2a1a;border-bottom:1px solid #2a5a78;font-size:13px;font-weight:700;color:#f59e0b;">⏰ Опоздавшие</div>
+          <div id="pLateList" style="padding:8px;display:flex;flex-direction:column;gap:4px;overflow-y:auto;flex:1;"><div style="color:#4a6a88;font-size:13px;padding:8px;">Загрузка...</div></div>
+        </div>
+        <div style="background:#071220;border:1px solid #1e3a52;border-radius:8px;display:flex;flex-direction:column;overflow:hidden;">
+          <div style="padding:8px 14px;background:#1a2030;border-bottom:1px solid #2a5a78;font-size:13px;font-weight:700;color:#60a5fa;">🚪 Ушли раньше срока</div>
+          <div id="pEarlyList" style="padding:8px;display:flex;flex-direction:column;gap:4px;overflow-y:auto;flex:1;"><div style="color:#4a6a88;font-size:13px;padding:8px;">Загрузка...</div></div>
+        </div>
+      </div>
+      <!-- История -->
+      <div id="pPanelHistory" style="display:none;flex:1;min-height:0;overflow:hidden;flex-direction:column;gap:8px;">
+        <div style="background:#071220;border:1px solid #1e3a52;border-radius:8px;overflow:hidden;display:flex;flex-direction:column;flex:1;min-height:0;">
+          <div style="display:grid;grid-template-columns:80px 60px 60px 60px 50px 1fr;gap:0;background:#1a3a52;padding:8px 12px;font-size:12px;font-weight:700;color:#7aacc8;flex-shrink:0;">
+            <div>Дата</div><div style="text-align:center;">Пришло</div><div style="text-align:center;color:#4ade80;">Вовремя</div><div style="text-align:center;color:#f59e0b;">Опоздали</div><div style="text-align:center;color:#60a5fa;">Ушли</div><div>Опоздавшие</div>
+          </div>
+          <div id="pHistoryRows" style="overflow-y:auto;flex:1;"><div style="color:#4a6a88;font-size:13px;padding:16px;">Загрузка истории...</div></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1216,14 +1275,26 @@ function renderBSU(rows) {
   document.getElementById('bsuDate').textContent = hdr[5] || hdr[2] || 'БСУ';
   dbg(`БСУ: заголовок строки 2: [${rows[1].join(' | ')}]`);
 
+  const MAT_IMAGES = {
+    'цемент':       'https://django1983.github.io/rws-dashboard/66292f263917e475426095-rashod-cement.png',
+    'песок':        'https://django1983.github.io/rws-dashboard/Песок-общий-1-740x492.jpg',
+    'щебень':       'https://django1983.github.io/rws-dashboard/Sheb2.webp',
+    'пластификатор':'https://django1983.github.io/rws-dashboard/plastifikator.jpg',
+  };
   let html = '';
   for (let i = 2; i < rows.length; i++) {
     const r = rows[i];
     if (!r || !r[1]) continue;
     const num = r[0] || (i - 1);
+    const matName = String(r[1]).toLowerCase();
+    let imgUrl = '';
+    for (const key in MAT_IMAGES) {
+      if (matName.includes(key)) { imgUrl = MAT_IMAGES[key]; break; }
+    }
+    const imgHtml = imgUrl ? `<img src="${imgUrl}" style="width:36px;height:36px;object-fit:cover;border-radius:4px;margin-right:6px;vertical-align:middle;border:1px solid #2a5a78;" onerror="this.style.display='none'">` : '';
     html += `<tr>
       <td class="row-num">${num}</td>
-      <td style="text-align:left">${r[1]}</td>
+      <td style="text-align:left;vertical-align:middle;">${imgHtml}${r[1]}</td>
       <td class="num">${fNum(r[2])}</td>
       <td class="num">${fPlus(r[3])}</td>
       <td class="num">${fMinus(r[4])}</td>
@@ -2030,6 +2101,216 @@ document.addEventListener('DOMContentLoaded', () => {
   setTimeout(animateCards, 300);
 });
 
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+// ── Переключение вкладок ──────────────────────────────────────────────────
+function showTab(n) {
+  document.getElementById('btnTab1').classList.toggle('active', n===1);
+  document.getElementById('btnTab2').classList.toggle('active', n===2);
+  var grid = document.getElementById('mainContent');
+  var allSections = ['section-pc','section-bsu','section-1c','section-otg','section-rashod','section-ok','section-power','section-solar','section-iqair','section-personnel'];
+  allSections.forEach(function(cls) {
+    var el = document.querySelector('.' + cls);
+    if (el) el.style.setProperty('display', 'none', 'important');
+  });
+  var s1 = [{cls:'section-pc',col:'1',row:'1'},{cls:'section-bsu',col:'1',row:'2'},{cls:'section-1c',col:'1',row:'3'},{cls:'section-otg',col:'2',row:'1'},{cls:'section-rashod',col:'2',row:'2 / 4'},{cls:'section-ok',col:'3',row:'1 / 4'},{cls:'section-power',col:'4',row:'1 / 4'}];
+  var s2 = [{cls:'section-solar',col:'1',row:'1'},{cls:'section-iqair',col:'2',row:'1'}];
+  var s3 = [{cls:'section-personnel',col:'1',row:'1'}];
+  var show = n===1 ? s1 : (n===2 ? s2 : s3);
+  if (n===1) { grid.style.gridTemplateColumns='minmax(0,1fr) minmax(0,1.5fr) minmax(0,1fr) minmax(0,0.5fr)'; grid.style.gridTemplateRows='minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)'; }
+  else if (n===2) { grid.style.gridTemplateColumns='minmax(0,1.7fr) minmax(0,1fr)'; grid.style.gridTemplateRows='1fr'; }
+  else { grid.style.gridTemplateColumns='1fr'; grid.style.gridTemplateRows='1fr'; }
+  show.forEach(function(s) {
+    var el = document.querySelector('.' + s.cls);
+    if (!el) return;
+    el.style.setProperty('display', 'flex', 'important');
+    el.style.gridColumn = s.col;
+    el.style.gridRow = s.row;
+  });
+}
+
+// ── Персонал ──────────────────────────────────────────────────────────────
+function renderPersonnel(d) {
+  if (!d || d.error) return;
+  var el;
+  el = document.getElementById('pTotalIn');    if(el) el.textContent = d.total_in ?? '—';
+  el = document.getElementById('pOnTime');     if(el) el.textContent = d.on_time ?? '—';
+  el = document.getElementById('pLate');       if(el) el.textContent = d.late ?? '—';
+  el = document.getElementById('pEarlyLeave'); if(el) el.textContent = d.early_leave ?? '—';
+  el = document.getElementById('personnelDate'); if(el) el.textContent = d.date ?? '—';
+  var lateEl = document.getElementById('pLateList');
+  if (lateEl) {
+    if (d.late_list && d.late_list.trim()) {
+      var items = d.late_list.split(' | ').filter(Boolean);
+      lateEl.innerHTML = items.map(function(item) {
+        var m = item.match(/^(.+?)\s*—\s*пришёл (\S+),\s*опоздал на (.+)$/);
+        if (m) return '<div class="personnel-late-item"><span style="flex:1;">'+m[1]+'</span><span style="color:#fbbf24;font-weight:600;white-space:nowrap;">'+m[2]+'</span><span style="color:#f59e0b;font-size:12px;white-space:nowrap;">+'+m[3]+'</span></div>';
+        return '<div class="personnel-late-item">'+item+'</div>';
+      }).join('');
+    } else { lateEl.innerHTML = '<div style="color:#4ade80;font-size:14px;padding:12px;">✅ Все пришли вовремя!</div>'; }
+  }
+  var earlyEl = document.getElementById('pEarlyList');
+  if (earlyEl) {
+    if (d.early_list && d.early_list.trim()) {
+      var items2 = d.early_list.split(' | ').filter(Boolean);
+      earlyEl.innerHTML = items2.map(function(item) {
+        var m2 = item.match(/^(.+?)\s*—\s*ушёл (\S+),\s*раньше на (.+)$/);
+        if (m2) return '<div class="personnel-early-item"><span style="flex:1;">'+m2[1]+'</span><span style="color:#93c5fd;font-weight:600;white-space:nowrap;">'+m2[2]+'</span><span style="color:#60a5fa;font-size:12px;white-space:nowrap;">-'+m2[3]+'</span></div>';
+        return '<div class="personnel-early-item">'+item+'</div>';
+      }).join('');
+    } else { earlyEl.innerHTML = '<div style="color:#4ade80;font-size:14px;padding:12px;">✅ Все ушли вовремя!</div>'; }
+  }
+}
+
+function showPersonnelTab(tab) {
+  var today = document.getElementById('pPanelToday');
+  var history = document.getElementById('pPanelHistory');
+  var btnToday = document.getElementById('pTabToday');
+  var btnHistory = document.getElementById('pTabHistory');
+  if (tab === 'today') {
+    today.style.display='grid'; history.style.display='none';
+    btnToday.style.borderColor='#4ade80'; btnToday.style.background='#0f3020'; btnToday.style.color='#4ade80';
+    btnHistory.style.borderColor='#1e3a52'; btnHistory.style.background='#0f1e30'; btnHistory.style.color='#7aacc8';
+  } else {
+    today.style.display='none'; history.style.display='flex';
+    btnHistory.style.borderColor='#4ade80'; btnHistory.style.background='#0f3020'; btnHistory.style.color='#4ade80';
+    btnToday.style.borderColor='#1e3a52'; btnToday.style.background='#0f1e30'; btnToday.style.color='#7aacc8';
+    fetchPersonnelHistory();
+  }
+}
+
+function renderPersonnelHistory(rows) {
+  var el = document.getElementById('pHistoryRows');
+  if (!el) return;
+  if (!rows || !rows.length) { el.innerHTML='<div style="color:#4a6a88;font-size:13px;padding:16px;">Нет данных</div>'; return; }
+  var html = rows.map(function(row) {
+    var dateStr = row.date;
+    try { var d=new Date(dateStr); if(!isNaN(d)) dateStr=('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2)+'.'+d.getFullYear(); } catch(e){}
+    var lateNames = '—';
+    if (row.late_list && row.late_list.trim()) {
+      lateNames = row.late_list.split(' | ').filter(Boolean).map(function(item){ var m=item.match(/^(\S+)\s+(\S+)/); return m?m[2]:item.split(' ')[0]; }).join(', ');
+    }
+    return '<div style="display:grid;grid-template-columns:80px 60px 60px 60px 50px 1fr;gap:0;padding:7px 12px;border-bottom:1px solid #1e3a52;font-size:13px;align-items:center;">'
+      +'<div style="color:#7aacc8;font-weight:600;white-space:nowrap;">'+dateStr+'</div>'
+      +'<div style="text-align:center;color:#c8dde8;">'+row.total_in+'</div>'
+      +'<div style="text-align:center;color:#4ade80;">'+row.on_time+'</div>'
+      +'<div style="text-align:center;color:'+(row.late>0?'#f59e0b':'#4ade80')+';font-weight:'+(row.late>0?'700':'400')+';">'+row.late+'</div>'
+      +'<div style="text-align:center;color:'+(row.early_leave>0?'#60a5fa':'#4ade80')+';font-weight:'+(row.early_leave>0?'700':'400')+';">'+row.early_leave+'</div>'
+      +'<div style="color:#9ab4c4;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+lateNames+'</div>'
+      +'</div>';
+  }).join('');
+  el.innerHTML = html;
+}
+
+async function fetchPersonnel() {
+  try {
+    const { url } = getConfig();
+    const r = await fetch(url + '?sheet=Turnstile&t=' + Date.now());
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const d = await r.json();
+    if (d && !d.error) renderPersonnel(d);
+  } catch(e) { console.warn('Personnel fetch error:', e); }
+}
+
+async function fetchPersonnelHistory() {
+  try {
+    const { url } = getConfig();
+    const r = await fetch(url + '?sheet=TurnstileHistory&t=' + Date.now());
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const rows = await r.json();
+    renderPersonnelHistory(rows);
+  } catch(e) { console.warn('History fetch error:', e); }
+}
+
+// ── Табель ────────────────────────────────────────────────────────────────
+function initTabelControls() {
+  var sel = document.getElementById('tabelMonth');
+  if (!sel) return;
+  var months = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+  var now = new Date();
+  for (var i = 0; i < 6; i++) {
+    var d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+    var opt = document.createElement('option');
+    opt.value = d.getFullYear()+'-'+(d.getMonth()+1);
+    opt.text = months[d.getMonth()]+' '+d.getFullYear();
+    if (i===0) opt.selected=true;
+    sel.appendChild(opt);
+  }
+  var dsel = document.getElementById('tabelDept');
+  if (dsel) {
+    ['Отдел охраны','ИТ','CACC','БСУ','ПРУ','РВЦ','Транспортный цех','Производственный цех','ПС','ОГЭ','ОГМ','ИП','АХО','АУП','ДСЦ','Отдел локализации'].forEach(function(d) {
+      var o=document.createElement('option'); o.value=d+'|'+d; o.text=d; dsel.appendChild(o);
+    });
+  }
+}
+
+async function exportTabel() {
+  var monthSel = document.getElementById('tabelMonth');
+  var deptSel = document.getElementById('tabelDept');
+  var status = document.getElementById('tabelStatus');
+  if (!monthSel || !monthSel.value) return;
+  var parts = monthSel.value.split('-');
+  var year = parts[0]; var month = parts[1];
+  var deptParts = (deptSel.value || '').split('|');
+  var deptName = deptParts[1] || '';
+  status.textContent = '⏳ Загружаю...'; status.style.color = '#fbbf24';
+  try {
+    var { url } = getConfig();
+    var resp = await fetch(url+'?sheet=GenerateTabel&year='+year+'&month='+month+'&dept='+encodeURIComponent(deptName)+'&t='+Date.now());
+    var data = await resp.json();
+    if (data.error) throw new Error(data.error);
+    buildTabelExcel(data, year, month, deptName || 'Все');
+    status.textContent = '✅ Файл скачан!'; status.style.color = '#4ade80';
+    setTimeout(function(){ status.textContent=''; }, 3000);
+  } catch(e) { status.textContent='❌ '+e.message; status.style.color='#f87171'; }
+}
+
+function buildTabelExcel(data, year, month, deptName) {
+  var XLSX = window.XLSX;
+  if (!XLSX) { alert('SheetJS не загружен'); return; }
+  var months=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+  var monthName=months[parseInt(month)-1];
+  var daysInMonth=new Date(parseInt(year),parseInt(month),0).getDate();
+  var dayNames=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+  var wb=XLSX.utils.book_new(); var ws_data=[];
+  ws_data.push(['ТАБЕЛЬ УЧЁТА РАБОЧЕГО ВРЕМЕНИ — '+monthName+' '+year+' г.   Подразделение: '+deptName]);
+  var h1=['№','Фамилия Имя','Отдел','Должность'];
+  for(var d=1;d<=daysInMonth;d++) h1.push(d); h1.push('ИТОГО'); ws_data.push(h1);
+  var h2=['','','',''];
+  for(var d=1;d<=daysInMonth;d++){var wd=new Date(parseInt(year),parseInt(month)-1,d).getDay();h2.push(dayNames[wd]);}
+  h2.push(''); ws_data.push(h2);
+  var byDept={};
+  (data.employees||[]).forEach(function(emp){if(!byDept[emp.dept])byDept[emp.dept]=[];byDept[emp.dept].push(emp);});
+  var num=1;
+  Object.keys(byDept).sort().forEach(function(dept){
+    ws_data.push([dept]);
+    byDept[dept].forEach(function(emp){
+      var row=[num++,emp.surname+' '+emp.name,emp.dept,''];
+      var total=0;
+      for(var d=1;d<=daysInMonth;d++){
+        var day=emp.days[d];
+        if(day&&day.hasData){var val=(day.arrival&&day.departure)?8:(day.arrival?4:0);row.push(val||'');total+=val;}
+        else row.push('');
+      }
+      row.push(total); ws_data.push(row);
+    });
+  });
+  var ws=XLSX.utils.aoa_to_sheet(ws_data);
+  var cols=[{wch:4},{wch:24},{wch:18},{wch:14}];
+  for(var d=0;d<daysInMonth;d++) cols.push({wch:3.5}); cols.push({wch:7});
+  ws['!cols']=cols;
+  XLSX.utils.book_append_sheet(wb,ws,'Табель');
+  XLSX.writeFile(wb,'Tabel_'+monthName+'_'+year+'_'+deptName+'.xlsx');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  showTab(1);
+  setTimeout(initTabelControls, 500);
+  // Загрузка данных персонала
+  fetchPersonnel();
+  setInterval(fetchPersonnel, 5*60*1000);
+});
 </script>
 </body>
 </html>
