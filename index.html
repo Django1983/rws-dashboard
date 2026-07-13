@@ -5,269 +5,406 @@
 <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=1.0">
 <title>RWS Optimum — Производство ЖБ Шпал</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Inter', 'Segoe UI', sans-serif;
-    background: #080e1a;
-    color: #c8dde8;
-    height: 100vh; overflow: hidden;
-    display: flex; flex-direction: column;
-  }
-
-  /* ── HEADER ── */
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #071220; color: #c8dde8; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
   .header {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 8px 20px;
-    background: linear-gradient(135deg, #0a1628 0%, #0f1f3a 100%);
-    border-bottom: 1px solid rgba(100,181,246,0.15);
-    flex-shrink: 0; gap: 12px;
-    box-shadow: 0 2px 20px rgba(0,0,0,0.4);
+    padding: 7px 18px; background: #1a3a52;
+    border-bottom: 1px solid #15304a; flex-shrink: 0;
+    gap: 12px;
   }
   .header-logo { flex-shrink: 0; }
   .header-center { flex: 1; text-align: center; }
-  .logo-text {
-    font-size: 18px; font-weight: 800; color: #fff;
-    letter-spacing: 0.12em;
-    background: linear-gradient(135deg, #64b5f6, #e3f2fd);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  }
-  .logo-sub { font-size: 9px; color: #3a6a88; letter-spacing: 0.2em; text-transform: uppercase; margin-top: 2px; }
-  .header-time { font-size: 20px; font-weight: 200; color: #64b5f6; font-variant-numeric: tabular-nums; letter-spacing: 0.05em; }
+  .logo-text { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: 0.08em; }
+  .logo-sub { font-size: 10px; color: #7aacc8; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 1px; }
+  .header-time { font-size: 16px; font-weight: 300; color: #b0d4ea; font-variant-numeric: tabular-nums; }
   .header-controls { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; flex-shrink: 0; }
   .btn {
-    padding: 5px 12px; font-size: 10px; font-weight: 600; border-radius: 8px; cursor: pointer;
-    border: 1px solid rgba(100,181,246,0.2);
-    background: rgba(100,181,246,0.08);
-    color: #64b5f6;
-    display: inline-flex; align-items: center; gap: 5px;
-    transition: all 0.2s; letter-spacing: 0.02em;
+    padding: 4px 11px; font-size: 11px; border-radius: 5px; cursor: pointer;
+    border: 1px solid #2e5c7a; background: #244a62; color: #b0d4ea;
+    display: inline-flex; align-items: center; gap: 5px; transition: background 0.15s;
   }
-  .btn:hover { background: rgba(100,181,246,0.18); border-color: rgba(100,181,246,0.4); color: #90caf9; transform: translateY(-1px); }
-  .btn-primary {
-    background: linear-gradient(135deg, rgba(21,101,192,0.8), rgba(25,118,210,0.8));
-    border-color: rgba(33,150,243,0.4); color: #fff;
-  }
-  .btn-primary:hover { background: linear-gradient(135deg, rgba(25,118,210,0.9), rgba(33,150,243,0.9)); }
-
-  /* ── STATUS BAR ── */
+  .btn:hover { background: #2a5a78; color: #d8edf8; }
+  .btn-primary { background: #2277aa; border-color: #2a90cc; color: #fff; }
+  .btn-primary:hover { background: #278ac0; }
   .status-bar {
     display: flex; align-items: center; gap: 10px;
-    padding: 3px 20px;
-    background: #050a14;
-    border-bottom: 1px solid rgba(100,181,246,0.06);
-    font-size: 10px; color: #2a5a78; flex-shrink: 0;
-    transition: background 0.5s ease;
+    padding: 3px 18px; background: #e2ecf4;
+    border-bottom: 1px solid #c8dce8; font-size: 10px; color: #4a7fa5; flex-shrink: 0;
   }
-  .dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; flex-shrink: 0; box-shadow: 0 0 6px #4ade80; }
-  .dot.loading { background: #fbbf24; box-shadow: 0 0 6px #fbbf24; animation: pulse 1.2s infinite; }
-  .dot.error { background: #f87171; box-shadow: 0 0 6px #f87171; }
-  .dot.ok { background: #4ade80; box-shadow: 0 0 6px #4ade80; }
-  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: #16a34a; flex-shrink: 0; }
+  .dot.loading { background: #d97706; animation: pulse 1.2s infinite; }
+  .dot.error { background: #dc2626; }
+  .dot.ok { background: #16a34a; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-  /* ── TABS ── */
-  .tabs-bar {
-    display: flex; background: #050a14;
-    border-bottom: 1px solid rgba(100,181,246,0.1);
-    padding: 0 16px; flex-shrink: 0;
-  }
-  .tab-btn {
-    padding: 9px 28px; font-size: 11px; font-weight: 700;
-    color: #2a5a78; background: none; border: none;
-    border-bottom: 2px solid transparent; cursor: pointer;
-    text-transform: uppercase; letter-spacing: 0.1em;
-    margin-bottom: -1px; transition: all 0.2s;
-  }
-  .tab-btn:hover { color: #64b5f6; }
-  .tab-btn.active { color: #4ade80; border-bottom-color: #4ade80; text-shadow: 0 0 12px rgba(74,222,128,0.5); }
-  .section-solar { display:none !important; }
-  .section-iqair { display:none !important; }
-  .section-power { display:none !important; }
-  .section-personnel { display:none !important; }
-  .personnel-stat-card { background:rgba(10,22,40,0.8); border:1px solid rgba(100,181,246,0.15); border-radius:12px; padding:16px 20px; display:flex; flex-direction:column; gap:4px; }
-  .personnel-stat-val { font-size:42px; font-weight:700; line-height:1; }
-  .personnel-stat-label { font-size:13px; color:#4a8ab8; text-transform:uppercase; letter-spacing:0.05em; }
-  .personnel-late-item { display:flex; align-items:center; gap:8px; padding:6px 10px; border-radius:6px; background:rgba(10,22,40,0.8); border-left:3px solid #f59e0b; font-size:13px; color:#c8dde8; }
-  .personnel-early-item { display:flex; align-items:center; gap:8px; padding:6px 10px; border-radius:6px; background:rgba(10,22,40,0.8); border-left:3px solid #60a5fa; font-size:13px; color:#c8dde8; }
-
-  /* ── MAIN GRID ── */
+  /* ── ГЛАВНАЯ СЕТКА ── */
   .content {
-    flex: 1; display: grid; gap: 8px; padding: 8px;
-    overflow: hidden; min-height: 0;
-  }
-
-  /* ── SECTIONS ── */
-  .section {
-    background: linear-gradient(145deg, rgba(12,22,42,0.95) 0%, rgba(8,16,30,0.98) 100%);
-    border: 1px solid rgba(100,181,246,0.12);
-    border-radius: 12px;
+    flex: 1;
+    display: grid;
+    grid-template-columns: minmax(0,1fr) minmax(0,1.4fr) minmax(0,0.9fr) minmax(0,0.7fr) minmax(0,0.45fr);
+    grid-template-rows: minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);
+    gap: 8px;
+    padding: 8px;
     overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04);
-    display: flex; flex-direction: column; min-height: 0;
-    position: relative;
-    transition: box-shadow 0.3s;
-  }
-  .section:hover {
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 1px rgba(100,181,246,0.15);
   }
 
-  /* Цветные акценты по типу секции */
-  .section-pc    { border-top: 2px solid #4ade80; }
-  .section-otg   { border-top: 2px solid #f59e0b; }
-  .section-bsu   { border-top: 2px solid #60a5fa; }
-  .section-rashod{ border-top: 2px solid #a78bfa; }
-  .section-ok    { border-top: 2px solid #f472b6; }
-  .section-1c    { border-top: 2px solid #34d399; }
+  /* Отгрузка — только верхняя строка центр */
+  .section-otg    { grid-column: 2; grid-row: 1; }
+  /* ОК — 2 строки, своя колонка */
+  .section-ok     { grid-column: 3; grid-row: 1 / 3; }
+  /* ПЦ вверху слева */
+  .section-pc     { grid-column: 1; grid-row: 1; }
+  /* БСУ — строка 2 слева */
+  .section-bsu    { grid-column: 1; grid-row: 2; }
+  /* 1С — строка 3 слева */
+  .section-1c     { grid-column: 1; grid-row: 3; }
+  /* Расход — строка 2 центр */
+  .section-rashod { grid-column: 2; grid-row: 2; }
+  /* Солнечные — строка 3 центр */
+  .section-solar  { grid-column: 2 / 4; grid-row: 3; }
+  /* IQAir — отдельная колонка, вся высота */
+  .section-iqair  { grid-column: 4; grid-row: 1 / 4; }
 
-  .section-header {
-    display: flex; align-items: center; gap: 8px;
-    padding: 8px 14px;
-    background: rgba(5,12,24,0.6);
-    border-bottom: 1px solid rgba(100,181,246,0.08);
-    font-size: 12px; font-weight: 600; color: #90c8e8;
-    flex-shrink: 0; letter-spacing: 0.02em;
+  /* Диаграмма солнечных по дням */
+  .solar-day-bar {
+    flex: 1; min-width: 4px; max-width: 20px;
+    background: linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+    border-radius: 3px 3px 0 0;
+    position: relative; cursor: default;
+    transition: all 0.2s; overflow: visible;
   }
-  .section-badge {
-    margin-left: auto; font-size: 9px; padding: 2px 9px;
-    border-radius: 20px;
-    background: rgba(100,181,246,0.08);
-    color: #4a8ab8;
-    border: 1px solid rgba(100,181,246,0.15);
-    white-space: nowrap; font-weight: 500;
+  .solar-day-bar:hover { opacity: 0.85; transform: scaleY(1.02); }
+  .solar-day-bar-today {
+    background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 100%);
+    box-shadow: 0 0 8px rgba(251,191,36,0.4);
   }
-  .auto-badge {
-    font-size: 9px; padding: 2px 8px; border-radius: 20px;
-    background: rgba(74,222,128,0.1); color: #4ade80;
-    border: 1px solid rgba(74,222,128,0.2);
-    font-weight: 600;
+  .solar-day-label { position:absolute; bottom:-13px; left:50%; transform:translateX(-50%); font-size:6px; color:#4a6a88; white-space:nowrap; }
+  .solar-day-val { position:absolute; top:-14px; left:50%; transform:translateX(-50%); font-size:6.5px; color:#86efac; white-space:nowrap; font-weight:600; }
+
+  /* Тарифная диаграмма в блоке электроэнергии */
+  .tarif-row { display:flex; align-items:center; gap:5px; }
+  .tarif-label { font-size:11px; font-weight:600; color:#7aacc8; flex-shrink:0; white-space:nowrap; }
+  .tarif-desc { font-size:10px; color:#4a7a9a; line-height:1.3; margin:1px 0 4px; }
+  .tarif-bar-wrap { width:100%; height:6px; background:#1e3a52; border-radius:4px; overflow:hidden; }
+  .tarif-bar { height:100%; border-radius:4px; width:0%; transition:width 0.6s ease; }
+  .tarif-val { font-size:12px; font-weight:600; color:#fff; flex-shrink:0; }
+
+, где текст перестаёт помещаться */
+  .section-pc .section-header,
+  .section-bsu .section-header,
+  .section-otg .section-header,
+  .section-ok .section-header {
+    font-size: 9px;
+    padding: 4px 6px;
+    gap: 3px;
+    flex-wrap: wrap;
+    row-gap: 2px;
   }
-
-  /* ── CARDS ── */
-  .cards {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(100px,1fr));
-    gap: 6px; padding: 8px;
-    border-bottom: 1px solid rgba(100,181,246,0.08);
-    flex-shrink: 0;
-    background: rgba(5,12,24,0.3);
-  }
-  .card {
-    background: rgba(12,24,46,0.8);
-    border: 1px solid rgba(100,181,246,0.1);
-    border-radius: 10px; padding: 8px 12px;
-    position: relative; overflow: hidden;
-    transition: all 0.2s;
-  }
-  .card::after {
-    content: ''; position: absolute;
-    bottom: 0; left: 0; right: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(100,181,246,0.3), transparent);
-  }
-  .card:hover { border-color: rgba(100,181,246,0.25); transform: translateY(-1px); }
-  .card-label { font-size: 9px; color: #2a5a78; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 3px; font-weight: 500; }
-  .card-value { font-size: 22px; font-weight: 700; color: #4ade80; font-variant-numeric: tabular-nums; line-height: 1.1; }
-  .card-unit { font-size: 10px; color: #1a4a68; margin-left: 2px; font-weight: 400; }
-
-  /* ── TABLES ── */
-  .table-wrap { overflow-y: auto; flex: 1; min-height: 0; }
-  .table-wrap::-webkit-scrollbar { width: 4px; }
-  .table-wrap::-webkit-scrollbar-track { background: transparent; }
-  .table-wrap::-webkit-scrollbar-thumb { background: rgba(100,181,246,0.2); border-radius: 2px; }
-
-  table { width: 100%; border-collapse: collapse; font-size: 11px; }
-  th {
-    padding: 5px 8px; text-align: center; font-size: 8px; font-weight: 700;
-    color: #2a5a78;
-    border-bottom: 1px solid rgba(100,181,246,0.1);
-    text-transform: uppercase; letter-spacing: 0.08em;
-    background: rgba(5,12,24,0.9);
-    position: sticky; top: 0; z-index: 1;
-  }
-  td { padding: 5px 8px; border-bottom: 1px solid rgba(100,181,246,0.05); color: #90c8e8; text-align: center; }
-  td.name-col { text-align: left; color: #b0d4e8; font-weight: 500; }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: rgba(100,181,246,0.05); }
-  .num { text-align: center; font-variant-numeric: tabular-nums; font-size: 12px; font-weight: 600; }
-  .n-num { color: #4ade80; font-weight: 700; font-size: 13px; text-shadow: 0 0 8px rgba(74,222,128,0.3); }
-  .plus { color: #4ade80; }
-  .minus { color: #f87171; }
-  .neutral { color: rgba(100,181,246,0.15); }
-  .row-num { color: rgba(100,181,246,0.2); font-size: 10px; }
-  .empty { padding: 20px; text-align: center; color: #1a3a58; font-size: 12px; }
-
-  /* ── BSU IMAGE ── */
-  .bsu-img { width:28px; height:28px; object-fit:cover; border-radius:6px; border:1px solid rgba(100,181,246,0.2); flex-shrink:0; }
-
-  /* ── RASHOD ── */
-  .rashod-inner { display:flex; flex-direction:column; height:100%; overflow:hidden; padding:6px 8px; gap:5px; }
-  .rashod-item {
-    flex:1; display:grid; grid-template-columns:1fr 60px 120px 120px 100px;
-    align-items:center; padding:6px 12px; border-radius:10px;
-    border:1px solid rgba(100,181,246,0.08);
-    background: rgba(12,24,46,0.5);
-    min-height:0; gap:8px; transition: all 0.2s;
-  }
-  .rashod-item:hover { background: rgba(12,24,46,0.8); border-color: rgba(100,181,246,0.15); }
-  .rashod-item.is-limit { background:rgba(245,158,11,0.06); border-color:rgba(245,158,11,0.3); border-left:3px solid #f59e0b; }
-  .rashod-item.is-limit .rashod-label { color:#fbbf24; }
-  .rashod-item.is-limit .rashod-ost   { color:#f59e0b; }
-  .rashod-label { font-size:11px; font-weight:600; color:#90c8e8; }
-  .rashod-norm  { font-size:10px; color:#2a5a78; text-align:right; white-space:nowrap; }
-  .rashod-ost   { font-size:11px; font-weight:600; color:#60a5fa; text-align:right; white-space:nowrap; }
-  .rashod-count { font-size:14px; font-weight:700; color:#4ade80; text-align:right; white-space:nowrap; min-width:60px; text-shadow:0 0 8px rgba(74,222,128,0.3); }
-  .rashod-unit  { font-size:9px; color:#2a5a78; }
-  .rashod-min {
-    display:flex; align-items:center; justify-content:space-between;
-    padding:8px 14px;
-    background: linear-gradient(135deg, rgba(74,222,128,0.06), rgba(74,222,128,0.02));
-    border:1px solid rgba(74,222,128,0.2); border-radius:10px;
-    flex-shrink:0; margin-top:2px;
-  }
-  .rashod-min-label { font-size:10px; font-weight:700; color:#4ade80; text-transform:uppercase; letter-spacing:0.06em; }
-  .rashod-min-val   { font-size:26px; font-weight:800; color:#4ade80; text-shadow:0 0 12px rgba(74,222,128,0.4); }
-  .rashod-min-unit  { font-size:11px; color:#86efac; margin-left:4px; }
-
-  /* ── 1C ── */
-  .onec-mat  { font-size:10px; color:#90c8e8; font-weight:500; }
-  .onec-qty  { text-align:right; font-weight:700; color:#4ade80; font-variant-numeric:tabular-nums; }
-  .onec-unit { font-size:9px; color:#2a5a78; text-align:left; padding-left:2px; }
-  .onec-total{ font-size:11px; font-weight:700; color:#60a5fa; }
-
-  /* ── DEBUG & ERRORS ── */
-  .debug-panel { display:none; background:#050a14; border:1px solid rgba(100,181,246,0.1); border-radius:10px; padding:12px; font-family:monospace; font-size:10px; color:#64b5f6; max-height:200px; overflow-y:auto; margin:8px; }
-  .debug-panel.visible { display:block; }
-  .debug-line { padding:1px 0; border-bottom:1px solid rgba(100,181,246,0.05); }
-  .debug-line.err  { color:#f87171; }
-  .debug-line.ok   { color:#4ade80; }
-  .debug-line.warn { color:#fbbf24; }
-
-  .error-block { background:rgba(248,113,113,0.06); border:1px solid rgba(248,113,113,0.2); border-radius:8px; padding:10px; margin:6px 10px; font-size:11px; color:#f87171; display:none; }
-  .error-block.visible { display:block; }
-  .error-block h4 { margin-bottom:6px; color:#fca5a5; }
-  .error-block ul { padding-left:14px; line-height:1.7; }
-
-  /* ── URL EDITOR ── */
-  .url-editor { background:#050a14; border:1px solid rgba(100,181,246,0.1); border-radius:8px; padding:10px 12px; margin:0 10px 10px; display:none; }
-  .url-editor.visible { display:block; }
-  .url-editor label { font-size:9px; color:#2a5a78; text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:3px; }
-  .url-editor input { width:100%; background:#080e1a; border:1px solid rgba(100,181,246,0.15); border-radius:6px; padding:5px 8px; color:#90c8e8; font-size:10px; font-family:monospace; margin-bottom:6px; }
-  .url-editor input:focus { outline:none; border-color:rgba(33,150,243,0.5); }
-
-  /* ── SECTION-OK badge sizes ── */
+  .section-pc .auto-badge,
+  .section-bsu .auto-badge,
+  .section-otg .auto-badge,
+  .section-ok .auto-badge,
+  .section-pc .section-badge,
   .section-bsu .section-badge,
   .section-otg .section-badge,
-  .section-ok  .section-badge { font-size:8px; padding:1px 5px; }
+  .section-ok .section-badge {
+    font-size: 8px;
+    padding: 1px 4px;
+    flex-shrink: 0;
+  }
+  .section-pc .section-badge,
+  .section-bsu .section-badge,
+  .section-otg .section-badge,
+  .section-ok .section-badge {
+    margin-left: auto;
+  }
+  /* RadioMer — узкая колонка справа от Auris, вся высота */
+  .section-power  { grid-column: 5; grid-row: 1 / 4; }
+
+  /* Расход: вертикальная таблица карточек */
+  .rashod-inner {
+    display: flex; flex-direction: column;
+    height: 100%; overflow: hidden; padding: 6px 8px; gap: 4px;
+  }
+  .rashod-item {
+    flex: 1; display: grid;
+    grid-template-columns: 1fr 60px 120px 120px 100px;
+    align-items: center;
+    padding: 4px 8px; border-radius: 5px;
+    border: 1px solid #d0e4f0; background: #f8fbfd;
+    min-height: 0; gap: 8px;
+  }
+  .rashod-item.is-limit { background: #fff3cd; border-color: #ffc107; border-left: 4px solid #f59e0b; }
+  .rashod-item.is-limit .rashod-label { color: #92400e; font-weight: 700; }
+  .rashod-item.is-limit .rashod-ost   { color: #b45309; }
+  .rashod-label { font-size: 11px; font-weight: 600; color: #1a3a52; }
+  .rashod-norm  { font-size: 10px; color: #7aacc8; text-align:right; white-space:nowrap; }
+  .rashod-ost   { font-size: 11px; font-weight: 600; color: #2277aa; text-align:right; white-space:nowrap; }
+  .rashod-count { font-size: 13px; font-weight: 700; color: #16a34a; text-align:right; white-space:nowrap; min-width:60px; }
+  .rashod-unit  { font-size: 9px; color: #7aacc8; }
+  .rashod-min {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 10px; background: #f0faf4;
+    border: 2px solid #86efac; border-radius: 6px; flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .rashod-min-label { font-size: 10px; font-weight: 600; color: #16a34a; text-transform: uppercase; letter-spacing: 0.05em; }
+  .rashod-min-val   { font-size: 22px; font-weight: 700; color: #15803d; }
+  .rashod-min-unit  { font-size: 10px; color: #4ade80; margin-left: 3px; }
+
+  .section {
+    background: #fff; border: 1px solid #c8dce8; border-radius: 8px;
+    overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    display: flex; flex-direction: column; min-height: 0;
+  }
+  .section-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 12px; background: #1a5c8a; border-bottom: 1px solid #154e78;
+    font-size: 12px; font-weight: 600; color: #ffffff; flex-shrink: 0;
+  }
+  .section-badge {
+    margin-left: auto; font-size: 10px; padding: 1px 8px;
+    border-radius: 20px; background: rgba(255,255,255,0.15); color: #ffffff;
+    border: 1px solid rgba(255,255,255,0.3); white-space: nowrap;
+  }
+  .cards {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(100px,1fr));
+    gap: 6px; padding: 8px; border-bottom: 1px solid #d0e4f0; flex-shrink: 0;
+    background: #f0f6fb;
+  }
+  .card { background: #ffffff; border: 1px solid #c8dce8; border-radius: 6px; padding: 6px 10px; }
+  .card-label { font-size: 9px; color: #5a8aaa; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
+  .card-value { font-size: 18px; font-weight: 500; color: #1a5c8a; }
+  .card-unit { font-size: 10px; color: #7aacc8; margin-left: 2px; }
+
+  .table-wrap { overflow: hidden; flex: 1; min-height: 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  th {
+    padding: 3px 4px; text-align: center; font-size: 8px; font-weight: 700;
+    color: #ffffff; border-bottom: 2px solid #154e78; border-right: 1px solid #2a7ab0;
+    text-transform: uppercase; letter-spacing: 0.01em; background: #1a5c8a;
+    position: sticky; top: 0; z-index: 1; line-height: 1.2;
+  }
+  th:last-child { border-right: none; }
+  td { padding: 4px 6px; border-bottom: 1px solid #eaf2f8; color: #1a2e3b; text-align: center; }
+  td.name-col { text-align: left; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #f4f9fd; }
+  .num { text-align: center; font-variant-numeric: tabular-nums; font-size: 12px; font-weight: 600; }
+  .n-num { color: #1a5c8a; font-weight: 700; font-size: 12px; }
+  .plus { color: #16a34a; font-weight: 500; }
+  .minus { color: #dc2626; font-weight: 500; }
+  .neutral { color: #9ab4c4; }
+  .row-num { color: #9ab4c4; font-size: 10px; }
+  .empty { padding: 16px; text-align: center; color: #9ab4c4; font-size: 12px; }
+  .auto-badge { font-size: 9px; padding: 1px 7px; border-radius: 20px; background: rgba(255,255,255,0.15); color: #ffffff; border: 1px solid rgba(134,239,172,0.6); }
+
+  /* Debug panel */
+  .debug-panel {
+    display: none; background: #f8fbfd; border: 1px solid #c8dce8; border-radius: 8px;
+    padding: 12px; font-family: monospace; font-size: 10px; color: #2277aa;
+    max-height: 200px; overflow-y: auto; margin: 8px;
+  }
+  .debug-panel.visible { display: block; }
+  .debug-line { padding: 1px 0; border-bottom: 1px solid #e8f2f8; }
+  .debug-line.err { color: #dc2626; }
+  .debug-line.ok { color: #16a34a; }
+  .debug-line.warn { color: #d97706; }
+
+  /* Error block */
+  .error-block {
+    background: #fef2f2; border: 1px solid #fca5a5; border-radius: 6px;
+    padding: 10px; margin: 6px 10px; font-size: 11px; color: #dc2626; display: none;
+  }
+  .error-block.visible { display: block; }
+  .error-block h4 { margin-bottom: 6px; color: #b91c1c; }
+  .error-block ul { padding-left: 14px; line-height: 1.7; }
+  .error-block a { color: #2277aa; }
+
+  /* URL editor */
+  .url-editor {
+    background: #f8fbfd; border: 1px solid #c8dce8; border-radius: 6px;
+    padding: 10px 12px; margin: 0 10px 10px; display: none;
+  }
+  .url-editor.visible { display: block; }
+  .url-editor label { font-size: 9px; color: #5a8aaa; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 3px; }
+  .url-editor input {
+    width: 100%; background: #fff; border: 1px solid #c8dce8; border-radius: 4px;
+    padding: 5px 8px; color: #1a2e3b; font-size: 10px; font-family: monospace; margin-bottom: 6px;
+  }
+  .url-editor input:focus { outline: none; border-color: #2277aa; }
+
+  /* Панели настроек и диагностики — в попап поверх */
+  .overlay-panels { position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; padding: 0 8px 4px; pointer-events: none; display: flex; gap: 6px; }
+  .overlay-panels .section { pointer-events: all; flex: 1; }
+  .overlay-panels .section-header { padding: 3px 10px; font-size: 10px; min-height: 0; }
 
   @media print {
-    body { overflow:visible; height:auto; background:#fff; color:#000; }
-    .content { display:block; overflow:visible; }
-    .table-wrap { overflow:visible; }
-    .header-controls, .tabs-bar, .status-bar { display:none; }
-    .section { background:#fff; border:1px solid #ddd; box-shadow:none; }
-    th, td { color:#000; border-color:#eee; }
-    .n-num { color:#000; text-shadow:none; }
-    .rashod-min-val { color:#000; text-shadow:none; }
+    body { overflow: visible; height: auto; }
+    .content { display: block; overflow: visible; }
+    .table-wrap { overflow: visible; }
+    .header-controls { display: none; }
   }
+
+  /* ── СОЛНЕЧНЫЕ ПАНЕЛИ ── */
+  .solar-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    padding: 6px 8px;
+    height: 100%;
+    align-content: center;
+  }
+  .solar-card {
+    background: linear-gradient(135deg, #1a3a52 0%, #1e4d6b 100%);
+    border-radius: 8px; padding: 12px 14px;
+    display: flex; flex-direction: column; gap: 5px;
+    border: 1px solid #2a5a78;
+  }
+  .solar-card-label {
+    font-size: 12px; color: #7aacc8;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .solar-card-value {
+    font-size: 30px; font-weight: 600; color: #fff;
+    font-variant-numeric: tabular-nums; line-height: 1.1;
+  }
+  .solar-card-unit { font-size: 13px; color: #7aacc8; margin-left: 3px; }
+  .solar-card-sub { font-size: 12px; color: #4a9a6a; margin-top: 2px; }
+  .solar-card.realtime { background: linear-gradient(135deg, #1a4a2a 0%, #1e6035 100%); border-color: #2a7a45; }
+  .solar-card.realtime .solar-card-value { color: #4ade80; }
+
+  .section-1c { overflow: hidden; }
+  .onec-inner { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+  .onec-header-row {
+    display: grid; grid-template-columns: 1fr 90px 50px;
+    font-size: 9px; font-weight: 700; color: #4a8ab8; text-transform: uppercase;
+    letter-spacing: 0.06em; padding: 4px 10px;
+    background: rgba(5,12,24,0.8); border-bottom: 1px solid rgba(100,181,246,0.1);
+    flex-shrink: 0;
+  }
+  .onec-row {
+    display: grid; grid-template-columns: 1fr 90px 50px;
+    align-items: center; padding: 4px 10px;
+    border-bottom: 1px solid rgba(100,181,246,0.05);
+    font-size: 11px; flex: 1; min-height: 0; max-height: 40px;
+  }
+  .onec-row.is-total {
+    background: rgba(13,40,71,0.5); border-top: 1px solid rgba(100,181,246,0.15);
+    font-weight: 700; flex-shrink: 0; max-height: 36px;
+  }
+  .onec-name  { color: #90c8e8; font-weight: 500; font-size: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .onec-qty   { text-align: right; font-weight: 700; color: #4ade80; font-variant-numeric: tabular-nums; font-size: 11px; }
+  .onec-unit  { text-align: right; font-size: 9px; color: #2a5a78; }
+  .onec-updated { font-size: 9px; color: #2a5a78; padding: 3px 10px; border-top: 1px solid rgba(100,181,246,0.08); flex-shrink: 0; }
+
+
+  /* ── АНИМАЦИИ ─────────────────────────────────────────────────────── */
+
+  /* Появление блоков при загрузке */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Счётчик цифр */
+  @keyframes countUp {
+    from { opacity: 0; transform: scale(0.8); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  /* Пульсация авто-бейджа */
+  @keyframes autoPulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(134,239,172,0.5); }
+    50%     { box-shadow: 0 0 0 4px rgba(134,239,172,0); }
+  }
+
+  /* Мигание при обновлении данных */
+  @keyframes flashUpdate {
+    0%   { background: rgba(34,119,170,0.3); }
+    100% { background: transparent; }
+  }
+
+  /* Вращение иконки при загрузке */
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  /* Плавное появление блоков с задержкой */
+  .section { animation: fadeInUp 0.5s ease both; }
+  .section:nth-child(1) { animation-delay: 0.05s; }
+  .section:nth-child(2) { animation-delay: 0.10s; }
+  .section:nth-child(3) { animation-delay: 0.15s; }
+  .section:nth-child(4) { animation-delay: 0.20s; }
+  .section:nth-child(5) { animation-delay: 0.25s; }
+  .section:nth-child(6) { animation-delay: 0.30s; }
+
+  /* Пульсация авто-бейджа */
+  .auto-badge { animation: autoPulse 2s infinite; }
+
+  /* Подсветка при обновлении */
+  .flash-update { animation: flashUpdate 1s ease; }
+
+  /* Цифры в карточках — появление */
+  .card-value { animation: countUp 0.6s cubic-bezier(0.34,1.56,0.64,1) both; }
+
+  /* Иконка обновления крутится */
+  .refreshing .section-header::before {
+    content: '';
+    display: inline-block;
+    animation: spin 1s linear infinite;
+  }
+
+  /* Hover эффект на блоках */
+  .section {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .section:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  }
+
+  /* Строки таблицы — появление по очереди */
+  @keyframes rowIn {
+    from { opacity: 0; transform: translateX(-8px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  tbody tr {
+    animation: rowIn 0.3s ease both;
+  }
+  tbody tr:nth-child(1) { animation-delay: 0.05s; }
+  tbody tr:nth-child(2) { animation-delay: 0.10s; }
+  tbody tr:nth-child(3) { animation-delay: 0.15s; }
+  tbody tr:nth-child(4) { animation-delay: 0.20s; }
+  tbody tr:nth-child(5) { animation-delay: 0.25s; }
+
+  /* Солнечная мощность — пульс если работает */
+  @keyframes solarPulse {
+    0%,100% { text-shadow: 0 0 0 rgba(250,204,21,0); }
+    50%     { text-shadow: 0 0 12px rgba(250,204,21,0.6); }
+  }
+  .solar-active { animation: solarPulse 2s infinite; }
+
+  /* Статус бар — плавное изменение */
+  .status-bar { transition: background 0.5s ease; }
+
+
+  /* ── ТАБЫ ── */
+  .tabs-bar { display:flex; background:#0a1828; border-bottom:2px solid #1e3a52; padding:0 12px; flex-shrink:0; }
+  .tab-btn { padding:9px 28px; font-size:13px; font-weight:700; color:#4a6a88; background:none; border:none; border-bottom:3px solid transparent; cursor:pointer; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:-2px; transition:color 0.15s; }
+  .tab-btn:hover { color:#7aacc8; }
+  .tab-btn.active { color:#4ade80; border-bottom-color:#4ade80; }
+  .section-solar { display:none !important; }
+  .section-iqair { display:none !important; }
+  .section-personnel { display:none !important; }
+  .personnel-stat-card { background:#0f1e30; border:1px solid #1e3a52; border-radius:8px; padding:16px 20px; display:flex; flex-direction:column; gap:4px; }
+  .personnel-stat-val { font-size:42px; font-weight:700; line-height:1; }
+  .personnel-stat-label { font-size:13px; color:#7aacc8; text-transform:uppercase; letter-spacing:0.05em; }
+  .personnel-late-item { display:flex; align-items:center; gap:8px; padding:6px 10px; border-radius:6px; background:#0f1e30; border-left:3px solid #f59e0b; font-size:13px; color:#c8dde8; }
+  .personnel-early-item { display:flex; align-items:center; gap:8px; padding:6px 10px; border-radius:6px; background:#0f1e30; border-left:3px solid #60a5fa; font-size:13px; color:#c8dde8; }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
@@ -593,12 +730,12 @@
     </div>
 
     <!-- Диаграмма выработки по дням за месяц -->
-    <div style="padding:4px 10px 6px;border-top:1px solid #1e3a52;height:180px;flex-shrink:0;display:flex;flex-direction:column;">
-      <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;flex-shrink:0;">📊 Выработка по дням за месяц, кВт·ч</div>
-      <div id="solarDailyChart" style="display:flex;align-items:flex-end;gap:2px;flex:1;min-height:0;overflow:visible;margin-top:18px;margin-bottom:14px;">
-        <div style="color:#4a6a88;font-size:9px;align-self:center;">Загрузка...</div>
+    <div style="padding:6px 12px 8px;border-top:1px solid rgba(100,181,246,0.1);height:180px;flex-shrink:0;display:flex;flex-direction:column;">
+      <div style="font-size:9px;color:#4a8ab8;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;flex-shrink:0;font-weight:600;">📊 Выработка по дням за месяц, кВт·ч</div>
+      <div id="solarDailyChart" style="display:flex;align-items:flex-end;gap:2px;flex:1;min-height:0;overflow:hidden;margin-top:18px;margin-bottom:16px;padding:0 2px;">
+        <div style="color:#2a5a78;font-size:9px;align-self:center;">Загрузка...</div>
       </div>
-      <div id="solarDailyTotal" style="font-size:9px;color:#4ade80;text-align:right;flex-shrink:0;"></div>
+      <div id="solarDailyTotal" style="font-size:9px;color:#4ade80;text-align:right;flex-shrink:0;font-weight:600;"></div>
     </div>
   </div>
   <div class="section section-iqair" style="background:linear-gradient(135deg,#0a1e2e 0%,#1a3a52 100%);border:1px solid #2a5a78;">
@@ -1236,27 +1373,27 @@ function renderOTG(rows) {
       // Main product row — остаток в колонке L (индекс 11)
       rowNum++;
       const ostn = parseFloat(String(r[11] || '').replace(/\s/g,'').replace(',','.')) || 0;
-      result += `<tr style="background:#f0f6fb; font-weight:500;">
-        <td class="row-num">${num}</td>
-        <td colspan="10" style="text-align:left">${name}</td>
-        <td class="num n-num">${ostn ? ostn.toLocaleString('ru-RU') : '<span style="color:#bbb">—</span>'}</td>
+      result += `<tr style="background:rgba(13,40,71,0.6); font-weight:600;">
+        <td class="row-num" style="color:#4a8ab8;">${num}</td>
+        <td colspan="10" style="text-align:left; color:#90c8e8;">${name}</td>
+        <td class="num n-num">${ostn ? ostn.toLocaleString('ru-RU') : '<span style="color:#2a5a78">—</span>'}</td>
       </tr>`;
     } else if (!num && name) {
       // Sub-row ГАЖК/JMAR: C=2(день_ваг), D=3(день_маш), E=4(день_шт),
       // F=5(мес_ваг), G=6(мес_маш), H=7(мес_шт),
       // I=8(год_ваг), J=9(год_маш), K=10(год_шт)
-      result += `<tr>
+      result += `<tr style="background:rgba(5,12,24,0.3);">
         <td></td>
-        <td style="color:#5a8aaa; text-align:left; padding-left:20px;">${name}</td>
-        <td class="num">${fmt(r[2])}</td>
-        <td class="num">${fmt(r[3])}</td>
-        <td class="num">${fmt(r[4])}</td>
-        <td class="num" style="border-left:1px solid #eaf2f8;">${fmt(r[5])}</td>
-        <td class="num">${fmt(r[6])}</td>
-        <td class="num">${fmt(r[7])}</td>
-        <td class="num" style="border-left:1px solid #eaf2f8;">${fmt(r[8])}</td>
-        <td class="num">${fmt(r[9])}</td>
-        <td class="num">${fmt(r[10])}</td>
+        <td style="color:#64b5f6; text-align:left; padding-left:20px; font-weight:500;">${name}</td>
+        <td class="num" style="color:#c8dde8;">${fmt(r[2])}</td>
+        <td class="num" style="color:#c8dde8;">${fmt(r[3])}</td>
+        <td class="num" style="color:#c8dde8;">${fmt(r[4])}</td>
+        <td class="num" style="border-left:1px solid rgba(100,181,246,0.1); color:#c8dde8;">${fmt(r[5])}</td>
+        <td class="num" style="color:#c8dde8;">${fmt(r[6])}</td>
+        <td class="num" style="color:#c8dde8;">${fmt(r[7])}</td>
+        <td class="num" style="border-left:1px solid rgba(100,181,246,0.1); color:#c8dde8;">${fmt(r[8])}</td>
+        <td class="num" style="color:#c8dde8;">${fmt(r[9])}</td>
+        <td class="num" style="color:#c8dde8;">${fmt(r[10])}</td>
         <td class="num"></td>
       </tr>`;
     }
@@ -1806,14 +1943,13 @@ async function fetchSolarHistory() {
 
     let html = '';
     days.forEach(d => {
-      const pct = Math.round(d.kwh / maxKwh * 100);
+      const pct = Math.max(Math.round(d.kwh / maxKwh * 100), 2);
       const isToday = d.day === today;
       const cls = isToday ? 'solar-day-bar solar-day-bar-today' : 'solar-day-bar';
-      const valColor = isToday ? '#facc15' : '#ffffff';
-      const kwh = d.kwh >= 1000 ? (d.kwh/1000).toFixed(1)+'М' : d.kwh;
-      html += `<div class="${cls}" style="height:${pct}%;" title="${d.day}: ${d.kwh} кВт·ч">
-        <span class="solar-day-val" style="color:${valColor};">${kwh}</span>
-        <span class="solar-day-label">${d.day}</span>
+      const kwh = d.kwh >= 1000 ? (d.kwh/1000).toFixed(1)+'М' : d.kwh.toFixed(0);
+      html += `<div class="${cls}" style="height:${pct}%;" title="День ${d.day}: ${d.kwh} кВт·ч">
+        <span class="solar-day-val" style="position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:8px;color:${isToday?'#fbbf24':'#4a8ab8'};white-space:nowrap;">${kwh}</span>
+        <span class="solar-day-label" style="position:absolute;bottom:-14px;left:50%;transform:translateX(-50%);font-size:7px;color:#2a5a78;">${d.day}</span>
       </div>`;
     });
     chart.innerHTML = html;
@@ -1990,12 +2126,12 @@ function showTab(n) {
     var el = document.querySelector('.' + cls);
     if (el) el.style.setProperty('display', 'none', 'important');
   });
-  var s1 = [{cls:'section-pc',col:'1',row:'1'},{cls:'section-bsu',col:'1',row:'2'},{cls:'section-1c',col:'1',row:'3'},{cls:'section-otg',col:'2',row:'1'},{cls:'section-rashod',col:'2',row:'2 / 4'},{cls:'section-ok',col:'3',row:'1 / 4'}];
-  var s2 = [{cls:'section-solar',col:'1',row:'1'},{cls:'section-iqair',col:'2',row:'1'},{cls:'section-power',col:'3',row:'1'}];
+  var s1 = [{cls:'section-pc',col:'1',row:'1'},{cls:'section-bsu',col:'1',row:'2'},{cls:'section-1c',col:'1',row:'3'},{cls:'section-otg',col:'2',row:'1'},{cls:'section-rashod',col:'2',row:'2 / 4'},{cls:'section-ok',col:'3',row:'1 / 4'},{cls:'section-power',col:'4',row:'1 / 4'}];
+  var s2 = [{cls:'section-solar',col:'1',row:'1'},{cls:'section-iqair',col:'2',row:'1'}];
   var s3 = [{cls:'section-personnel',col:'1',row:'1'}];
   var show = n===1 ? s1 : (n===2 ? s2 : s3);
-  if (n===1) { grid.style.gridTemplateColumns='minmax(0,1fr) minmax(0,1.5fr) minmax(0,1fr)'; grid.style.gridTemplateRows='minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)'; }
-  else if (n===2) { grid.style.gridTemplateColumns='minmax(0,1.7fr) minmax(0,1fr) minmax(0,0.5fr)'; grid.style.gridTemplateRows='1fr'; }
+  if (n===1) { grid.style.gridTemplateColumns='minmax(0,1fr) minmax(0,1.5fr) minmax(0,1fr) minmax(0,0.5fr)'; grid.style.gridTemplateRows='minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)'; }
+  else if (n===2) { grid.style.gridTemplateColumns='minmax(0,1.7fr) minmax(0,1fr)'; grid.style.gridTemplateRows='1fr'; }
   else { grid.style.gridTemplateColumns='1fr'; grid.style.gridTemplateRows='1fr'; }
   show.forEach(function(s) {
     var el = document.querySelector('.' + s.cls);
