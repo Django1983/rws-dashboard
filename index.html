@@ -80,6 +80,8 @@
     background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 100%);
     box-shadow: 0 0 8px rgba(251,191,36,0.4);
   }
+  .solar-pt-hit { cursor: default; }
+  .solar-pt-hit:hover + circle { r: 4; fill: #86efac; }
   .solar-day-label { position:absolute; bottom:-13px; left:50%; transform:translateX(-50%); font-size:6px; color:#4a6a88; white-space:nowrap; }
   .solar-day-val { position:absolute; top:-14px; left:50%; transform:translateX(-50%); font-size:6.5px; color:#86efac; white-space:nowrap; font-weight:600; }
 
@@ -128,13 +130,21 @@
     display: flex; flex-direction: column;
     height: 100%; overflow: hidden; padding: 6px 8px; gap: 4px;
   }
+  .rashod-items-scroll {
+    flex: 1; min-height: 0; overflow-y: auto;
+    display: flex; flex-direction: column; gap: 5px;
+    padding: 2px 2px 2px 0;
+    scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.15) transparent;
+  }
+  .rashod-items-scroll::-webkit-scrollbar { width: 5px; }
+  .rashod-items-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
   .rashod-item {
-    flex: 1; display: grid;
+    flex-shrink: 0; display: grid;
     grid-template-columns: 1fr 60px 120px 120px 100px;
     align-items: center;
-    padding: 5px 10px; border-radius: 8px;
+    padding: 7px 10px; border-radius: 8px;
     border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.03);
-    min-height: 0; gap: 8px; transition: border-color 0.2s;
+    min-height: 40px; gap: 8px; transition: border-color 0.2s;
   }
   .rashod-item.is-limit { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.4); border-left: 3px solid #f59e0b; }
   .rashod-item.is-limit .rashod-label { color: #fbbf24; font-weight: 700; }
@@ -146,13 +156,14 @@
   .rashod-unit  { font-size: 9px; color: #7aacc8; }
   .rashod-min {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 7px 12px; background: rgba(74,222,128,0.08);
-    border: 1px solid rgba(74,222,128,0.35); border-radius: 10px; flex-shrink: 0;
-    margin-top: 2px;
+    padding: 8px 14px; background: rgba(74,222,128,0.1);
+    border: 1px solid rgba(74,222,128,0.4); border-radius: 10px; flex-shrink: 0;
+    margin-top: 2px; box-shadow: 0 4px 14px -6px rgba(74,222,128,0.4);
   }
   .rashod-min-label { font-size: 10px; font-weight: 600; color: #4ade80; text-transform: uppercase; letter-spacing: 0.05em; }
-  .rashod-min-val   { font-size: 22px; font-weight: 700; color: #4ade80; }
+  .rashod-min-val   { font-size: 24px; font-weight: 700; color: #4ade80; }
   .rashod-min-unit  { font-size: 10px; color: #4ade80; margin-left: 3px; }
+
 
   .section {
     background: linear-gradient(160deg, #0f2032 0%, #142c42 100%);
@@ -735,12 +746,12 @@
     </div>
 
     <!-- Диаграмма выработки по дням за месяц -->
-    <div style="padding:6px 12px 8px;border-top:1px solid rgba(100,181,246,0.1);height:180px;flex-shrink:0;display:flex;flex-direction:column;">
-      <div style="font-size:9px;color:#4a8ab8;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;flex-shrink:0;font-weight:600;">📊 Выработка по дням за месяц, кВт·ч</div>
-      <div id="solarDailyChart" style="display:flex;align-items:flex-end;gap:2px;flex:1;min-height:0;overflow:hidden;margin-top:18px;margin-bottom:16px;padding:0 2px;">
-        <div style="color:#2a5a78;font-size:9px;align-self:center;">Загрузка...</div>
+    <div style="padding:8px 14px 10px;border-top:1px solid rgba(100,181,246,0.1);height:190px;flex-shrink:0;display:flex;flex-direction:column;">
+      <div style="font-size:9px;color:#4a8ab8;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:2px;flex-shrink:0;font-weight:600;">📊 Выработка по дням за месяц, кВт·ч</div>
+      <div id="solarDailyChart" style="flex:1;min-height:0;overflow:visible;">
+        <div style="color:#2a5a78;font-size:9px;text-align:center;padding-top:30px;">Загрузка...</div>
       </div>
-      <div id="solarDailyTotal" style="font-size:9px;color:#4ade80;text-align:right;flex-shrink:0;font-weight:600;"></div>
+      <div id="solarDailyTotal" style="font-size:9px;color:#4ade80;text-align:right;flex-shrink:0;font-weight:600;margin-top:2px;"></div>
     </div>
   </div>
   <div class="section section-iqair" style="background:linear-gradient(135deg,#0a1e2e 0%,#1a3a52 100%);border:1px solid #2a5a78;">
@@ -1560,14 +1571,15 @@ function renderRashod(rows) {
   let html = `
     <div style="display:grid; grid-template-columns:1fr 60px 120px 130px 110px;
       font-size:9px; font-weight:700; color:#ffffff; text-transform:uppercase;
-      letter-spacing:0.05em; padding:5px 10px; border-bottom:1px solid #1a5c8a;
-      flex-shrink:0; background:#1a5c8a;">
+      letter-spacing:0.05em; padding:6px 10px; border-radius:8px;
+      flex-shrink:0; background:rgba(255,255,255,0.06); margin-bottom:2px;">
       <div>Наименование сырья</div>
       <div style="text-align:center;">Ед. изм.</div>
       <div style="text-align:right;">Норма на 1 шпалу</div>
       <div style="text-align:right;">Остаток на складе</div>
       <div style="text-align:right;">Хватит шпал</div>
-    </div>`;
+    </div>
+    <div class="rashod-items-scroll">`;
 
   items.forEach(item => {
     const ostStr   = item.ost   !== null ? item.ost.toLocaleString('ru-RU')   : '—';
@@ -1582,6 +1594,8 @@ function renderRashod(rows) {
       <div class="rashod-count" style="text-align:right;">${countStr} <span class="rashod-unit">шт.</span></div>
     </div>`;
   });
+
+  html += `</div>`;
 
   html += `<div class="rashod-min">
     <div class="rashod-min-label">🧮 Хватит шпал (лимит по сырью):</div>
@@ -1930,6 +1944,23 @@ async function fetchRadiomer() {
 }
 
 // ── ДИАГРАММА СОЛНЕЧНЫХ ПО ДНЯМ ──────────────────────────────────────────────
+function smoothPath(pts) {
+  if (pts.length < 2) return '';
+  let d = `M ${pts[0].x},${pts[0].y}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i === 0 ? i : i - 1];
+    const p1 = pts[i];
+    const p2 = pts[i + 1];
+    const p3 = pts[i + 2 === pts.length ? i + 1 : i + 2];
+    const c1x = p1.x + (p2.x - p0.x) / 6;
+    const c1y = p1.y + (p2.y - p0.y) / 6;
+    const c2x = p2.x - (p3.x - p1.x) / 6;
+    const c2y = p2.y - (p3.y - p1.y) / 6;
+    d += ` C ${c1x.toFixed(1)},${c1y.toFixed(1)} ${c2x.toFixed(1)},${c2y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)}`;
+  }
+  return d;
+}
+
 async function fetchSolarHistory() {
   try {
     const { url } = getConfig();
@@ -1942,23 +1973,76 @@ async function fetchSolarHistory() {
     const totalEl = document.getElementById('solarDailyTotal');
     if (!chart) return;
 
-    const maxKwh = Math.max(...days.map(d => d.kwh), 0.01);
+    const W = 1000, H = 220, padT = 26, padB = 22, padL = 4, padR = 4;
+    const maxKwh = Math.max(...days.map(d => d.kwh), 0.01) * 1.15;
     const today = new Date().getDate();
-    const totalKwh = days.reduce((s, d) => s + d.kwh, 0).toFixed(1);
+    const totalKwh = days.reduce((s, d) => s + d.kwh, 0);
+    const avgKwh = totalKwh / days.length;
+    const n = days.length;
+    const xStep = n > 1 ? (W - padL - padR) / (n - 1) : 0;
 
-    let html = '';
-    days.forEach(d => {
-      const pct = Math.max(Math.round(d.kwh / maxKwh * 100), 2);
-      const isToday = d.day === today;
-      const cls = isToday ? 'solar-day-bar solar-day-bar-today' : 'solar-day-bar';
-      const kwh = d.kwh >= 1000 ? (d.kwh/1000).toFixed(1)+'М' : d.kwh.toFixed(0);
-      html += `<div class="${cls}" style="height:${pct}%;" title="День ${d.day}: ${d.kwh} кВт·ч">
-        <span class="solar-day-val" style="position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:8px;color:${isToday?'#fbbf24':'#4a8ab8'};white-space:nowrap;">${kwh}</span>
-        <span class="solar-day-label" style="position:absolute;bottom:-14px;left:50%;transform:translateX(-50%);font-size:7px;color:#2a5a78;">${d.day}</span>
-      </div>`;
+    const pts = days.map((d, i) => ({
+      x: padL + i * xStep,
+      y: padT + (1 - d.kwh / maxKwh) * (H - padT - padB),
+      d
+    }));
+
+    const linePath = smoothPath(pts);
+    const areaPath = `${linePath} L ${pts[n-1].x.toFixed(1)},${H-padB} L ${pts[0].x.toFixed(1)},${H-padB} Z`;
+    const avgY = padT + (1 - avgKwh / maxKwh) * (H - padT - padB);
+
+    // сетка
+    let gridSvg = '';
+    [0, 0.5, 1].forEach(f => {
+      const y = padT + f * (H - padT - padB);
+      gridSvg += `<line x1="${padL}" y1="${y.toFixed(1)}" x2="${W-padR}" y2="${y.toFixed(1)}" stroke="rgba(255,255,255,0.06)" stroke-width="1" stroke-dasharray="3,4"/>`;
     });
-    chart.innerHTML = html;
-    if (totalEl) totalEl.textContent = `Итого за месяц: ${totalKwh} кВт·ч`;
+
+    // подписи дней (не перегружаем — примерно каждый n/8-й)
+    const labelStep = Math.max(1, Math.ceil(n / 8));
+    let labelsSvg = '';
+    pts.forEach((p, i) => {
+      const isToday = p.d.day === today;
+      if (i % labelStep === 0 || i === n - 1 || isToday) {
+        labelsSvg += `<text x="${p.x.toFixed(1)}" y="${H-4}" font-size="9" text-anchor="middle" fill="${isToday ? '#fbbf24' : '#4a7a9a'}" font-weight="${isToday?700:400}">${p.d.day}</text>`;
+      }
+    });
+
+    // точки данных + сегодняшний маркер
+    let dotsSvg = '';
+    pts.forEach(p => {
+      const isToday = p.d.day === today;
+      const kwhStr = p.d.kwh >= 1000 ? (p.d.kwh/1000).toFixed(1)+' МВт·ч' : Math.round(p.d.kwh)+' кВт·ч';
+      if (isToday) {
+        dotsSvg += `<line x1="${p.x.toFixed(1)}" y1="${p.y.toFixed(1)}" x2="${p.x.toFixed(1)}" y2="${H-padB}" stroke="#fbbf24" stroke-width="1" stroke-dasharray="2,3" opacity="0.6"/>`;
+        dotsSvg += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="8" fill="rgba(251,191,36,0.18)"><title>День ${p.d.day}: ${kwhStr}</title></circle>`;
+        dotsSvg += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4" fill="#fbbf24" stroke="#0a1e2e" stroke-width="1.5"><title>День ${p.d.day}: ${kwhStr}</title></circle>`;
+        dotsSvg += `<text x="${p.x.toFixed(1)}" y="${(p.y-11).toFixed(1)}" font-size="10" font-weight="700" text-anchor="middle" fill="#fbbf24">${kwhStr}</text>`;
+      } else {
+        dotsSvg += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="6" fill="transparent" class="solar-pt-hit"><title>День ${p.d.day}: ${kwhStr}</title></circle>`;
+        dotsSvg += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="2.3" fill="#4ade80" opacity="0.85" pointer-events="none"/>`;
+      }
+    });
+
+    const svg = `
+      <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:100%;overflow:visible;">
+        <defs>
+          <linearGradient id="solarAreaGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#4ade80" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="#4ade80" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        ${gridSvg}
+        <line x1="${padL}" y1="${avgY.toFixed(1)}" x2="${W-padR}" y2="${avgY.toFixed(1)}" stroke="#60a5fa" stroke-width="1" stroke-dasharray="5,4" opacity="0.55"/>
+        <text x="${W-padR}" y="${(avgY-5).toFixed(1)}" font-size="9" text-anchor="end" fill="#93c5fd" opacity="0.8">ср. ${avgKwh.toFixed(0)}</text>
+        <path d="${areaPath}" fill="url(#solarAreaGrad)"/>
+        <path d="${linePath}" fill="none" stroke="#4ade80" stroke-width="2.2" stroke-linecap="round" style="filter:drop-shadow(0 0 4px rgba(74,222,128,0.5));"/>
+        ${dotsSvg}
+        ${labelsSvg}
+      </svg>`;
+
+    chart.innerHTML = svg;
+    if (totalEl) totalEl.textContent = `Итого за месяц: ${totalKwh.toFixed(1)} кВт·ч`;
 
     dbg('Солнечные история: загружено ' + days.length + ' дней', 'ok');
   } catch(e) {
