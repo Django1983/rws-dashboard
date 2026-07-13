@@ -46,9 +46,10 @@
     grid-template-columns: minmax(0,1fr) minmax(0,1.4fr) minmax(0,0.9fr) minmax(0,0.7fr) minmax(0,0.45fr);
     grid-template-rows: minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);
     gap: 8px;
-    padding: 8px;
+    padding: 8px 8px 38px 8px;
     overflow: hidden;
   }
+
 
   /* Отгрузка — только верхняя строка центр */
   .section-otg    { grid-column: 2; grid-row: 1; }
@@ -2010,14 +2011,26 @@ async function fetchSolarHistory() {
 
     // точки данных + сегодняшний маркер
     let dotsSvg = '';
+    let todayLabelSvg = '';
     pts.forEach(p => {
       const isToday = p.d.day === today;
       const kwhStr = p.d.kwh >= 1000 ? (p.d.kwh/1000).toFixed(1)+' МВт·ч' : Math.round(p.d.kwh)+' кВт·ч';
       if (isToday) {
-        dotsSvg += `<line x1="${p.x.toFixed(1)}" y1="${p.y.toFixed(1)}" x2="${p.x.toFixed(1)}" y2="${H-padB}" stroke="#fbbf24" stroke-width="1" stroke-dasharray="2,3" opacity="0.6"/>`;
-        dotsSvg += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="8" fill="rgba(251,191,36,0.18)"><title>День ${p.d.day}: ${kwhStr}</title></circle>`;
-        dotsSvg += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4" fill="#fbbf24" stroke="#0a1e2e" stroke-width="1.5"><title>День ${p.d.day}: ${kwhStr}</title></circle>`;
-        dotsSvg += `<text x="${p.x.toFixed(1)}" y="${(p.y-11).toFixed(1)}" font-size="10" font-weight="700" text-anchor="middle" fill="#fbbf24">${kwhStr}</text>`;
+        dotsSvg += `<line x1="${p.x.toFixed(1)}" y1="${p.y.toFixed(1)}" x2="${p.x.toFixed(1)}" y2="${H-padB}" stroke="#fbbf24" stroke-width="1" stroke-dasharray="2,3" opacity="0.5"/>`;
+        dotsSvg += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4" fill="#fbbf24" stroke="#0a1e2e" stroke-width="1.5"><title>Сегодня, день ${p.d.day}: ${kwhStr}</title></circle>`;
+
+        // Подпись "Сегодня" в виде аккуратной таблички над точкой, не вылезающей за края графика
+        const label = `Сегодня · ${kwhStr}`;
+        const lw = Math.max(64, label.length * 5.6 + 16);
+        const lx = Math.min(Math.max(p.x - lw / 2, padL), W - padR - lw);
+        const ly = Math.max(p.y - 30, 4);
+        todayLabelSvg += `
+          <g>
+            <rect x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" width="${lw.toFixed(1)}" height="18" rx="9"
+              fill="#1a2a10" stroke="#fbbf24" stroke-opacity="0.5"/>
+            <text x="${(lx+lw/2).toFixed(1)}" y="${(ly+12.5).toFixed(1)}" font-size="9.5" font-weight="700"
+              text-anchor="middle" fill="#fbbf24">${label}</text>
+          </g>`;
       } else {
         dotsSvg += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="6" fill="transparent" class="solar-pt-hit"><title>День ${p.d.day}: ${kwhStr}</title></circle>`;
         dotsSvg += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="2.3" fill="#4ade80" opacity="0.85" pointer-events="none"/>`;
@@ -2039,6 +2052,7 @@ async function fetchSolarHistory() {
         <path d="${linePath}" fill="none" stroke="#4ade80" stroke-width="2.2" stroke-linecap="round" style="filter:drop-shadow(0 0 4px rgba(74,222,128,0.5));"/>
         ${dotsSvg}
         ${labelsSvg}
+        ${todayLabelSvg}
       </svg>`;
 
     chart.innerHTML = svg;
