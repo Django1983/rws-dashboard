@@ -39,6 +39,25 @@
   .dot.ok { background: #16a34a; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
+  /* ── Декоративная полоска: поезд со шпалами едет мимо завода ── */
+  .train-banner {
+    flex-shrink: 0; height: 26px; overflow: hidden;
+    background: linear-gradient(180deg, #0a1828 0%, #0d2032 100%);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .train-banner svg { width: 100%; height: 100%; display: block; }
+  .train-move { animation: trainCross 30s linear infinite; }
+  @keyframes trainCross { from { transform: translateX(-150px); } to { transform: translateX(1680px); } }
+  .smoke-puff { animation: smokePuff 2.8s ease-out infinite; transform-origin: center; opacity: 0; }
+  .smoke-puff.d1 { animation-delay: 0s; }
+  .smoke-puff.d2 { animation-delay: 0.95s; }
+  .smoke-puff.d3 { animation-delay: 1.9s; }
+  @keyframes smokePuff {
+    0%   { opacity: 0.55; transform: translate(0,0) scale(0.5); }
+    100% { opacity: 0;    transform: translate(-7px,-15px) scale(2); }
+  }
+  @media print { .train-banner { display: none; } }
+
   /* ── ГЛАВНАЯ СЕТКА ── */
   .content {
     flex: 1;
@@ -489,6 +508,68 @@
     <button class="btn" onclick="exportCSV()">↓ CSV</button>
     <button class="btn btn-primary" onclick="window.print()">⎙ Печать</button>
   </div>
+</div>
+
+<div class="train-banner" aria-hidden="true">
+  <svg viewBox="0 0 1600 34" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <pattern id="sleeperPattern" width="40" height="34" patternUnits="userSpaceOnUse">
+        <rect x="0" y="25" width="16" height="6" rx="1" fill="#1c3346"/>
+      </pattern>
+      <linearGradient id="locoGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#5a7a98"/>
+        <stop offset="100%" stop-color="#3a5a78"/>
+      </linearGradient>
+    </defs>
+
+    <!-- рельсовый путь -->
+    <rect x="0" y="0" width="1600" height="34" fill="url(#sleeperPattern)"/>
+    <line x1="0" y1="26" x2="1600" y2="26" stroke="#2e5470" stroke-width="1.4"/>
+    <line x1="0" y1="31" x2="1600" y2="31" stroke="#2e5470" stroke-width="1.4"/>
+
+    <!-- завод (статичный, у правого края) -->
+    <g transform="translate(1522,0)">
+      <rect x="0" y="12" width="46" height="19" fill="#16283c"/>
+      <rect x="0" y="10" width="46" height="3" fill="#1c3346"/>
+      <rect x="6" y="18" width="7" height="7" fill="#f59e0b" opacity="0.35"/>
+      <rect x="18" y="18" width="7" height="7" fill="#f59e0b" opacity="0.5"/>
+      <rect x="30" y="18" width="7" height="7" fill="#f59e0b" opacity="0.3"/>
+      <rect x="6" y="0" width="5" height="12" fill="#16283c"/>
+      <rect x="20" y="4" width="5" height="8" fill="#16283c"/>
+      <g class="smoke-puff d1"><circle cx="8.5" cy="-2" r="2.1" fill="#4a6a80"/></g>
+      <g class="smoke-puff d2"><circle cx="8.5" cy="-2" r="2.1" fill="#4a6a80"/></g>
+      <g class="smoke-puff d3"><circle cx="22.5" cy="2" r="1.8" fill="#4a6a80"/></g>
+    </g>
+
+    <!-- поезд, везущий шпалы -->
+    <g class="train-move">
+      <!-- локомотив -->
+      <rect x="0" y="10" width="32" height="14" rx="2" fill="url(#locoGrad)"/>
+      <rect x="3" y="2" width="13" height="10" rx="1" fill="#5a7a98"/>
+      <rect x="6" y="4" width="6" height="5" fill="#0a1828" opacity="0.55"/>
+      <rect x="20" y="3" width="4" height="9" fill="#3a5a72"/>
+      <g class="smoke-puff d1"><circle cx="22" cy="1" r="2" fill="#6a8aa0"/></g>
+      <g class="smoke-puff d2"><circle cx="22" cy="1" r="2" fill="#6a8aa0"/></g>
+      <g class="smoke-puff d3"><circle cx="22" cy="1" r="2" fill="#6a8aa0"/></g>
+      <circle cx="7" cy="27" r="3.5" fill="#0a1828" stroke="#4a6a88"/>
+      <circle cx="25" cy="27" r="3.5" fill="#0a1828" stroke="#4a6a88"/>
+
+      <!-- платформа со шпалами -->
+      <rect x="38" y="18" width="42" height="6" rx="1" fill="#3a5a78"/>
+      <rect x="40" y="8" width="38" height="3.4" rx="0.5" fill="#94ADC0"/>
+      <rect x="40" y="12" width="38" height="3.4" rx="0.5" fill="#8199AC"/>
+      <rect x="40" y="16" width="38" height="3.4" rx="0.5" fill="#94ADC0"/>
+      <circle cx="46" cy="27" r="3.5" fill="#0a1828" stroke="#4a6a88"/>
+      <circle cx="72" cy="27" r="3.5" fill="#0a1828" stroke="#4a6a88"/>
+
+      <!-- вагон -->
+      <rect x="88" y="11" width="36" height="13" rx="2" fill="#4a6a88"/>
+      <rect x="93" y="14" width="9" height="6" fill="#0a1828" opacity="0.4"/>
+      <rect x="106" y="14" width="9" height="6" fill="#0a1828" opacity="0.4"/>
+      <circle cx="96" cy="27" r="3.5" fill="#0a1828" stroke="#4a6a88"/>
+      <circle cx="116" cy="27" r="3.5" fill="#0a1828" stroke="#4a6a88"/>
+    </g>
+  </svg>
 </div>
 
 <div class="status-bar">
