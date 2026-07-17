@@ -8,15 +8,21 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Segoe UI', Arial, sans-serif; background: radial-gradient(1200px 600px at 10% -10%, #0f2438 0%, #071220 55%) fixed, #071220; color: #c8dde8; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
   .header {
+    position: relative; overflow: hidden;
     display: flex; align-items: center; justify-content: space-between;
     padding: 9px 20px; background: linear-gradient(135deg, #0e2136 0%, #17324a 100%);
     border-bottom: 1px solid rgba(255,255,255,0.06); flex-shrink: 0;
     gap: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.25);
   }
+  .header-train-bg {
+    position: absolute; inset: 0; z-index: 0; opacity: 0.6; pointer-events: none;
+  }
+  .header-train-bg svg { width: 100%; height: 100%; display: block; }
+  .header-logo, .header-center, .header-controls { position: relative; z-index: 1; }
   .header-logo { flex-shrink: 0; }
   .header-center { flex: 1; text-align: center; }
-  .logo-text { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: 0.08em; }
-  .logo-sub { font-size: 10px; color: #7aacc8; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 1px; }
+  .logo-text { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: 0.08em; text-shadow: 0 1px 6px rgba(0,0,0,0.85), 0 0 14px rgba(0,0,0,0.5); }
+  .logo-sub { font-size: 10px; color: #7aacc8; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 1px; text-shadow: 0 1px 5px rgba(0,0,0,0.85); }
   .header-time { font-size: 16px; font-weight: 300; color: #b0d4ea; font-variant-numeric: tabular-nums; }
   .header-controls { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; flex-shrink: 0; }
   .btn {
@@ -39,24 +45,18 @@
   .dot.ok { background: #16a34a; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-  /* ── Декоративная полоска: поезд со шпалами едет мимо завода ── */
-  .train-banner {
-    flex-shrink: 0; height: 26px; overflow: hidden;
-    background: linear-gradient(180deg, #0a1828 0%, #0d2032 100%);
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-  }
-  .train-banner svg { width: 100%; height: 100%; display: block; }
-  .train-move { animation: trainCross 30s linear infinite; }
-  @keyframes trainCross { from { transform: translateX(-150px); } to { transform: translateX(1680px); } }
+  /* ── Декоративный слой в шапке: поезд со шпалами едет мимо завода ── */
+  .train-move { animation: trainCross 32s linear infinite; }
+  @keyframes trainCross { from { transform: translateX(-260px); } to { transform: translateX(1680px); } }
   .smoke-puff { animation: smokePuff 2.8s ease-out infinite; transform-origin: center; opacity: 0; }
   .smoke-puff.d1 { animation-delay: 0s; }
   .smoke-puff.d2 { animation-delay: 0.95s; }
   .smoke-puff.d3 { animation-delay: 1.9s; }
   @keyframes smokePuff {
     0%   { opacity: 0.55; transform: translate(0,0) scale(0.5); }
-    100% { opacity: 0;    transform: translate(-7px,-15px) scale(2); }
+    100% { opacity: 0;    transform: translate(-10px,-22px) scale(2); }
   }
-  @media print { .train-banner { display: none; } }
+  @media print { .header-train-bg { display: none; } }
 
   /* ── ГЛАВНАЯ СЕТКА ── */
   .content {
@@ -493,6 +493,67 @@
 <!-- ══ КОНЕЦ ЭКРАНА ВХОДА ════════════════════════════════════════════════════ -->
 
 <div class="header">
+  <div class="header-train-bg" aria-hidden="true">
+    <svg viewBox="0 0 1600 66" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="sleeperPattern" width="76" height="66" patternUnits="userSpaceOnUse">
+          <rect x="0" y="48" width="30" height="11" rx="2" fill="#1c3346"/>
+        </pattern>
+        <linearGradient id="locoGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#5a7a98"/>
+          <stop offset="100%" stop-color="#3a5a78"/>
+        </linearGradient>
+      </defs>
+
+      <!-- рельсовый путь -->
+      <rect x="0" y="0" width="1600" height="66" fill="url(#sleeperPattern)"/>
+      <line x1="0" y1="50" x2="1600" y2="50" stroke="#2e5470" stroke-width="2.6"/>
+      <line x1="0" y1="60" x2="1600" y2="60" stroke="#2e5470" stroke-width="2.6"/>
+
+      <!-- завод (статичный, у правого края) -->
+      <g transform="translate(1495,0)">
+        <rect x="0" y="23" width="88" height="36" fill="#16283c"/>
+        <rect x="0" y="19" width="88" height="6" fill="#1c3346"/>
+        <rect x="11" y="35" width="14" height="14" fill="#f59e0b" opacity="0.35"/>
+        <rect x="34" y="35" width="14" height="14" fill="#f59e0b" opacity="0.5"/>
+        <rect x="57" y="35" width="14" height="14" fill="#f59e0b" opacity="0.3"/>
+        <rect x="11" y="0" width="10" height="23" fill="#16283c"/>
+        <rect x="38" y="8" width="10" height="15" fill="#16283c"/>
+        <g class="smoke-puff d1"><circle cx="16" cy="-4" r="4" fill="#4a6a80"/></g>
+        <g class="smoke-puff d2"><circle cx="16" cy="-4" r="4" fill="#4a6a80"/></g>
+        <g class="smoke-puff d3"><circle cx="43" cy="4" r="3.4" fill="#4a6a80"/></g>
+      </g>
+
+      <!-- поезд, везущий шпалы -->
+      <g class="train-move">
+        <!-- локомотив -->
+        <rect x="0" y="19" width="61" height="27" rx="4" fill="url(#locoGrad)"/>
+        <rect x="6" y="4" width="25" height="19" rx="2" fill="#5a7a98"/>
+        <rect x="11" y="8" width="11" height="9" fill="#0a1828" opacity="0.55"/>
+        <rect x="38" y="6" width="8" height="17" fill="#3a5a72"/>
+        <g class="smoke-puff d1"><circle cx="42" cy="2" r="3.8" fill="#6a8aa0"/></g>
+        <g class="smoke-puff d2"><circle cx="42" cy="2" r="3.8" fill="#6a8aa0"/></g>
+        <g class="smoke-puff d3"><circle cx="42" cy="2" r="3.8" fill="#6a8aa0"/></g>
+        <circle cx="13" cy="51" r="6.6" fill="#0a1828" stroke="#4a6a88" stroke-width="1.5"/>
+        <circle cx="47" cy="51" r="6.6" fill="#0a1828" stroke="#4a6a88" stroke-width="1.5"/>
+
+        <!-- платформа со шпалами -->
+        <rect x="72" y="34" width="80" height="11" rx="2" fill="#3a5a78"/>
+        <rect x="76" y="15" width="72" height="6.5" rx="1" fill="#94ADC0"/>
+        <rect x="76" y="23" width="72" height="6.5" rx="1" fill="#8199AC"/>
+        <rect x="76" y="31" width="72" height="6.5" rx="1" fill="#94ADC0"/>
+        <circle cx="87" cy="51" r="6.6" fill="#0a1828" stroke="#4a6a88" stroke-width="1.5"/>
+        <circle cx="137" cy="51" r="6.6" fill="#0a1828" stroke="#4a6a88" stroke-width="1.5"/>
+
+        <!-- вагон -->
+        <rect x="167" y="21" width="68" height="25" rx="4" fill="#4a6a88"/>
+        <rect x="176" y="27" width="17" height="11" fill="#0a1828" opacity="0.4"/>
+        <rect x="201" y="27" width="17" height="11" fill="#0a1828" opacity="0.4"/>
+        <circle cx="182" cy="51" r="6.6" fill="#0a1828" stroke="#4a6a88" stroke-width="1.5"/>
+        <circle cx="220" cy="51" r="6.6" fill="#0a1828" stroke="#4a6a88" stroke-width="1.5"/>
+      </g>
+    </svg>
+  </div>
   <div class="header-logo">
     <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACoAAAAwCAYAAABnjuimAAABJGlDQ1BJQ0MgUHJvZmlsZQAAeJxjYGAycHRxcmUSYGDIzSspCnJ3UoiIjFJgP8/AxsDMAAaJycUFjgEBPiB2Xn5eKgMG+HaNgRFEX9YFmYUpjxdwJRcUlQDpP0BslJJanMzAwGgAZGeXlxQAxRnnANkiSdlg9gYQuygkyBnIPgJk86VD2FdA7CQI+wmIXQT0BJD9BaQ+Hcxm4gCbA2HLgNglqRUgexmc8wsqizLTM0oUDC0tLRUcU/KTUhWCK4tLUnOLFTzzkvOLCvKLEktSU4BqIe4DA0GIQlCIaQA1WmiS6G+CABQPENbnQHD4MoqdQYghQHJpURmUychkTJiPMGOOBAOD/1IGBpY/CDGTXgaGBToMDPxTEWJqhgwMAvoMDPvmAADAxk/9GlU2EAAACspJREFUeJzVWX2MVcUV/52Ze9/b711Y2WZV9huQB6gVm4KKF1pjbYxuFZ+2aoItWm2jMWmixqpZto0talrF1jYhtcSYpsozxqhJVSjLE2lTFAWpK12W3X0L3VWX/Wbf7r47c07/eO/BAvtxBWviSeaPe++cM785M78zZ84FviJCQfp4nqcnvojH4wLAZh6VB0/FETeT6cXjcQtAMmMpz/MIcSCOOAPgM51AEAkyyS/MxnQdCYDUzZ1bC+3ewGDJvGRR6v22trZtAFBbWXkVQ0XaE+1PIu05BYDnzZt3jlh7q2F+oaOjIwFAza+tvUaszAcwZBX+1tbW1pkdZyagzjTfFAArWi92tVrPcnxORISaiqpH2zo7HobQGqXwfQAbAEglKkMJJMbI2mqt9Hrj8wcAEjWVlS8rqHomBimCWNtXc+65Xtvhwx9lJzcdUDXTTCAybpmNZXvTuDURX/gC35pXtFYP1dXVhZnkU2EeyvTmBBJjACDMvrXWaOIjtXNrF7naqTe+/6gPvsCyvZKAfFLO4zi+f6eV6TyaxgkQETmw3Jro7PwYAKorKp5Rjq7nFJ1DIAYkF4BdUFt7iTH845KzZt8x1NcnROQAgNK2AOTAsNnR0Xn4QwCoqax6iYClmWEsZtgCM3s0K647fkxJqXwA5CvfElGv1tqNRCIha+3qcCi0Zqi3NyJAGRHBcRzl5uV9YI055LqhV+qqq6NpZHK7D77kRJ9MLcGBGr5p3tzK22rmVt5FRI9Z5pHS0tIuEuxXRODx8cUitNiy9ZnoMggtYmb4QGdzc3PKh9QLy6da6c21VVV/EZHczs7OfgRkfhCgJCLQWj2iXHeT4+g/Cku5QNbu3r3bF6h2FoHP/F2BLITAFYYnkG9ayz1tbW2fAUAikfgg6Y8vtcb8ydHOza7SOysqKsozQGfEEQSoEBHY8O1W7I1p5PjNwY6OFwFQXnFeu2UeBstaAgqMtf8iyLcAWUXAexkbbiQSCXV1dfW2Jjru8I1/s1ZqoQv1W6TZPqNXAy89M+1qbW+PMfO/mXB7JBIJAcC+ffv6ARzQWldD5DApPEJEpZpUCUj2AUBNRdVPUsnkR+Xl5XkAqC2R+Ks1dpNArq+rqwvjOJlOHyilN7kVkhIAWghPuI4zN5VMrkSGAAR8TCADRe+1trdvY5FuAAZEH6WNyLDjuHX5bs7VAOT888/PJ6LZRGRCodCMwT4YUGZXKaWJLAOwQyMjL1trkyz4dVZfCC1aKwfAdgCWgPeVUg5J2qPQ+mXf95u1ozbXVlR1jwwOdTuOrmfIE83NzSkAGmfAegEA6zifMPMWh6gXAHp6eo5C+CFF1F9dXT0HAEj0Dt83W8h3tgEAC2/yjdmic3JaAaCtrW3QF76CLW8AUQsIb6esuas9kViH9JLbSRGcoZxOMvJFJDCBBlETB2tIP6tp+pz8HUineE7mvUaAU/GMRADKNC2e5zR5niNomHQLSUODavI8RzzPEUBndf+vALMgAQB06lhykgdPfp5KL6gEdr9Eo5piMdu6fPm354yOrh823CJh92A+1P7DpbPep7fe2i+AIoA3A5oA27xixUWlw8klPvN8Ej4vpKlyeNasW6qbmloysANn+IGmKADFAFWwYYOz5Nln95b7/oIxAJoIBOCo0iM9RbNXLvxH/L2Wurrw/NbW8ZZLVqw+a2jgpRy2UAB8ERQQ4VAo9FbF3r3fkRtu0BSLBWZ7IKBNnuesisdN+0UX/fzssfFHe42fIiINgQhE8ojc8VC4u7+q8tLzXnut/aB3xWUlRz7ZIr4f8rOnDoEgwkVuyP1sVskPqt9554XsKn0hQKWhQaGxUVqvuaa2pK39Q/L9kE+kCNmUn8AQW6yU7lfO7tFZsx/OH+h7Ps/3z0pCWIEye1UgAIcBGnND3aOXLI/UbNw4DEAowFVk5rO+uZkIkNChw08VsM1NEZAGScjmugqkhy2ztmapNv7decY/a0SyILMYCARSYwJbyvZs9f6eXxLA20+64Z4W0GMEWrbsulI/dfWAtVaBMoYFWRAMscVaKT8nZ/Nz/9x57Ygb+rBIkRKIPbGvgIj0gLG2KJn8aeuqK5euisfN5mh0RrBTAhWAEItJz333FeaNJJ/yjRUQnbJKApIQQINKHx35WtkDjUR8tKT0HqM0VDZlmSAEISYgzFaHej/5nYhQdCaU0wHd7nmaAD66dfsjpdZWjIpYAqnjS55pIrZQO2osv+AXC998s6Olri68YEfT24M5OZuKtdYsYk/WIZAeZjZzrF1+cNmyOygWszKDV6c8UVbF4+bApasWFY4l7x00xhKRnriEgIAhnK/I6XGcfUfW/vApAfS8W27xBVCp2poHBrQ+kkMggfDJukKkk8Zw4dGRX+257royxGLSMI3jJv/Q3EwgQmi475lc4ZA5RqCJQlAiYrVGqrjo7ovvvNNHNApqbGREozQ/FusZyct9IFc7SgSnnJwKoHGBFDOXFnd0Pk4Ar4tGp4xCpwCdcALdVmaNN8g8gUDHl49FbIl29FA45/maHTvenhgTs0tZ++67fz7iOu8UKaWPE2tCtCDSA9bYktTYmv9cfvmK6bbAyeczIRbj1ltvLSsYHn5s1BimYwSiY70YImECDWrdN1xbc78Aal0kcgLLYgAgAlNWds+4VkaLQEAyMVxltgC0tcjr73+6ac2aHMRikxYkTvRomkDi7t//szLmsjSBcCxgZwGTiM13HDWcm/PQ4ljsk+2epxobG084t2+MxWyT5znVW7bsGcrJe6bYcbUcI9bx0EYgfdSyf7bIhRWtrTcTwE2TxNYTgK6Lx1kA4pKS53qU7sonchkTWQsIxBYq7fQovev5Xbs2CqBXxU8pOQIAVsbjVgDFS7/e0KtVVy5BpYmV9SjBQmyRVu5n2t2bKi19QwC1Ml2qnBpoI8BoaKDqrVs/7i+b8z3rhkbDAi3CRkSMAEYJxNcao7PL7l1HRB9FIjqda0ZPaQAUIhGnZuPGodHCwvvzXFdBxIogbU/EFIL0iON2dZ1TXr/w1Ve7MlM45UidlGXieQ7F4+bAihX1pQODLzrWhl0ALIw8UmgP56yv+WD3g5PpTiftF174UlUqtTqZLmjBQJBy3L7uOeVXLfn7G+9Ol6RMGQ6yueW+q66qLRlKLpDRkVqXTUSUu0i77tOjwwP9BIckfTudVqxSWjNbyi9ckGtM1Ld2j7i6xXFzW/9bMLt56dZXu7LjTWVj2uxpMuXExd94rGJ09P4+a+F8joTdClDsODhUXHR71c6dz840zucCmjUCz1MA8PGsWcXFLQcOhK0pMemxA1daCLC5RM6Q4zYPrr7+okWvvy6oqeF1sZg0Bsj0g1RKGAAoHje53d3XzibMSokwAIfSngjUBHCTLFIovChv27ZltHu3D2QIHECCeSQeZxDBSY6uNZaFTuOSltHgMIuEhobWAgBiscCGgi4dQQRQulNTsJ8D01giUU47AMDzAqsFAxpNZ4ypkqI/jCsFpLMM/nyNrAZokGhsoOLcNJni8S/2FgpkqiMi+NGSJXvPNnbxkDD056glGAhKlcbhcOjVuXv21EvmSh1UP/C9fl00SkRkb1u+/Mmx8fEHk8ZaSpdmAgkBdsDRmgsKfi8AIRoFYrGg6qdXXomKBAY4UWLpS9OX8lvx1Az4S9I/LSU5oyrSGUSMr4L8D/R2Y8dA8IDiAAAAAElFTkSuQmCC" alt="RWS Optimum" style="height:48px; display:block;">
   </div>
@@ -508,68 +569,6 @@
     <button class="btn" onclick="exportCSV()">↓ CSV</button>
     <button class="btn btn-primary" onclick="window.print()">⎙ Печать</button>
   </div>
-</div>
-
-<div class="train-banner" aria-hidden="true">
-  <svg viewBox="0 0 1600 34" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <pattern id="sleeperPattern" width="40" height="34" patternUnits="userSpaceOnUse">
-        <rect x="0" y="25" width="16" height="6" rx="1" fill="#1c3346"/>
-      </pattern>
-      <linearGradient id="locoGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#5a7a98"/>
-        <stop offset="100%" stop-color="#3a5a78"/>
-      </linearGradient>
-    </defs>
-
-    <!-- рельсовый путь -->
-    <rect x="0" y="0" width="1600" height="34" fill="url(#sleeperPattern)"/>
-    <line x1="0" y1="26" x2="1600" y2="26" stroke="#2e5470" stroke-width="1.4"/>
-    <line x1="0" y1="31" x2="1600" y2="31" stroke="#2e5470" stroke-width="1.4"/>
-
-    <!-- завод (статичный, у правого края) -->
-    <g transform="translate(1522,0)">
-      <rect x="0" y="12" width="46" height="19" fill="#16283c"/>
-      <rect x="0" y="10" width="46" height="3" fill="#1c3346"/>
-      <rect x="6" y="18" width="7" height="7" fill="#f59e0b" opacity="0.35"/>
-      <rect x="18" y="18" width="7" height="7" fill="#f59e0b" opacity="0.5"/>
-      <rect x="30" y="18" width="7" height="7" fill="#f59e0b" opacity="0.3"/>
-      <rect x="6" y="0" width="5" height="12" fill="#16283c"/>
-      <rect x="20" y="4" width="5" height="8" fill="#16283c"/>
-      <g class="smoke-puff d1"><circle cx="8.5" cy="-2" r="2.1" fill="#4a6a80"/></g>
-      <g class="smoke-puff d2"><circle cx="8.5" cy="-2" r="2.1" fill="#4a6a80"/></g>
-      <g class="smoke-puff d3"><circle cx="22.5" cy="2" r="1.8" fill="#4a6a80"/></g>
-    </g>
-
-    <!-- поезд, везущий шпалы -->
-    <g class="train-move">
-      <!-- локомотив -->
-      <rect x="0" y="10" width="32" height="14" rx="2" fill="url(#locoGrad)"/>
-      <rect x="3" y="2" width="13" height="10" rx="1" fill="#5a7a98"/>
-      <rect x="6" y="4" width="6" height="5" fill="#0a1828" opacity="0.55"/>
-      <rect x="20" y="3" width="4" height="9" fill="#3a5a72"/>
-      <g class="smoke-puff d1"><circle cx="22" cy="1" r="2" fill="#6a8aa0"/></g>
-      <g class="smoke-puff d2"><circle cx="22" cy="1" r="2" fill="#6a8aa0"/></g>
-      <g class="smoke-puff d3"><circle cx="22" cy="1" r="2" fill="#6a8aa0"/></g>
-      <circle cx="7" cy="27" r="3.5" fill="#0a1828" stroke="#4a6a88"/>
-      <circle cx="25" cy="27" r="3.5" fill="#0a1828" stroke="#4a6a88"/>
-
-      <!-- платформа со шпалами -->
-      <rect x="38" y="18" width="42" height="6" rx="1" fill="#3a5a78"/>
-      <rect x="40" y="8" width="38" height="3.4" rx="0.5" fill="#94ADC0"/>
-      <rect x="40" y="12" width="38" height="3.4" rx="0.5" fill="#8199AC"/>
-      <rect x="40" y="16" width="38" height="3.4" rx="0.5" fill="#94ADC0"/>
-      <circle cx="46" cy="27" r="3.5" fill="#0a1828" stroke="#4a6a88"/>
-      <circle cx="72" cy="27" r="3.5" fill="#0a1828" stroke="#4a6a88"/>
-
-      <!-- вагон -->
-      <rect x="88" y="11" width="36" height="13" rx="2" fill="#4a6a88"/>
-      <rect x="93" y="14" width="9" height="6" fill="#0a1828" opacity="0.4"/>
-      <rect x="106" y="14" width="9" height="6" fill="#0a1828" opacity="0.4"/>
-      <circle cx="96" cy="27" r="3.5" fill="#0a1828" stroke="#4a6a88"/>
-      <circle cx="116" cy="27" r="3.5" fill="#0a1828" stroke="#4a6a88"/>
-    </g>
-  </svg>
 </div>
 
 <div class="status-bar">
