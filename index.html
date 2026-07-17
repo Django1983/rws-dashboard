@@ -48,15 +48,40 @@
   /* ── Декоративный слой в шапке: поезд со шпалами едет мимо завода ── */
   .train-move { animation: trainCross 32s linear infinite; }
   @keyframes trainCross { from { transform: translateX(-260px); } to { transform: translateX(1680px); } }
-  .smoke-puff { animation: smokePuff 2.8s ease-out infinite; transform-origin: center; opacity: 0; }
+
+  /* лёгкая тряска на стыках рельс */
+  .train-bob { animation: trainBob 0.42s linear infinite; }
+  @keyframes trainBob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-0.8px); }
+  }
+
+  /* вращение колёс */
+  .wheel-spin { animation: wheelSpin 0.7s linear infinite; }
+  @keyframes wheelSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  /* качение шатуна локомотива (имитация паровой тяги) */
+  .rod-spin { animation: rodSway 0.7s linear infinite; }
+  @keyframes rodSway {
+    0%, 100% { transform: translateY(0) scaleX(1); }
+    50%      { transform: translateY(0.6px) scaleX(0.97); }
+  }
+
+  /* объёмный, более "живой" дым: несколько клубов с разной траекторией и растяжением */
+  .smoke-puff { animation: smokePuff 3.2s ease-out infinite; transform-origin: center; opacity: 0; }
   .smoke-puff.d1 { animation-delay: 0s; }
-  .smoke-puff.d2 { animation-delay: 0.95s; }
-  .smoke-puff.d3 { animation-delay: 1.9s; }
+  .smoke-puff.d2 { animation-delay: 0.8s; }
+  .smoke-puff.d3 { animation-delay: 1.6s; }
+  .smoke-puff.d4 { animation-delay: 2.4s; }
   @keyframes smokePuff {
-    0%   { opacity: 0.55; transform: translate(0,0) scale(0.5); }
-    100% { opacity: 0;    transform: translate(-10px,-22px) scale(2); }
+    0%   { opacity: 0;    transform: translate(0,0) scale(0.4); }
+    12%  { opacity: 0.5;  transform: translate(-1px,-4px) scale(0.7); }
+    45%  { opacity: 0.4;  transform: translate(-6px,-14px) scale(1.4) rotate(6deg); }
+    75%  { opacity: 0.2;  transform: translate(-11px,-24px) scale(2) rotate(-4deg); }
+    100% { opacity: 0;    transform: translate(-16px,-34px) scale(2.6) rotate(3deg); }
   }
   @media print { .header-train-bg { display: none; } }
+
 
   /* ── ГЛАВНАЯ СЕТКА ── */
   .content {
@@ -500,9 +525,21 @@
           <rect x="0" y="48" width="30" height="11" rx="2" fill="#1c3346"/>
         </pattern>
         <linearGradient id="locoGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#5a7a98"/>
-          <stop offset="100%" stop-color="#3a5a78"/>
+          <stop offset="0%" stop-color="#6a8aa8"/>
+          <stop offset="45%" stop-color="#4a6a88"/>
+          <stop offset="100%" stop-color="#2e4a64"/>
         </linearGradient>
+        <linearGradient id="wagonGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#5a7a98"/>
+          <stop offset="100%" stop-color="#324e68"/>
+        </linearGradient>
+        <radialGradient id="shadowGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#000" stop-opacity="0.4"/>
+          <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="smokeBlur" x="-100%" y="-100%" width="300%" height="300%">
+          <feGaussianBlur stdDeviation="1.1"/>
+        </filter>
       </defs>
 
       <!-- рельсовый путь -->
@@ -519,38 +556,83 @@
         <rect x="57" y="35" width="14" height="14" fill="#f59e0b" opacity="0.3"/>
         <rect x="11" y="0" width="10" height="23" fill="#16283c"/>
         <rect x="38" y="8" width="10" height="15" fill="#16283c"/>
-        <g class="smoke-puff d1"><circle cx="16" cy="-4" r="4" fill="#4a6a80"/></g>
-        <g class="smoke-puff d2"><circle cx="16" cy="-4" r="4" fill="#4a6a80"/></g>
-        <g class="smoke-puff d3"><circle cx="43" cy="4" r="3.4" fill="#4a6a80"/></g>
+        <g filter="url(#smokeBlur)">
+          <g class="smoke-puff d1"><circle cx="16" cy="-4" r="4.2" fill="#5a7a90"/></g>
+          <g class="smoke-puff d2"><circle cx="16" cy="-4" r="3.6" fill="#5a7a90"/></g>
+          <g class="smoke-puff d3"><circle cx="16" cy="-4" r="4.6" fill="#5a7a90"/></g>
+          <g class="smoke-puff d4"><circle cx="43" cy="4" r="3.2" fill="#5a7a90"/></g>
+          <g class="smoke-puff d2"><circle cx="43" cy="4" r="3.6" fill="#5a7a90"/></g>
+        </g>
       </g>
 
       <!-- поезд, везущий шпалы -->
       <g class="train-move">
-        <!-- локомотив -->
-        <rect x="0" y="19" width="61" height="27" rx="4" fill="url(#locoGrad)"/>
-        <rect x="6" y="4" width="25" height="19" rx="2" fill="#5a7a98"/>
-        <rect x="11" y="8" width="11" height="9" fill="#0a1828" opacity="0.55"/>
-        <rect x="38" y="6" width="8" height="17" fill="#3a5a72"/>
-        <g class="smoke-puff d1"><circle cx="42" cy="2" r="3.8" fill="#6a8aa0"/></g>
-        <g class="smoke-puff d2"><circle cx="42" cy="2" r="3.8" fill="#6a8aa0"/></g>
-        <g class="smoke-puff d3"><circle cx="42" cy="2" r="3.8" fill="#6a8aa0"/></g>
-        <circle cx="13" cy="51" r="6.6" fill="#0a1828" stroke="#4a6a88" stroke-width="1.5"/>
-        <circle cx="47" cy="51" r="6.6" fill="#0a1828" stroke="#4a6a88" stroke-width="1.5"/>
+        <g class="train-bob">
+          <!-- тень под составом -->
+          <ellipse cx="115" cy="58" rx="150" ry="4.5" fill="url(#shadowGrad)"/>
 
-        <!-- платформа со шпалами -->
-        <rect x="72" y="34" width="80" height="11" rx="2" fill="#3a5a78"/>
-        <rect x="76" y="15" width="72" height="6.5" rx="1" fill="#94ADC0"/>
-        <rect x="76" y="23" width="72" height="6.5" rx="1" fill="#8199AC"/>
-        <rect x="76" y="31" width="72" height="6.5" rx="1" fill="#94ADC0"/>
-        <circle cx="87" cy="51" r="6.6" fill="#0a1828" stroke="#4a6a88" stroke-width="1.5"/>
-        <circle cx="137" cy="51" r="6.6" fill="#0a1828" stroke="#4a6a88" stroke-width="1.5"/>
+          <!-- локомотив -->
+          <rect x="0" y="19" width="61" height="27" rx="4" fill="url(#locoGrad)"/>
+          <rect x="0" y="19" width="61" height="4" rx="2" fill="#ffffff" opacity="0.12"/>
+          <rect x="6" y="4" width="25" height="19" rx="2" fill="#5a7a98"/>
+          <rect x="11" y="8" width="11" height="9" fill="#0a1828" opacity="0.55"/>
+          <rect x="38" y="6" width="8" height="17" fill="#3a5a72"/>
+          <circle cx="59" cy="30" r="2.3" fill="#fde68a" opacity="0.9"/>
+          <g filter="url(#smokeBlur)">
+            <g class="smoke-puff d1"><circle cx="42" cy="2" r="3.6" fill="#7a97ab"/></g>
+            <g class="smoke-puff d2"><circle cx="42" cy="2" r="4.2" fill="#7a97ab"/></g>
+            <g class="smoke-puff d3"><circle cx="42" cy="2" r="3.2" fill="#7a97ab"/></g>
+            <g class="smoke-puff d4"><circle cx="42" cy="2" r="4" fill="#7a97ab"/></g>
+          </g>
 
-        <!-- вагон -->
-        <rect x="167" y="21" width="68" height="25" rx="4" fill="#4a6a88"/>
-        <rect x="176" y="27" width="17" height="11" fill="#0a1828" opacity="0.4"/>
-        <rect x="201" y="27" width="17" height="11" fill="#0a1828" opacity="0.4"/>
-        <circle cx="182" cy="51" r="6.6" fill="#0a1828" stroke="#4a6a88" stroke-width="1.5"/>
-        <circle cx="220" cy="51" r="6.6" fill="#0a1828" stroke="#4a6a88" stroke-width="1.5"/>
+          <!-- шатун (соединительная тяга колёс локомотива) -->
+          <g class="rod-spin" style="transform-origin:13px 51px;">
+            <rect x="9" y="49.6" width="38" height="2.8" rx="1.4" fill="#1c3346"/>
+          </g>
+
+          <g class="wheel-spin" style="transform-origin:13px 51px;">
+            <circle cx="13" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
+            <line x1="13" y1="45" x2="13" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
+            <line x1="7.3" y1="51" x2="18.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
+          </g>
+          <g class="wheel-spin" style="transform-origin:47px 51px;">
+            <circle cx="47" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
+            <line x1="47" y1="45" x2="47" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
+            <line x1="41.3" y1="51" x2="52.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
+          </g>
+
+          <!-- платформа со шпалами -->
+          <rect x="72" y="34" width="80" height="11" rx="2" fill="url(#wagonGrad)"/>
+          <rect x="76" y="15" width="72" height="6.5" rx="1" fill="#94ADC0"/>
+          <rect x="76" y="23" width="72" height="6.5" rx="1" fill="#7C93A6"/>
+          <rect x="76" y="31" width="72" height="6.5" rx="1" fill="#94ADC0"/>
+          <g class="wheel-spin" style="transform-origin:87px 51px;">
+            <circle cx="87" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
+            <line x1="87" y1="45" x2="87" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
+            <line x1="81.3" y1="51" x2="92.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
+          </g>
+          <g class="wheel-spin" style="transform-origin:137px 51px;">
+            <circle cx="137" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
+            <line x1="137" y1="45" x2="137" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
+            <line x1="131.3" y1="51" x2="142.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
+          </g>
+
+          <!-- вагон -->
+          <rect x="167" y="21" width="68" height="25" rx="4" fill="url(#wagonGrad)"/>
+          <rect x="167" y="21" width="68" height="4" rx="2" fill="#ffffff" opacity="0.1"/>
+          <rect x="176" y="27" width="17" height="11" fill="#0a1828" opacity="0.4"/>
+          <rect x="201" y="27" width="17" height="11" fill="#0a1828" opacity="0.4"/>
+          <g class="wheel-spin" style="transform-origin:182px 51px;">
+            <circle cx="182" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
+            <line x1="182" y1="45" x2="182" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
+            <line x1="176.3" y1="51" x2="187.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
+          </g>
+          <g class="wheel-spin" style="transform-origin:220px 51px;">
+            <circle cx="220" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
+            <line x1="220" y1="45" x2="220" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
+            <line x1="214.3" y1="51" x2="225.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
+          </g>
+        </g>
       </g>
     </svg>
   </div>
