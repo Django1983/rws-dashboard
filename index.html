@@ -46,8 +46,8 @@
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
   /* ── Декоративный слой в шапке: поезд со шпалами едет мимо завода ── */
-  .train-move { animation: trainCross 32s linear infinite; }
-  @keyframes trainCross { from { transform: translateX(-260px); } to { transform: translateX(1680px); } }
+  .train-move { animation: trainCross 37s linear infinite; }
+  @keyframes trainCross { from { transform: translateX(-580px); } to { transform: translateX(1680px); } }
 
   /* лёгкая тряска на стыках рельс */
   .train-bob { animation: trainBob 0.42s linear infinite; }
@@ -569,68 +569,159 @@
       <g class="train-move">
         <g class="train-bob">
           <!-- тень под составом -->
-          <ellipse cx="115" cy="58" rx="150" ry="4.5" fill="url(#shadowGrad)"/>
+          <ellipse cx="276" cy="58" rx="350" ry="4.5" fill="url(#shadowGrad)"/>
 
-          <!-- локомотив -->
-          <rect x="0" y="19" width="61" height="27" rx="4" fill="url(#locoGrad)"/>
-          <rect x="0" y="19" width="61" height="4" rx="2" fill="#ffffff" opacity="0.12"/>
-          <rect x="6" y="4" width="25" height="19" rx="2" fill="#5a7a98"/>
-          <rect x="11" y="8" width="11" height="9" fill="#0a1828" opacity="0.55"/>
-          <rect x="38" y="6" width="8" height="17" fill="#3a5a72"/>
-          <circle cx="59" cy="30" r="2.3" fill="#fde68a" opacity="0.9"/>
-          <g filter="url(#smokeBlur)">
-            <g class="smoke-puff d1"><circle cx="42" cy="2" r="3.6" fill="#7a97ab"/></g>
-            <g class="smoke-puff d2"><circle cx="42" cy="2" r="4.2" fill="#7a97ab"/></g>
-            <g class="smoke-puff d3"><circle cx="42" cy="2" r="3.2" fill="#7a97ab"/></g>
-            <g class="smoke-puff d4"><circle cx="42" cy="2" r="4" fill="#7a97ab"/></g>
+          <!-- ═══ платформа со шпалами №1 ═══ -->
+          <rect x="0" y="34" width="80" height="11" rx="2" fill="url(#wagonGrad)"/>
+          <rect x="4" y="15" width="72" height="6.5" rx="1" fill="#94ADC0"/>
+          <rect x="4" y="23" width="72" height="6.5" rx="1" fill="#7C93A6"/>
+          <rect x="4" y="31" width="72" height="6.5" rx="1" fill="#94ADC0"/>
+          <g class="wheel-spin" style="transform-origin:15px 51px;">
+            <circle cx="15" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
+            <line x1="15" y1="45" x2="15" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
+            <line x1="9.3" y1="51" x2="20.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
           </g>
-
-          <!-- шатун (соединительная тяга колёс локомотива) -->
-          <g class="rod-spin" style="transform-origin:13px 51px;">
-            <rect x="9" y="49.6" width="38" height="2.8" rx="1.4" fill="#1c3346"/>
+          <g class="wheel-spin" style="transform-origin:65px 51px;">
+            <circle cx="65" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
+            <line x1="65" y1="45" x2="65" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
+            <line x1="59.3" y1="51" x2="70.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
           </g>
 
-          <g class="wheel-spin" style="transform-origin:13px 51px;">
-            <circle cx="13" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
-            <line x1="13" y1="45" x2="13" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
-            <line x1="7.3" y1="51" x2="18.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
+          <!-- ═══ платформа со шпалами №2 ═══ -->
+          <rect x="95" y="34" width="80" height="11" rx="2" fill="url(#wagonGrad)"/>
+          <rect x="99" y="15" width="72" height="6.5" rx="1" fill="#94ADC0"/>
+          <rect x="99" y="23" width="72" height="6.5" rx="1" fill="#7C93A6"/>
+          <rect x="99" y="31" width="72" height="6.5" rx="1" fill="#94ADC0"/>
+          <g class="wheel-spin" style="transform-origin:110px 51px;">
+            <circle cx="110" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
+            <line x1="110" y1="45" x2="110" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
+            <line x1="104.3" y1="51" x2="115.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
           </g>
-          <g class="wheel-spin" style="transform-origin:47px 51px;">
-            <circle cx="47" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
-            <line x1="47" y1="45" x2="47" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
-            <line x1="41.3" y1="51" x2="52.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
-          </g>
-
-          <!-- платформа со шпалами -->
-          <rect x="72" y="34" width="80" height="11" rx="2" fill="url(#wagonGrad)"/>
-          <rect x="76" y="15" width="72" height="6.5" rx="1" fill="#94ADC0"/>
-          <rect x="76" y="23" width="72" height="6.5" rx="1" fill="#7C93A6"/>
-          <rect x="76" y="31" width="72" height="6.5" rx="1" fill="#94ADC0"/>
-          <g class="wheel-spin" style="transform-origin:87px 51px;">
-            <circle cx="87" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
-            <line x1="87" y1="45" x2="87" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
-            <line x1="81.3" y1="51" x2="92.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
-          </g>
-          <g class="wheel-spin" style="transform-origin:137px 51px;">
-            <circle cx="137" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
-            <line x1="137" y1="45" x2="137" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
-            <line x1="131.3" y1="51" x2="142.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
+          <g class="wheel-spin" style="transform-origin:160px 51px;">
+            <circle cx="160" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
+            <line x1="160" y1="45" x2="160" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
+            <line x1="154.3" y1="51" x2="165.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
           </g>
 
-          <!-- вагон -->
-          <rect x="167" y="21" width="68" height="25" rx="4" fill="url(#wagonGrad)"/>
-          <rect x="167" y="21" width="68" height="4" rx="2" fill="#ffffff" opacity="0.1"/>
-          <rect x="176" y="27" width="17" height="11" fill="#0a1828" opacity="0.4"/>
-          <rect x="201" y="27" width="17" height="11" fill="#0a1828" opacity="0.4"/>
-          <g class="wheel-spin" style="transform-origin:182px 51px;">
-            <circle cx="182" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
-            <line x1="182" y1="45" x2="182" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
-            <line x1="176.3" y1="51" x2="187.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
+          <!-- ═══ платформа со шпалами №3 ═══ -->
+          <rect x="190" y="34" width="80" height="11" rx="2" fill="url(#wagonGrad)"/>
+          <rect x="194" y="15" width="72" height="6.5" rx="1" fill="#94ADC0"/>
+          <rect x="194" y="23" width="72" height="6.5" rx="1" fill="#7C93A6"/>
+          <rect x="194" y="31" width="72" height="6.5" rx="1" fill="#94ADC0"/>
+          <g class="wheel-spin" style="transform-origin:205px 51px;">
+            <circle cx="205" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
+            <line x1="205" y1="45" x2="205" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
+            <line x1="199.3" y1="51" x2="210.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
           </g>
-          <g class="wheel-spin" style="transform-origin:220px 51px;">
-            <circle cx="220" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
-            <line x1="220" y1="45" x2="220" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
-            <line x1="214.3" y1="51" x2="225.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
+          <g class="wheel-spin" style="transform-origin:255px 51px;">
+            <circle cx="255" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
+            <line x1="255" y1="45" x2="255" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
+            <line x1="249.3" y1="51" x2="260.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
+          </g>
+
+          <!-- ═══ платформа со шпалами №4 ═══ -->
+          <rect x="285" y="34" width="80" height="11" rx="2" fill="url(#wagonGrad)"/>
+          <rect x="289" y="15" width="72" height="6.5" rx="1" fill="#94ADC0"/>
+          <rect x="289" y="23" width="72" height="6.5" rx="1" fill="#7C93A6"/>
+          <rect x="289" y="31" width="72" height="6.5" rx="1" fill="#94ADC0"/>
+          <g class="wheel-spin" style="transform-origin:300px 51px;">
+            <circle cx="300" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
+            <line x1="300" y1="45" x2="300" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
+            <line x1="294.3" y1="51" x2="305.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
+          </g>
+          <g class="wheel-spin" style="transform-origin:350px 51px;">
+            <circle cx="350" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
+            <line x1="350" y1="45" x2="350" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
+            <line x1="344.3" y1="51" x2="355.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
+          </g>
+
+          <!-- ═══ крытый вагон ═══ -->
+          <rect x="380" y="21" width="68" height="25" rx="4" fill="url(#wagonGrad)"/>
+          <rect x="380" y="21" width="68" height="4" rx="2" fill="#ffffff" opacity="0.1"/>
+          <rect x="389" y="27" width="17" height="11" fill="#0a1828" opacity="0.4"/>
+          <rect x="414" y="27" width="17" height="11" fill="#0a1828" opacity="0.4"/>
+          <g class="wheel-spin" style="transform-origin:395px 51px;">
+            <circle cx="395" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
+            <line x1="395" y1="45" x2="395" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
+            <line x1="389.3" y1="51" x2="400.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
+          </g>
+          <g class="wheel-spin" style="transform-origin:433px 51px;">
+            <circle cx="433" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
+            <line x1="433" y1="45" x2="433" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
+            <line x1="427.3" y1="51" x2="438.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
+          </g>
+
+          <!-- ═══ ЛОКОМОТИВ (ведёт состав спереди) ═══ -->
+          <g transform="translate(553,0) scale(-1,1)">
+            <!-- рамы тележек -->
+            <rect x="6" y="46" width="34" height="4" rx="1.5" fill="#16283c"/>
+            <rect x="54" y="46" width="34" height="4" rx="1.5" fill="#16283c"/>
+
+            <!-- капот (моторный отсек) -->
+            <rect x="24" y="27" width="66" height="19" rx="2" fill="url(#locoGrad)"/>
+            <rect x="24" y="27" width="66" height="3.2" rx="1.5" fill="#ffffff" opacity="0.12"/>
+
+            <!-- вентиляционные жалюзи -->
+            <rect x="34" y="30.5" width="1.4" height="11" fill="#1c3346" opacity="0.35"/>
+            <rect x="42" y="30.5" width="1.4" height="11" fill="#1c3346" opacity="0.35"/>
+            <rect x="70" y="30.5" width="1.4" height="11" fill="#1c3346" opacity="0.35"/>
+            <rect x="78" y="30.5" width="1.4" height="11" fill="#1c3346" opacity="0.35"/>
+
+            <!-- выхлопная труба и дым -->
+            <rect x="56" y="20" width="6" height="8" rx="1" fill="#33424f"/>
+            <g filter="url(#smokeBlur)">
+              <g class="smoke-puff d1"><circle cx="59" cy="18" r="3.6" fill="#5a6672"/></g>
+              <g class="smoke-puff d2"><circle cx="59" cy="18" r="4.2" fill="#5a6672"/></g>
+              <g class="smoke-puff d3"><circle cx="59" cy="18" r="3.2" fill="#5a6672"/></g>
+              <g class="smoke-puff d4"><circle cx="59" cy="18" r="4" fill="#5a6672"/></g>
+            </g>
+
+            <!-- носовая часть -->
+            <polygon points="0,46 0,30 8,22 8,46" fill="url(#locoGrad)"/>
+
+            <!-- кабина машиниста -->
+            <rect x="8" y="27" width="16" height="19" fill="url(#locoGrad)"/>
+            <polygon points="8,27 8,16 12,10 22,10 26,16 26,27" fill="url(#locoGrad)"/>
+
+            <!-- лобовое стекло -->
+            <polygon points="11,14 24,14 25,20 12,20" fill="#0a1828" opacity="0.6"/>
+
+            <!-- гудок -->
+            <rect x="17" y="6" width="2" height="5" fill="#1c3346"/>
+
+            <!-- фара -->
+            <circle cx="9" cy="30" r="2.6" fill="#fde68a" opacity="0.95"/>
+
+            <!-- предупреждающая полоса -->
+            <rect x="0" y="42" width="28" height="3" fill="#f5b300"/>
+            <rect x="0" y="45" width="28" height="1.4" fill="#1c3346"/>
+
+            <!-- шатун -->
+            <g class="rod-spin" style="transform-origin:14px 51px;">
+              <rect x="10" y="49.6" width="30" height="2.8" rx="1.4" fill="#1c3346"/>
+            </g>
+
+            <!-- колёсные пары -->
+            <g class="wheel-spin" style="transform-origin:14px 51px;">
+              <circle cx="14" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
+              <line x1="14" y1="45" x2="14" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
+              <line x1="8.3" y1="51" x2="19.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
+            </g>
+            <g class="wheel-spin" style="transform-origin:34px 51px;">
+              <circle cx="34" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
+              <line x1="34" y1="45" x2="34" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
+              <line x1="28.3" y1="51" x2="39.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
+            </g>
+            <g class="wheel-spin" style="transform-origin:64px 51px;">
+              <circle cx="64" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
+              <line x1="64" y1="45" x2="64" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
+              <line x1="58.3" y1="51" x2="69.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
+            </g>
+            <g class="wheel-spin" style="transform-origin:84px 51px;">
+              <circle cx="84" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
+              <line x1="84" y1="45" x2="84" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
+              <line x1="78.3" y1="51" x2="89.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
+            </g>
           </g>
         </g>
       </g>
