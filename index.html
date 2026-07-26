@@ -14,15 +14,23 @@
     border-bottom: 1px solid rgba(255,255,255,0.06); flex-shrink: 0;
     gap: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.25);
   }
-  .header-train-bg {
-    position: absolute; inset: 0; z-index: 0; opacity: 0.6; pointer-events: none;
+  .header-video-window {
+    flex-shrink: 0; width: 95px; height: 56px; border-radius: 10px; overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 14px -4px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,0,0,0.2);
+    position: relative; background: #000;
   }
-  .header-train-bg svg { width: 100%; height: 100%; display: block; }
+  .header-video-window video {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .header-video-window::after {
+    content: ""; position: absolute; inset: 0; border-radius: 10px;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5); pointer-events: none;
+  }
   .header-logo, .header-center, .header-controls { position: relative; z-index: 1; }
   .header-logo { flex-shrink: 0; }
   .header-center { flex: 1; text-align: center; }
-  .logo-text { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: 0.08em; text-shadow: 0 1px 6px rgba(0,0,0,0.85), 0 0 14px rgba(0,0,0,0.5); }
-  .logo-sub { font-size: 10px; color: #7aacc8; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 1px; text-shadow: 0 1px 5px rgba(0,0,0,0.85); }
+  .logo-text { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: 0.08em; }
+  .logo-sub { font-size: 10px; color: #7aacc8; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 1px; }
   .header-time { font-size: 16px; font-weight: 300; color: #b0d4ea; font-variant-numeric: tabular-nums; }
   .header-controls { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; flex-shrink: 0; }
   .btn {
@@ -45,42 +53,8 @@
   .dot.ok { background: #16a34a; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-  /* ── Декоративный слой в шапке: поезд со шпалами едет мимо завода ── */
-  .train-move { animation: trainCross 37s linear infinite; }
-  @keyframes trainCross { from { transform: translateX(-580px); } to { transform: translateX(1680px); } }
+  @media print { .header-video-window { display: none; } }
 
-  /* лёгкая тряска на стыках рельс */
-  .train-bob { animation: trainBob 0.42s linear infinite; }
-  @keyframes trainBob {
-    0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(-0.8px); }
-  }
-
-  /* вращение колёс */
-  .wheel-spin { animation: wheelSpin 0.7s linear infinite; }
-  @keyframes wheelSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-  /* качение шатуна локомотива (имитация паровой тяги) */
-  .rod-spin { animation: rodSway 0.7s linear infinite; }
-  @keyframes rodSway {
-    0%, 100% { transform: translateY(0) scaleX(1); }
-    50%      { transform: translateY(0.6px) scaleX(0.97); }
-  }
-
-  /* объёмный, более "живой" дым: несколько клубов с разной траекторией и растяжением */
-  .smoke-puff { animation: smokePuff 3.2s ease-out infinite; transform-origin: center; opacity: 0; }
-  .smoke-puff.d1 { animation-delay: 0s; }
-  .smoke-puff.d2 { animation-delay: 0.8s; }
-  .smoke-puff.d3 { animation-delay: 1.6s; }
-  .smoke-puff.d4 { animation-delay: 2.4s; }
-  @keyframes smokePuff {
-    0%   { opacity: 0;    transform: translate(0,0) scale(0.4); }
-    12%  { opacity: 0.5;  transform: translate(-1px,-4px) scale(0.7); }
-    45%  { opacity: 0.4;  transform: translate(-6px,-14px) scale(1.4) rotate(6deg); }
-    75%  { opacity: 0.2;  transform: translate(-11px,-24px) scale(2) rotate(-4deg); }
-    100% { opacity: 0;    transform: translate(-16px,-34px) scale(2.6) rotate(3deg); }
-  }
-  @media print { .header-train-bg { display: none; } }
 
 
   /* ── ГЛАВНАЯ СЕТКА ── */
@@ -518,217 +492,11 @@
 <!-- ══ КОНЕЦ ЭКРАНА ВХОДА ════════════════════════════════════════════════════ -->
 
 <div class="header">
-  <div class="header-train-bg" aria-hidden="true">
-    <svg viewBox="0 0 1600 66" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <pattern id="sleeperPattern" width="76" height="66" patternUnits="userSpaceOnUse">
-          <rect x="0" y="48" width="30" height="11" rx="2" fill="#1c3346"/>
-        </pattern>
-        <linearGradient id="locoGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#6a8aa8"/>
-          <stop offset="45%" stop-color="#4a6a88"/>
-          <stop offset="100%" stop-color="#2e4a64"/>
-        </linearGradient>
-        <linearGradient id="wagonGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#5a7a98"/>
-          <stop offset="100%" stop-color="#324e68"/>
-        </linearGradient>
-        <radialGradient id="shadowGrad" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#000" stop-opacity="0.4"/>
-          <stop offset="100%" stop-color="#000" stop-opacity="0"/>
-        </radialGradient>
-        <filter id="smokeBlur" x="-100%" y="-100%" width="300%" height="300%">
-          <feGaussianBlur stdDeviation="1.1"/>
-        </filter>
-      </defs>
-
-      <!-- рельсовый путь -->
-      <rect x="0" y="0" width="1600" height="66" fill="url(#sleeperPattern)"/>
-      <line x1="0" y1="50" x2="1600" y2="50" stroke="#2e5470" stroke-width="2.6"/>
-      <line x1="0" y1="60" x2="1600" y2="60" stroke="#2e5470" stroke-width="2.6"/>
-
-      <!-- завод (статичный, у правого края) -->
-      <g transform="translate(1495,0)">
-        <rect x="0" y="23" width="88" height="36" fill="#16283c"/>
-        <rect x="0" y="19" width="88" height="6" fill="#1c3346"/>
-        <rect x="11" y="35" width="14" height="14" fill="#f59e0b" opacity="0.35"/>
-        <rect x="34" y="35" width="14" height="14" fill="#f59e0b" opacity="0.5"/>
-        <rect x="57" y="35" width="14" height="14" fill="#f59e0b" opacity="0.3"/>
-        <rect x="11" y="0" width="10" height="23" fill="#16283c"/>
-        <rect x="38" y="8" width="10" height="15" fill="#16283c"/>
-        <g filter="url(#smokeBlur)">
-          <g class="smoke-puff d1"><circle cx="16" cy="-4" r="4.2" fill="#5a7a90"/></g>
-          <g class="smoke-puff d2"><circle cx="16" cy="-4" r="3.6" fill="#5a7a90"/></g>
-          <g class="smoke-puff d3"><circle cx="16" cy="-4" r="4.6" fill="#5a7a90"/></g>
-          <g class="smoke-puff d4"><circle cx="43" cy="4" r="3.2" fill="#5a7a90"/></g>
-          <g class="smoke-puff d2"><circle cx="43" cy="4" r="3.6" fill="#5a7a90"/></g>
-        </g>
-      </g>
-
-      <!-- поезд, везущий шпалы -->
-      <g class="train-move">
-        <g class="train-bob">
-          <!-- тень под составом -->
-          <ellipse cx="276" cy="58" rx="350" ry="4.5" fill="url(#shadowGrad)"/>
-
-          <!-- ═══ платформа со шпалами №1 ═══ -->
-          <rect x="0" y="34" width="80" height="11" rx="2" fill="url(#wagonGrad)"/>
-          <rect x="4" y="15" width="72" height="6.5" rx="1" fill="#94ADC0"/>
-          <rect x="4" y="23" width="72" height="6.5" rx="1" fill="#7C93A6"/>
-          <rect x="4" y="31" width="72" height="6.5" rx="1" fill="#94ADC0"/>
-          <g class="wheel-spin" style="transform-origin:15px 51px;">
-            <circle cx="15" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
-            <line x1="15" y1="45" x2="15" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
-            <line x1="9.3" y1="51" x2="20.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
-          </g>
-          <g class="wheel-spin" style="transform-origin:65px 51px;">
-            <circle cx="65" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
-            <line x1="65" y1="45" x2="65" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
-            <line x1="59.3" y1="51" x2="70.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
-          </g>
-
-          <!-- ═══ платформа со шпалами №2 ═══ -->
-          <rect x="95" y="34" width="80" height="11" rx="2" fill="url(#wagonGrad)"/>
-          <rect x="99" y="15" width="72" height="6.5" rx="1" fill="#94ADC0"/>
-          <rect x="99" y="23" width="72" height="6.5" rx="1" fill="#7C93A6"/>
-          <rect x="99" y="31" width="72" height="6.5" rx="1" fill="#94ADC0"/>
-          <g class="wheel-spin" style="transform-origin:110px 51px;">
-            <circle cx="110" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
-            <line x1="110" y1="45" x2="110" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
-            <line x1="104.3" y1="51" x2="115.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
-          </g>
-          <g class="wheel-spin" style="transform-origin:160px 51px;">
-            <circle cx="160" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
-            <line x1="160" y1="45" x2="160" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
-            <line x1="154.3" y1="51" x2="165.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
-          </g>
-
-          <!-- ═══ платформа со шпалами №3 ═══ -->
-          <rect x="190" y="34" width="80" height="11" rx="2" fill="url(#wagonGrad)"/>
-          <rect x="194" y="15" width="72" height="6.5" rx="1" fill="#94ADC0"/>
-          <rect x="194" y="23" width="72" height="6.5" rx="1" fill="#7C93A6"/>
-          <rect x="194" y="31" width="72" height="6.5" rx="1" fill="#94ADC0"/>
-          <g class="wheel-spin" style="transform-origin:205px 51px;">
-            <circle cx="205" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
-            <line x1="205" y1="45" x2="205" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
-            <line x1="199.3" y1="51" x2="210.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
-          </g>
-          <g class="wheel-spin" style="transform-origin:255px 51px;">
-            <circle cx="255" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
-            <line x1="255" y1="45" x2="255" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
-            <line x1="249.3" y1="51" x2="260.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
-          </g>
-
-          <!-- ═══ платформа со шпалами №4 ═══ -->
-          <rect x="285" y="34" width="80" height="11" rx="2" fill="url(#wagonGrad)"/>
-          <rect x="289" y="15" width="72" height="6.5" rx="1" fill="#94ADC0"/>
-          <rect x="289" y="23" width="72" height="6.5" rx="1" fill="#7C93A6"/>
-          <rect x="289" y="31" width="72" height="6.5" rx="1" fill="#94ADC0"/>
-          <g class="wheel-spin" style="transform-origin:300px 51px;">
-            <circle cx="300" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
-            <line x1="300" y1="45" x2="300" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
-            <line x1="294.3" y1="51" x2="305.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
-          </g>
-          <g class="wheel-spin" style="transform-origin:350px 51px;">
-            <circle cx="350" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
-            <line x1="350" y1="45" x2="350" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
-            <line x1="344.3" y1="51" x2="355.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
-          </g>
-
-          <!-- ═══ крытый вагон ═══ -->
-          <rect x="380" y="21" width="68" height="25" rx="4" fill="url(#wagonGrad)"/>
-          <rect x="380" y="21" width="68" height="4" rx="2" fill="#ffffff" opacity="0.1"/>
-          <rect x="389" y="27" width="17" height="11" fill="#0a1828" opacity="0.4"/>
-          <rect x="414" y="27" width="17" height="11" fill="#0a1828" opacity="0.4"/>
-          <g class="wheel-spin" style="transform-origin:395px 51px;">
-            <circle cx="395" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
-            <line x1="395" y1="45" x2="395" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
-            <line x1="389.3" y1="51" x2="400.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
-          </g>
-          <g class="wheel-spin" style="transform-origin:433px 51px;">
-            <circle cx="433" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
-            <line x1="433" y1="45" x2="433" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
-            <line x1="427.3" y1="51" x2="438.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
-          </g>
-
-          <!-- ═══ ЛОКОМОТИВ (ведёт состав спереди) ═══ -->
-          <g transform="translate(553,0) scale(-1,1)">
-            <!-- рамы тележек -->
-            <rect x="6" y="46" width="34" height="4" rx="1.5" fill="#16283c"/>
-            <rect x="54" y="46" width="34" height="4" rx="1.5" fill="#16283c"/>
-
-            <!-- капот (моторный отсек) -->
-            <rect x="24" y="27" width="66" height="19" rx="2" fill="url(#locoGrad)"/>
-            <rect x="24" y="27" width="66" height="3.2" rx="1.5" fill="#ffffff" opacity="0.12"/>
-
-            <!-- вентиляционные жалюзи -->
-            <rect x="34" y="30.5" width="1.4" height="11" fill="#1c3346" opacity="0.35"/>
-            <rect x="42" y="30.5" width="1.4" height="11" fill="#1c3346" opacity="0.35"/>
-            <rect x="70" y="30.5" width="1.4" height="11" fill="#1c3346" opacity="0.35"/>
-            <rect x="78" y="30.5" width="1.4" height="11" fill="#1c3346" opacity="0.35"/>
-
-            <!-- выхлопная труба и дым -->
-            <rect x="56" y="20" width="6" height="8" rx="1" fill="#33424f"/>
-            <g filter="url(#smokeBlur)">
-              <g class="smoke-puff d1"><circle cx="59" cy="18" r="3.6" fill="#5a6672"/></g>
-              <g class="smoke-puff d2"><circle cx="59" cy="18" r="4.2" fill="#5a6672"/></g>
-              <g class="smoke-puff d3"><circle cx="59" cy="18" r="3.2" fill="#5a6672"/></g>
-              <g class="smoke-puff d4"><circle cx="59" cy="18" r="4" fill="#5a6672"/></g>
-            </g>
-
-            <!-- носовая часть -->
-            <polygon points="0,46 0,30 8,22 8,46" fill="url(#locoGrad)"/>
-
-            <!-- кабина машиниста -->
-            <rect x="8" y="27" width="16" height="19" fill="url(#locoGrad)"/>
-            <polygon points="8,27 8,16 12,10 22,10 26,16 26,27" fill="url(#locoGrad)"/>
-
-            <!-- лобовое стекло -->
-            <polygon points="11,14 24,14 25,20 12,20" fill="#0a1828" opacity="0.6"/>
-
-            <!-- гудок -->
-            <rect x="17" y="6" width="2" height="5" fill="#1c3346"/>
-
-            <!-- фара -->
-            <circle cx="9" cy="30" r="2.6" fill="#fde68a" opacity="0.95"/>
-
-            <!-- предупреждающая полоса -->
-            <rect x="0" y="42" width="28" height="3" fill="#f5b300"/>
-            <rect x="0" y="45" width="28" height="1.4" fill="#1c3346"/>
-
-            <!-- шатун -->
-            <g class="rod-spin" style="transform-origin:14px 51px;">
-              <rect x="10" y="49.6" width="30" height="2.8" rx="1.4" fill="#1c3346"/>
-            </g>
-
-            <!-- колёсные пары -->
-            <g class="wheel-spin" style="transform-origin:14px 51px;">
-              <circle cx="14" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
-              <line x1="14" y1="45" x2="14" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
-              <line x1="8.3" y1="51" x2="19.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
-            </g>
-            <g class="wheel-spin" style="transform-origin:34px 51px;">
-              <circle cx="34" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
-              <line x1="34" y1="45" x2="34" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
-              <line x1="28.3" y1="51" x2="39.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
-            </g>
-            <g class="wheel-spin" style="transform-origin:64px 51px;">
-              <circle cx="64" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
-              <line x1="64" y1="45" x2="64" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
-              <line x1="58.3" y1="51" x2="69.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
-            </g>
-            <g class="wheel-spin" style="transform-origin:84px 51px;">
-              <circle cx="84" cy="51" r="6.6" fill="#0a1828" stroke="#5a7a98" stroke-width="1.4"/>
-              <line x1="84" y1="45" x2="84" y2="57" stroke="#5a7a98" stroke-width="1.1"/>
-              <line x1="78.3" y1="51" x2="89.7" y2="51" stroke="#5a7a98" stroke-width="1.1"/>
-            </g>
-          </g>
-        </g>
-      </g>
-    </svg>
+  <div class="header-video-window" aria-hidden="true">
+    <video src="train.mp4" autoplay muted loop playsinline></video>
   </div>
   <div class="header-logo">
-    <img src="data:image/png;base64,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" alt="RWS Optimum" style="height:48px; display:block;">
+    <img src="data:image/png;base64,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" alt="RWS Optimum" style="height:48px; display:block;">
   </div>
   <div class="header-center">
     <div class="logo-text">RWS OPTIMUM</div>
