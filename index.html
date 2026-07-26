@@ -14,23 +14,21 @@
     border-bottom: 1px solid rgba(255,255,255,0.06); flex-shrink: 0;
     gap: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.25);
   }
-  .header-video-window {
-    flex-shrink: 0; width: 95px; height: 56px; border-radius: 10px; overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 14px -4px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,0,0,0.2);
-    position: relative; background: #000;
+  .header-video-bg {
+    position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
   }
-  .header-video-window video {
-    width: 100%; height: 100%; object-fit: cover; display: block;
+  .header-video-bg video {
+    width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0.65;
   }
-  .header-video-window::after {
-    content: ""; position: absolute; inset: 0; border-radius: 10px;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.5); pointer-events: none;
+  .header-video-bg::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(90deg, rgba(10,20,32,0.55) 0%, rgba(10,20,32,0.25) 40%, rgba(10,20,32,0.55) 100%);
   }
   .header-logo, .header-center, .header-controls { position: relative; z-index: 1; }
   .header-logo { flex-shrink: 0; }
   .header-center { flex: 1; text-align: center; }
-  .logo-text { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: 0.08em; }
-  .logo-sub { font-size: 10px; color: #7aacc8; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 1px; }
+  .logo-text { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: 0.08em; text-shadow: 0 1px 6px rgba(0,0,0,0.85), 0 0 14px rgba(0,0,0,0.5); }
+  .logo-sub { font-size: 10px; color: #7aacc8; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 1px; text-shadow: 0 1px 5px rgba(0,0,0,0.85); }
   .header-time { font-size: 16px; font-weight: 300; color: #b0d4ea; font-variant-numeric: tabular-nums; }
   .header-controls { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; flex-shrink: 0; }
   .btn {
@@ -53,7 +51,7 @@
   .dot.ok { background: #16a34a; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-  @media print { .header-video-window { display: none; } }
+  @media print { .header-video-bg { display: none; } }
 
 
 
@@ -492,7 +490,7 @@
 <!-- ══ КОНЕЦ ЭКРАНА ВХОДА ════════════════════════════════════════════════════ -->
 
 <div class="header">
-  <div class="header-video-window" aria-hidden="true">
+  <div class="header-video-bg" aria-hidden="true">
     <video src="train.mp4" autoplay muted loop playsinline></video>
   </div>
   <div class="header-logo">
