@@ -570,7 +570,9 @@
       <h4>⚠ Не удалось загрузить данные БСУ</h4>
       <ul id="bsuErrorList"></ul>
     </div>
-    <div class="table-wrap">
+
+    <!-- Таблица текущего остатка -->
+    <div class="table-wrap" id="bsuTableWrap" style="flex-shrink:0;">
     <table>
       <thead>
         <tr>
@@ -587,7 +589,16 @@
       </tbody>
     </table>
     </div>
+
+    <!-- История по дням — все материалы сразу, столбчатые диаграммы -->
+    <div id="bsuHistWrap" style="flex:1;min-height:0;overflow:hidden;padding:8px;display:flex;flex-direction:column;gap:6px;border-top:1px solid rgba(255,255,255,0.06);">
+      <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0;">📊 История остатка по дням</div>
+      <div id="bsuHistChart" style="flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:8px;overflow:hidden;">
+        <div style="grid-column:1 / 3;grid-row:1 / 3;color:#4a6a88;font-size:10px;text-align:center;align-self:center;">Загрузка истории...</div>
+      </div>
+    </div>
   </div>
+
 
   <!-- Отгрузка — центр, 2 строки -->
   <div class="section section-otg">
@@ -600,7 +611,7 @@
       <h4>⚠ Не удалось загрузить данные Отгрузки</h4>
       <ul id="otgErrorList"></ul>
     </div>
-    <div class="table-wrap">
+    <div class="table-wrap" style="flex-shrink:0;">
     <table style="min-width:500px;">
       <thead>
         <tr>
@@ -627,6 +638,14 @@
         <tr><td colspan="12" class="empty">Загрузка...</td></tr>
       </tbody>
     </table>
+    </div>
+
+    <!-- История отгрузки — статистика продаж по дням -->
+    <div id="otgHistWrap" style="flex:1;min-height:0;overflow:hidden;padding:8px;display:flex;flex-direction:column;gap:6px;border-top:1px solid rgba(255,255,255,0.06);">
+      <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0;">📊 Отгружено шпал по дням, шт.</div>
+      <div id="otgHistChart" style="flex:1;min-height:0;overflow:visible;">
+        <div style="color:#4a6a88;font-size:10px;text-align:center;padding-top:10px;">Загрузка истории...</div>
+      </div>
     </div>
   </div>
 
@@ -1731,6 +1750,14 @@ async function loadData() {
   fetchSolarHistory();
   setInterval(fetchSolarHistory, 15 * 60 * 1000); // каждые 15 минут
 
+  // История сырья БСУ по дням
+  fetchBSUHistory();
+  setInterval(fetchBSUHistory, 15 * 60 * 1000); // каждые 15 минут
+
+  // История отгрузки по дням
+  fetchOtgruzkaHistory();
+  setInterval(fetchOtgruzkaHistory, 15 * 60 * 1000); // каждые 15 минут
+
   if (pcOk && bsuOk && otgOk && okOk) {
     status('Данные успешно загружены через Apps Script', 'ok');
   } else if (!pcOk && !bsuOk && !otgOk && !okOk) {
@@ -2083,6 +2110,216 @@ async function fetchSolarHistory() {
   }
 }
 
+// ── ИСТОРИЯ СЫРЬЯ БСУ ────────────────────────────────────────────────────────
+let bsuHistByMaterial = {};
+
+function parseRuDate(s) {
+  const parts = String(s).split('.');
+  if (parts.length !== 3) return null;
+  const d = parseInt(parts[0], 10), m = parseInt(parts[1], 10) - 1, y = parseInt(parts[2], 10);
+  return new Date(y, m, d);
+}
+
+const BSU_MATERIAL_COLORS = {
+  'цемент':        '#94a3b8',
+  'песок':         '#eab308',
+  'щебень':        '#64748b',
+  'пластификатор': '#4ade80'
+};
+const BSU_MATERIAL_ORDER = ['цемент', 'песок', 'щебень', 'пластификатор'];
+
+async function fetchBSUHistory() {
+  try {
+    const { url } = getConfig();
+    const r = await fetch(url + '?sheet=BSUHistory&t=' + Date.now());
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const rows = await r.json();
+
+    const chart = document.getElementById('bsuHistChart');
+    if (!Array.isArray(rows) || rows.length === 0) {
+      if (chart) chart.innerHTML = '<div style="grid-column:1/3;grid-row:1/3;color:#4a6a88;font-size:10px;text-align:center;align-self:center;">История пока пуста — появится после следующей отправки данных из Excel</div>';
+      dbg('История БСУ: данных пока нет', 'warn');
+      return;
+    }
+
+    bsuHistByMaterial = {};
+    rows.forEach(row => {
+      if (!row.material || !row.date) return;
+      if (!bsuHistByMaterial[row.material]) bsuHistByMaterial[row.material] = [];
+      bsuHistByMaterial[row.material].push(row);
+    });
+    Object.keys(bsuHistByMaterial).forEach(mat => {
+      bsuHistByMaterial[mat].sort((a, b) => parseRuDate(a.date) - parseRuDate(b.date));
+    });
+
+    renderBSUHistAll();
+    dbg('История БСУ: загружено ' + rows.length + ' записей по ' + Object.keys(bsuHistByMaterial).length + ' материалам', 'ok');
+  } catch(e) {
+    dbg('История БСУ: ошибка — ' + e.message, 'err');
+    const chart = document.getElementById('bsuHistChart');
+    if (chart) chart.innerHTML = '<div style="grid-column:1/3;grid-row:1/3;color:#f87171;font-size:10px;text-align:center;align-self:center;">Не удалось загрузить историю</div>';
+  }
+}
+
+// Небольшая столбчатая диаграмма остатка по дням для одного материала
+function buildBSUBarChart(material, data) {
+  const color = BSU_MATERIAL_COLORS[material] || '#60a5fa';
+  const fmt = v => Number(v || 0).toLocaleString('ru-RU', {maximumFractionDigits: 1});
+  const last = data[data.length - 1];
+
+  const header = `
+    <div style="display:flex;justify-content:space-between;align-items:baseline;flex-shrink:0;margin-bottom:2px;">
+      <span style="font-size:10px;font-weight:700;color:#eaf6ff;text-transform:capitalize;">${material}</span>
+      <span style="font-size:11px;font-weight:700;color:${color};">${fmt(last.closing)}</span>
+    </div>`;
+
+  if (data.length < 2) {
+    return `<div style="display:flex;flex-direction:column;height:100%;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:6px 8px;">
+      ${header}
+      <div style="flex:1;min-height:0;display:flex;align-items:center;justify-content:center;color:#4a6a88;font-size:9px;text-align:center;">Копим историю — со 2-го дня появится график</div>
+    </div>`;
+  }
+
+  const W = 300, H = 100, padT = 6, padB = 16, padL = 2, padR = 2;
+  const n = data.length;
+  const maxVal = Math.max(...data.map(d => Number(d.closing) || 0), 0.01) * 1.12;
+  const gap = 3;
+  const barW = Math.max(3, (W - padL - padR) / n - gap);
+
+  let barsSvg = '';
+  let labelsSvg = '';
+  const labelStep = Math.max(1, Math.ceil(n / 5));
+  data.forEach((d, i) => {
+    const val = Number(d.closing) || 0;
+    const x = padL + i * ((W - padL - padR) / n) + gap / 2;
+    const barH = Math.max(1, (val / maxVal) * (H - padT - padB));
+    const y = H - padB - barH;
+    const isLast = i === n - 1;
+    barsSvg += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${barH.toFixed(1)}" rx="1.5"
+      fill="${color}" opacity="${isLast ? 1 : 0.55}"><title>${d.date}: остаток ${fmt(d.closing)}, приход ${fmt(d.incoming)}, расход ${fmt(d.outgoing)}</title></rect>`;
+    if (i % labelStep === 0 || i === n - 1) {
+      const shortDate = String(d.date).split('.')[0];
+      labelsSvg += `<text x="${(x + barW/2).toFixed(1)}" y="${H-4}" font-size="8" text-anchor="middle" fill="#4a7a9a">${shortDate}</text>`;
+    }
+  });
+
+  return `<div style="display:flex;flex-direction:column;height:100%;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:6px 8px;">
+    ${header}
+    <div style="flex:1;min-height:0;">
+      <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:100%;overflow:visible;">
+        <line x1="0" y1="${H-padB}" x2="${W}" y2="${H-padB}" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+        ${barsSvg}
+        ${labelsSvg}
+      </svg>
+    </div>
+  </div>`;
+}
+
+function renderBSUHistAll() {
+  const chart = document.getElementById('bsuHistChart');
+  if (!chart) return;
+
+  const materials = BSU_MATERIAL_ORDER.filter(m => bsuHistByMaterial[m] && bsuHistByMaterial[m].length > 0)
+    .concat(Object.keys(bsuHistByMaterial).filter(m => !BSU_MATERIAL_ORDER.includes(m)));
+
+  if (materials.length === 0) {
+    chart.innerHTML = '<div style="grid-column:1/3;grid-row:1/3;color:#4a6a88;font-size:10px;text-align:center;align-self:center;">Нет данных истории</div>';
+    return;
+  }
+
+  chart.innerHTML = materials.slice(0, 4).map(m => buildBSUBarChart(m, bsuHistByMaterial[m])).join('');
+}
+
+// ── ИСТОРИЯ ОТГРУЗКИ ──────────────────────────────────────────────────────────
+let otgHistData = [];
+
+async function fetchOtgruzkaHistory() {
+  try {
+    const { url } = getConfig();
+    const r = await fetch(url + '?sheet=OtgruzkaHistory&t=' + Date.now());
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const rows = await r.json();
+
+    const chart = document.getElementById('otgHistChart');
+    if (!Array.isArray(rows) || rows.length === 0) {
+      if (chart) chart.innerHTML = '<div style="color:#4a6a88;font-size:10px;text-align:center;padding-top:10px;">История пока пуста — появится после следующей отправки данных</div>';
+      dbg('История отгрузки: данных пока нет', 'warn');
+      return;
+    }
+
+    otgHistData = rows.slice().sort((a, b) => parseRuDate(a.date) - parseRuDate(b.date));
+    renderOtgHistChart();
+    dbg('История отгрузки: загружено ' + rows.length + ' дней', 'ok');
+  } catch(e) {
+    dbg('История отгрузки: ошибка — ' + e.message, 'err');
+    const chart = document.getElementById('otgHistChart');
+    if (chart) chart.innerHTML = '<div style="color:#f87171;font-size:10px;text-align:center;padding-top:10px;">Не удалось загрузить историю</div>';
+  }
+}
+
+function renderOtgHistChart() {
+  const chart = document.getElementById('otgHistChart');
+  if (!chart) return;
+  const data = otgHistData;
+
+  if (data.length === 0) {
+    chart.innerHTML = '<div style="color:#4a6a88;font-size:10px;text-align:center;padding-top:10px;">Нет данных истории</div>';
+    return;
+  }
+  if (data.length < 2) {
+    chart.innerHTML = '<div style="color:#4a6a88;font-size:10px;text-align:center;padding-top:10px;">Накапливаем историю — график появится со 2-го дня</div>';
+    return;
+  }
+
+  const W = 1000, H = 160, padT = 26, padB = 20, padL = 4, padR = 4;
+  const maxVal = Math.max(...data.map(d => Number(d.sht) || 0), 1) * 1.25;
+  const n = data.length;
+  const gap = 6;
+  const barW = Math.max(6, (W - padL - padR) / n - gap);
+  const avg = data.reduce((s, d) => s + (Number(d.sht) || 0), 0) / n;
+  const avgY = H - padB - (avg / maxVal) * (H - padT - padB);
+
+  let barsSvg = '', valSvg = '', labelsSvg = '';
+  const labelStep = Math.max(1, Math.ceil(n / 8));
+  data.forEach((d, i) => {
+    const val = Number(d.sht) || 0;
+    const x = padL + i * ((W - padL - padR) / n) + gap / 2;
+    const barH = Math.max(1, (val / maxVal) * (H - padT - padB));
+    const y = H - padB - barH;
+    const isLast = i === n - 1;
+    const tip = d.byBuyer ? `${d.date}: отгружено ${val.toLocaleString('ru-RU')} шт. (${d.byBuyer})` : `${d.date}: отгружено ${val.toLocaleString('ru-RU')} шт.`;
+    barsSvg += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${barH.toFixed(1)}" rx="3"
+      fill="${isLast ? 'url(#otgBarGradLast)' : 'url(#otgBarGrad)'}"><title>${tip}</title></rect>`;
+    if (isLast) {
+      valSvg += `<text x="${(x + barW/2).toFixed(1)}" y="${(y-6).toFixed(1)}" font-size="11" font-weight="700" text-anchor="middle" fill="#fbbf24">${val.toLocaleString('ru-RU')}</text>`;
+    }
+    if (i % labelStep === 0 || isLast) {
+      const shortDate = String(d.date).split('.').slice(0, 2).join('.');
+      labelsSvg += `<text x="${(x + barW/2).toFixed(1)}" y="${H-4}" font-size="9" text-anchor="middle" fill="#4a7a9a">${shortDate}</text>`;
+    }
+  });
+
+  chart.innerHTML = `
+    <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:100%;overflow:visible;">
+      <defs>
+        <linearGradient id="otgBarGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#60a5fa"/>
+          <stop offset="100%" stop-color="#2563eb"/>
+        </linearGradient>
+        <linearGradient id="otgBarGradLast" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#fde68a"/>
+          <stop offset="100%" stop-color="#f59e0b"/>
+        </linearGradient>
+      </defs>
+      <line x1="0" y1="${avgY.toFixed(1)}" x2="${W}" y2="${avgY.toFixed(1)}" stroke="#93c5fd" stroke-width="1" stroke-dasharray="5,4" opacity="0.5"/>
+      <text x="${W-padR}" y="${(avgY-5).toFixed(1)}" font-size="9" text-anchor="end" fill="#93c5fd" opacity="0.8">ср. ${Math.round(avg).toLocaleString('ru-RU')}</text>
+      <line x1="0" y1="${H-padB}" x2="${W}" y2="${H-padB}" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+      ${barsSvg}
+      ${valSvg}
+      ${labelsSvg}
+    </svg>`;
+}
+
 
 function renderOnec(rows) {
   const body    = document.getElementById('onecBody');
@@ -2248,7 +2485,7 @@ function showTab(n) {
     var el = document.querySelector('.' + cls);
     if (el) el.style.setProperty('display', 'none', 'important');
   });
-  var s1 = [{cls:'section-pc',col:'1',row:'1'},{cls:'section-bsu',col:'1',row:'2'},{cls:'section-1c',col:'1',row:'3'},{cls:'section-otg',col:'2',row:'1'},{cls:'section-rashod',col:'2',row:'2 / 4'},{cls:'section-ok',col:'3',row:'1 / 4'}];
+  var s1 = [{cls:'section-pc',col:'1',row:'1'},{cls:'section-bsu',col:'1',row:'2 / 4'},{cls:'section-otg',col:'2',row:'1 / 3'},{cls:'section-rashod',col:'2',row:'3'},{cls:'section-ok',col:'3',row:'1 / 3'},{cls:'section-1c',col:'3',row:'3'}];
   var s2 = [{cls:'section-solar',col:'1',row:'1'},{cls:'section-iqair',col:'2',row:'1'},{cls:'section-power',col:'3',row:'1'}];
   var s3 = [{cls:'section-personnel',col:'1',row:'1'}];
   var show = n===1 ? s1 : (n===2 ? s2 : s3);
