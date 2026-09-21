@@ -2273,19 +2273,21 @@ function renderOtgHistStats() {
   let maxIdx = 0;
   vals.forEach((v, i) => { if (v > vals[maxIdx]) maxIdx = i; });
   const fmt = v => Math.round(v).toLocaleString('ru-RU');
+  const shortDate = s => String(s).split('.').slice(0, 2).join('.');
+  const period = `с ${shortDate(data[0].date)} по ${shortDate(data[data.length - 1].date)}`;
 
   const cards = [
-    { label: 'Всего за период', value: fmt(total), unit: 'шт.', color: '#60a5fa' },
+    { label: 'Всего за период', value: fmt(total), unit: 'шт.', note: period, color: '#60a5fa' },
     { label: 'Среднее в день', value: fmt(avg), unit: 'шт.', color: '#4ade80' },
-    { label: 'Лучший день', value: fmt(vals[maxIdx]), unit: data[maxIdx].date, color: '#fbbf24' },
+    { label: 'Лучший день', value: fmt(vals[maxIdx]), unit: 'шт.', note: data[maxIdx].date, color: '#fbbf24' },
     { label: 'Дней в архиве', value: data.length, unit: 'дн.', color: '#93c5fd' }
   ];
 
   statsEl.innerHTML = cards.map(c => `
-    <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:8px;padding:6px 9px;">
-      <div style="font-size:8.5px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.label}</div>
-      <div style="font-size:16px;font-weight:700;color:${c.color};line-height:1.35;">${c.value}</div>
-      <div style="font-size:9px;color:#4a7a9a;">${c.unit}</div>
+    <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:8px;padding:7px 10px;">
+      <div style="font-size:9.5px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.label}</div>
+      <div style="font-size:19px;font-weight:700;color:${c.color};line-height:1.35;">${c.value} <span style="font-size:11px;font-weight:600;color:#7aacc8;">${c.unit}</span></div>
+      ${c.note ? `<div style="font-size:10.5px;color:#93c5fd;font-weight:600;">${c.note}</div>` : ''}
     </div>
   `).join('');
 }
