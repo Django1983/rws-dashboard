@@ -641,8 +641,9 @@
     </div>
 
     <!-- История отгрузки — статистика продаж по дням -->
-    <div id="otgHistWrap" style="flex:1;min-height:0;overflow:hidden;padding:8px;display:flex;flex-direction:column;gap:6px;border-top:1px solid rgba(255,255,255,0.06);">
+    <div id="otgHistWrap" style="flex:1;min-height:0;overflow:hidden;padding:8px;display:flex;flex-direction:column;gap:8px;border-top:1px solid rgba(255,255,255,0.06);">
       <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0;">📊 Отгружено шпал по дням, шт.</div>
+      <div id="otgHistStats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;flex-shrink:0;"></div>
       <div id="otgHistChart" style="flex:1;min-height:0;overflow:visible;">
         <div style="color:#4a6a88;font-size:10px;text-align:center;padding-top:10px;">Загрузка истории...</div>
       </div>
@@ -2241,13 +2242,16 @@ async function fetchOtgruzkaHistory() {
     const rows = await r.json();
 
     const chart = document.getElementById('otgHistChart');
+    const statsEl = document.getElementById('otgHistStats');
     if (!Array.isArray(rows) || rows.length === 0) {
       if (chart) chart.innerHTML = '<div style="color:#4a6a88;font-size:10px;text-align:center;padding-top:10px;">История пока пуста — появится после следующей отправки данных</div>';
+      if (statsEl) statsEl.innerHTML = '';
       dbg('История отгрузки: данных пока нет', 'warn');
       return;
     }
 
     otgHistData = rows.slice().sort((a, b) => parseRuDate(a.date) - parseRuDate(b.date));
+    renderOtgHistStats();
     renderOtgHistChart();
     dbg('История отгрузки: загружено ' + rows.length + ' дней', 'ok');
   } catch(e) {
@@ -2255,6 +2259,35 @@ async function fetchOtgruzkaHistory() {
     const chart = document.getElementById('otgHistChart');
     if (chart) chart.innerHTML = '<div style="color:#f87171;font-size:10px;text-align:center;padding-top:10px;">Не удалось загрузить историю</div>';
   }
+}
+
+function renderOtgHistStats() {
+  const statsEl = document.getElementById('otgHistStats');
+  if (!statsEl) return;
+  const data = otgHistData;
+  if (data.length === 0) { statsEl.innerHTML = ''; return; }
+
+  const vals = data.map(d => Number(d.sht) || 0);
+  const total = vals.reduce((s, v) => s + v, 0);
+  const avg = total / vals.length;
+  let maxIdx = 0;
+  vals.forEach((v, i) => { if (v > vals[maxIdx]) maxIdx = i; });
+  const fmt = v => Math.round(v).toLocaleString('ru-RU');
+
+  const cards = [
+    { label: 'Всего за период', value: fmt(total), unit: 'шт.', color: '#60a5fa' },
+    { label: 'Среднее в день', value: fmt(avg), unit: 'шт.', color: '#4ade80' },
+    { label: 'Лучший день', value: fmt(vals[maxIdx]), unit: data[maxIdx].date, color: '#fbbf24' },
+    { label: 'Дней в архиве', value: data.length, unit: 'дн.', color: '#93c5fd' }
+  ];
+
+  statsEl.innerHTML = cards.map(c => `
+    <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:8px;padding:6px 9px;">
+      <div style="font-size:8.5px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.label}</div>
+      <div style="font-size:16px;font-weight:700;color:${c.color};line-height:1.35;">${c.value}</div>
+      <div style="font-size:9px;color:#4a7a9a;">${c.unit}</div>
+    </div>
+  `).join('');
 }
 
 function renderOtgHistChart() {
@@ -2271,51 +2304,66 @@ function renderOtgHistChart() {
     return;
   }
 
-  const W = 1000, H = 160, padT = 26, padB = 20, padL = 4, padR = 4;
-  const maxVal = Math.max(...data.map(d => Number(d.sht) || 0), 1) * 1.25;
+  const W = 1000, H = 200, padT = 20, padB = 22, padL = 4, padR = 4;
+  const maxVal = Math.max(...data.map(d => Number(d.sht) || 0), 1) * 1.15;
   const n = data.length;
-  const gap = 6;
-  const barW = Math.max(6, (W - padL - padR) / n - gap);
+  const xStep = n > 1 ? (W - padL - padR) / (n - 1) : 0;
   const avg = data.reduce((s, d) => s + (Number(d.sht) || 0), 0) / n;
-  const avgY = H - padB - (avg / maxVal) * (H - padT - padB);
+  const avgY = padT + (1 - avg / maxVal) * (H - padT - padB);
 
-  let barsSvg = '', valSvg = '', labelsSvg = '';
-  const labelStep = Math.max(1, Math.ceil(n / 8));
-  data.forEach((d, i) => {
-    const val = Number(d.sht) || 0;
-    const x = padL + i * ((W - padL - padR) / n) + gap / 2;
-    const barH = Math.max(1, (val / maxVal) * (H - padT - padB));
-    const y = H - padB - barH;
-    const isLast = i === n - 1;
-    const tip = d.byBuyer ? `${d.date}: отгружено ${val.toLocaleString('ru-RU')} шт. (${d.byBuyer})` : `${d.date}: отгружено ${val.toLocaleString('ru-RU')} шт.`;
-    barsSvg += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${barH.toFixed(1)}" rx="3"
-      fill="${isLast ? 'url(#otgBarGradLast)' : 'url(#otgBarGrad)'}"><title>${tip}</title></rect>`;
-    if (isLast) {
-      valSvg += `<text x="${(x + barW/2).toFixed(1)}" y="${(y-6).toFixed(1)}" font-size="11" font-weight="700" text-anchor="middle" fill="#fbbf24">${val.toLocaleString('ru-RU')}</text>`;
+  const pts = data.map((d, i) => ({
+    x: padL + i * xStep,
+    y: padT + (1 - (Number(d.sht) || 0) / maxVal) * (H - padT - padB),
+    d
+  }));
+
+  const linePath = smoothPath(pts);
+  const areaPath = `${linePath} L ${pts[n-1].x.toFixed(1)},${H-padB} L ${pts[0].x.toFixed(1)},${H-padB} Z`;
+
+  let gridSvg = '';
+  [0, 0.5, 1].forEach(f => {
+    const y = padT + f * (H - padT - padB);
+    gridSvg += `<line x1="${padL}" y1="${y.toFixed(1)}" x2="${W-padR}" y2="${y.toFixed(1)}" stroke="rgba(255,255,255,0.06)" stroke-width="1" stroke-dasharray="3,4"/>`;
+  });
+
+  // подписи дат — не чаще, чем примерно раз в 7-10 точек, чтобы не слипались при большом числе дней
+  const labelStep = Math.max(1, Math.ceil(n / 9));
+  let labelsSvg = '';
+  pts.forEach((p, i) => {
+    if (i % labelStep === 0 || i === n - 1) {
+      const shortDate = String(p.d.date).split('.').slice(0, 2).join('.');
+      labelsSvg += `<text x="${p.x.toFixed(1)}" y="${H-4}" font-size="9" text-anchor="middle" fill="#4a7a9a">${shortDate}</text>`;
     }
-    if (i % labelStep === 0 || isLast) {
-      const shortDate = String(d.date).split('.').slice(0, 2).join('.');
-      labelsSvg += `<text x="${(x + barW/2).toFixed(1)}" y="${H-4}" font-size="9" text-anchor="middle" fill="#4a7a9a">${shortDate}</text>`;
+  });
+
+  let dotsSvg = '';
+  pts.forEach((p, i) => {
+    const isLast = i === n - 1;
+    const val = Number(p.d.sht) || 0;
+    const tip = p.d.byBuyer ? `${p.d.date}: отгружено ${val.toLocaleString('ru-RU')} шт. (${p.d.byBuyer})` : `${p.d.date}: отгружено ${val.toLocaleString('ru-RU')} шт.`;
+    if (isLast) {
+      dotsSvg += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4" fill="#fbbf24" stroke="#0a1e2e" stroke-width="1.5"><title>${tip}</title></circle>`;
+      dotsSvg += `<text x="${p.x.toFixed(1)}" y="${(p.y-9).toFixed(1)}" font-size="10" font-weight="700" text-anchor="middle" fill="#fbbf24">${val.toLocaleString('ru-RU')}</text>`;
+    } else {
+      dotsSvg += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="6" fill="transparent"><title>${tip}</title></circle>`;
+      dotsSvg += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="1.8" fill="#60a5fa" opacity="0.8" pointer-events="none"/>`;
     }
   });
 
   chart.innerHTML = `
     <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:100%;overflow:visible;">
       <defs>
-        <linearGradient id="otgBarGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#60a5fa"/>
-          <stop offset="100%" stop-color="#2563eb"/>
-        </linearGradient>
-        <linearGradient id="otgBarGradLast" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#fde68a"/>
-          <stop offset="100%" stop-color="#f59e0b"/>
+        <linearGradient id="otgAreaGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#60a5fa" stop-opacity="0.32"/>
+          <stop offset="100%" stop-color="#60a5fa" stop-opacity="0"/>
         </linearGradient>
       </defs>
-      <line x1="0" y1="${avgY.toFixed(1)}" x2="${W}" y2="${avgY.toFixed(1)}" stroke="#93c5fd" stroke-width="1" stroke-dasharray="5,4" opacity="0.5"/>
-      <text x="${W-padR}" y="${(avgY-5).toFixed(1)}" font-size="9" text-anchor="end" fill="#93c5fd" opacity="0.8">ср. ${Math.round(avg).toLocaleString('ru-RU')}</text>
-      <line x1="0" y1="${H-padB}" x2="${W}" y2="${H-padB}" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
-      ${barsSvg}
-      ${valSvg}
+      ${gridSvg}
+      <line x1="0" y1="${avgY.toFixed(1)}" x2="${W}" y2="${avgY.toFixed(1)}" stroke="#93c5fd" stroke-width="1" stroke-dasharray="5,4" opacity="0.55"/>
+      <text x="${W-padR}" y="${(avgY-5).toFixed(1)}" font-size="9" text-anchor="end" fill="#93c5fd" opacity="0.85">ср. ${Math.round(avg).toLocaleString('ru-RU')}</text>
+      <path d="${areaPath}" fill="url(#otgAreaGrad)"/>
+      <path d="${linePath}" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"/>
+      ${dotsSvg}
       ${labelsSvg}
     </svg>`;
 }
