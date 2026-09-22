@@ -641,15 +641,15 @@
     </div>
 
     <!-- История отгрузки — статистика продаж по дням -->
-    <div id="otgHistWrap" style="flex:1;min-height:0;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:8px;border-top:1px solid rgba(255,255,255,0.06);">
+    <div id="otgHistWrap" style="flex:1;min-height:0;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:6px;border-top:1px solid rgba(255,255,255,0.06);">
       <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0;">📊 Отгружено шпал по дням, шт.</div>
       <div id="otgHistStats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;flex-shrink:0;"></div>
-      <div id="otgHistChart" style="height:150px;flex-shrink:0;overflow:visible;">
-        <div style="color:#4a6a88;font-size:10px;text-align:center;padding-top:10px;">Загрузка истории...</div>
-      </div>
       <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0;margin-top:2px;">📦 Остаток по типам шпал, шт.</div>
-      <div id="otgTypeCharts" style="display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:110px;gap:8px;flex-shrink:0;">
+      <div id="otgTypeCharts" style="display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:72px;gap:6px;flex-shrink:0;">
         <div style="grid-column:1 / 3;color:#4a6a88;font-size:10px;text-align:center;align-self:center;">Загрузка...</div>
+      </div>
+      <div id="otgHistChart" style="height:130px;flex-shrink:0;overflow:visible;margin-top:2px;">
+        <div style="color:#4a6a88;font-size:10px;text-align:center;padding-top:10px;">Загрузка истории...</div>
       </div>
     </div>
   </div>
@@ -2292,48 +2292,41 @@ function buildOtgTypeChart(field, data) {
   const lastVal = last[field.key];
 
   const header = `
-    <div style="display:flex;justify-content:space-between;align-items:baseline;flex-shrink:0;margin-bottom:2px;">
-      <span style="font-size:9.5px;font-weight:700;color:#eaf6ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${field.label}</span>
-      <span style="font-size:11px;font-weight:700;color:${field.color};flex-shrink:0;margin-left:6px;">${fmt(lastVal)}</span>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;flex-shrink:0;margin-bottom:1px;">
+      <span style="font-size:8.5px;font-weight:700;color:#eaf6ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${field.label}</span>
+      <span style="font-size:10px;font-weight:700;color:${field.color};flex-shrink:0;margin-left:5px;">${fmt(lastVal)}</span>
     </div>`;
 
   if (data.length < 2) {
-    return `<div style="display:flex;flex-direction:column;height:100%;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:6px 8px;">
+    return `<div style="display:flex;flex-direction:column;height:100%;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:7px;padding:4px 6px;">
       ${header}
-      <div style="flex:1;min-height:0;display:flex;align-items:center;justify-content:center;color:#4a6a88;font-size:9px;text-align:center;">Копим историю</div>
+      <div style="flex:1;min-height:0;display:flex;align-items:center;justify-content:center;color:#4a6a88;font-size:8px;text-align:center;">Копим историю</div>
     </div>`;
   }
 
-  const W = 300, H = 100, padT = 6, padB = 16, padL = 2, padR = 2;
+  const W = 300, H = 60, padT = 3, padB = 3, padL = 1, padR = 1;
   const n = data.length;
-  const maxVal = Math.max(...data.map(d => Number(d[field.key]) || 0), 0.01) * 1.12;
-  const gap = Math.max(1, 3 - Math.floor(n / 40));
-  const barW = Math.max(1.2, (W - padL - padR) / n - gap);
+  const maxVal = Math.max(...data.map(d => Number(d[field.key]) || 0), 0.01) * 1.1;
+  const gap = Math.max(0.5, 2 - Math.floor(n / 40));
+  const barW = Math.max(1, (W - padL - padR) / n - gap);
 
   let barsSvg = '';
-  let labelsSvg = '';
-  const labelStep = Math.max(1, Math.ceil(n / 6));
   data.forEach((d, i) => {
     const val = Number(d[field.key]) || 0;
     const x = padL + i * ((W - padL - padR) / n) + gap / 2;
     const barH = Math.max(1, (val / maxVal) * (H - padT - padB));
     const y = H - padB - barH;
     const isLast = i === n - 1;
-    barsSvg += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${barH.toFixed(1)}" rx="1"
+    barsSvg += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${barH.toFixed(1)}" rx="0.8"
       fill="${field.color}" opacity="${isLast ? 1 : 0.55}"><title>${d.date}: остаток ${fmt(val)} шт.</title></rect>`;
-    if (i % labelStep === 0 || i === n - 1) {
-      const shortDate = String(d.date).split('.').slice(0, 2).join('.');
-      labelsSvg += `<text x="${(x + barW/2).toFixed(1)}" y="${H-4}" font-size="7.5" text-anchor="middle" fill="#4a7a9a">${shortDate}</text>`;
-    }
   });
 
-  return `<div style="display:flex;flex-direction:column;height:100%;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:6px 8px;">
+  return `<div style="display:flex;flex-direction:column;height:100%;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:7px;padding:4px 6px;">
     ${header}
     <div style="flex:1;min-height:0;">
       <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:100%;overflow:visible;">
         <line x1="0" y1="${H-padB}" x2="${W}" y2="${H-padB}" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
         ${barsSvg}
-        ${labelsSvg}
       </svg>
     </div>
   </div>`;
