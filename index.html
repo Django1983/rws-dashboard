@@ -641,11 +641,15 @@
     </div>
 
     <!-- История отгрузки — статистика продаж по дням -->
-    <div id="otgHistWrap" style="flex:1;min-height:0;overflow:hidden;padding:8px;display:flex;flex-direction:column;gap:8px;border-top:1px solid rgba(255,255,255,0.06);">
+    <div id="otgHistWrap" style="flex:1;min-height:0;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:8px;border-top:1px solid rgba(255,255,255,0.06);">
       <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0;">📊 Отгружено шпал по дням, шт.</div>
       <div id="otgHistStats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;flex-shrink:0;"></div>
-      <div id="otgHistChart" style="flex:1;min-height:0;overflow:visible;">
+      <div id="otgHistChart" style="height:150px;flex-shrink:0;overflow:visible;">
         <div style="color:#4a6a88;font-size:10px;text-align:center;padding-top:10px;">Загрузка истории...</div>
+      </div>
+      <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0;margin-top:2px;">📦 Остаток по типам шпал, шт.</div>
+      <div id="otgTypeCharts" style="display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:110px;gap:8px;flex-shrink:0;">
+        <div style="grid-column:1 / 3;color:#4a6a88;font-size:10px;text-align:center;align-self:center;">Загрузка...</div>
       </div>
     </div>
   </div>
@@ -2243,9 +2247,11 @@ async function fetchOtgruzkaHistory() {
 
     const chart = document.getElementById('otgHistChart');
     const statsEl = document.getElementById('otgHistStats');
+    const typeEl = document.getElementById('otgTypeCharts');
     if (!Array.isArray(rows) || rows.length === 0) {
       if (chart) chart.innerHTML = '<div style="color:#4a6a88;font-size:10px;text-align:center;padding-top:10px;">История пока пуста — появится после следующей отправки данных</div>';
       if (statsEl) statsEl.innerHTML = '';
+      if (typeEl) typeEl.innerHTML = '';
       dbg('История отгрузки: данных пока нет', 'warn');
       return;
     }
@@ -2253,12 +2259,84 @@ async function fetchOtgruzkaHistory() {
     otgHistData = rows.slice().sort((a, b) => parseRuDate(a.date) - parseRuDate(b.date));
     renderOtgHistStats();
     renderOtgHistChart();
+    renderOtgTypeCharts();
     dbg('История отгрузки: загружено ' + rows.length + ' дней', 'ok');
   } catch(e) {
     dbg('История отгрузки: ошибка — ' + e.message, 'err');
     const chart = document.getElementById('otgHistChart');
     if (chart) chart.innerHTML = '<div style="color:#f87171;font-size:10px;text-align:center;padding-top:10px;">Не удалось загрузить историю</div>';
   }
+}
+
+const OTG_TYPE_FIELDS = [
+  { key: 'ostBF70',     label: 'BF70 FC "1520"',            color: '#60a5fa' },
+  { key: 'ostBF70Styk', label: 'BF70 "1520" стык',           color: '#eab308' },
+  { key: 'ostBF70E',    label: 'BF70E "1520" облегч.',       color: '#4ade80' },
+  { key: 'ost1535',     label: 'BF70E "1535" облегч.',       color: '#f87171' }
+];
+
+function renderOtgTypeCharts() {
+  const el = document.getElementById('otgTypeCharts');
+  if (!el) return;
+  const data = otgHistData;
+  if (!data || data.length === 0) {
+    el.innerHTML = '<div style="grid-column:1/3;color:#4a6a88;font-size:10px;text-align:center;align-self:center;">Нет данных истории</div>';
+    return;
+  }
+  el.innerHTML = OTG_TYPE_FIELDS.map(f => buildOtgTypeChart(f, data)).join('');
+}
+
+function buildOtgTypeChart(field, data) {
+  const fmt = v => Number(v || 0).toLocaleString('ru-RU', {maximumFractionDigits: 1});
+  const last = data[data.length - 1];
+  const lastVal = last[field.key];
+
+  const header = `
+    <div style="display:flex;justify-content:space-between;align-items:baseline;flex-shrink:0;margin-bottom:2px;">
+      <span style="font-size:9.5px;font-weight:700;color:#eaf6ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${field.label}</span>
+      <span style="font-size:11px;font-weight:700;color:${field.color};flex-shrink:0;margin-left:6px;">${fmt(lastVal)}</span>
+    </div>`;
+
+  if (data.length < 2) {
+    return `<div style="display:flex;flex-direction:column;height:100%;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:6px 8px;">
+      ${header}
+      <div style="flex:1;min-height:0;display:flex;align-items:center;justify-content:center;color:#4a6a88;font-size:9px;text-align:center;">Копим историю</div>
+    </div>`;
+  }
+
+  const W = 300, H = 100, padT = 6, padB = 16, padL = 2, padR = 2;
+  const n = data.length;
+  const maxVal = Math.max(...data.map(d => Number(d[field.key]) || 0), 0.01) * 1.12;
+  const gap = Math.max(1, 3 - Math.floor(n / 40));
+  const barW = Math.max(1.2, (W - padL - padR) / n - gap);
+
+  let barsSvg = '';
+  let labelsSvg = '';
+  const labelStep = Math.max(1, Math.ceil(n / 6));
+  data.forEach((d, i) => {
+    const val = Number(d[field.key]) || 0;
+    const x = padL + i * ((W - padL - padR) / n) + gap / 2;
+    const barH = Math.max(1, (val / maxVal) * (H - padT - padB));
+    const y = H - padB - barH;
+    const isLast = i === n - 1;
+    barsSvg += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${barH.toFixed(1)}" rx="1"
+      fill="${field.color}" opacity="${isLast ? 1 : 0.55}"><title>${d.date}: остаток ${fmt(val)} шт.</title></rect>`;
+    if (i % labelStep === 0 || i === n - 1) {
+      const shortDate = String(d.date).split('.').slice(0, 2).join('.');
+      labelsSvg += `<text x="${(x + barW/2).toFixed(1)}" y="${H-4}" font-size="7.5" text-anchor="middle" fill="#4a7a9a">${shortDate}</text>`;
+    }
+  });
+
+  return `<div style="display:flex;flex-direction:column;height:100%;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:6px 8px;">
+    ${header}
+    <div style="flex:1;min-height:0;">
+      <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:100%;overflow:visible;">
+        <line x1="0" y1="${H-padB}" x2="${W}" y2="${H-padB}" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+        ${barsSvg}
+        ${labelsSvg}
+      </svg>
+    </div>
+  </div>`;
 }
 
 function renderOtgHistStats() {
