@@ -155,27 +155,27 @@
   }
   .rashod-items-scroll {
     flex: 1; min-height: 0; overflow-y: auto;
-    display: flex; flex-direction: column; gap: 5px;
+    display: grid; grid-template-columns: 1fr 1fr; align-content: start; gap: 5px 6px;
     padding: 2px 2px 2px 0;
     scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.15) transparent;
   }
   .rashod-items-scroll::-webkit-scrollbar { width: 5px; }
   .rashod-items-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
   .rashod-item {
-    flex-shrink: 0; display: grid;
-    grid-template-columns: 1fr 60px 120px 120px 100px;
-    align-items: center;
-    padding: 7px 10px; border-radius: 8px;
+    display: flex; flex-direction: column; gap: 3px;
+    padding: 6px 10px; border-radius: 8px; min-width: 0;
     border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.03);
-    min-height: 40px; gap: 8px; transition: border-color 0.2s;
+    transition: border-color 0.2s;
   }
+  .rashod-top  { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .rashod-meta { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; font-size: 10px; color: #7aacc8; white-space: nowrap; }
   .rashod-item.is-limit { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.4); border-left: 3px solid #f59e0b; }
   .rashod-item.is-limit .rashod-label { color: #fbbf24; font-weight: 700; }
   .rashod-item.is-limit .rashod-ost   { color: #fbbf24; }
-  .rashod-label { font-size: 11px; font-weight: 600; color: #eaf6ff; }
+  .rashod-label { font-size: 11px; font-weight: 600; color: #eaf6ff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
   .rashod-norm  { font-size: 10px; color: #7aacc8; text-align:right; white-space:nowrap; }
   .rashod-ost   { font-size: 11px; font-weight: 600; color: #60a5fa; text-align:right; white-space:nowrap; }
-  .rashod-count { font-size: 13px; font-weight: 700; color: #4ade80; text-align:right; white-space:nowrap; min-width:60px; }
+  .rashod-count { font-size: 13px; font-weight: 700; color: #4ade80; text-align:right; white-space:nowrap; flex-shrink: 0; }
   .rashod-unit  { font-size: 9px; color: #7aacc8; }
   .rashod-min {
     display: flex; align-items: center; justify-content: space-between;
@@ -650,11 +650,11 @@
     <div id="otgHistWrap" style="flex:1;min-height:0;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:6px;border-top:1px solid rgba(255,255,255,0.06);">
       <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0;">📊 Отгружено шпал по дням, шт.</div>
       <div id="otgHistStats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;flex-shrink:0;"></div>
-      <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0;margin-top:2px;">📦 Остаток по типам шпал, шт.</div>
+      <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0;margin-top:2px;">🚚 Отгружено по типам шпал, шт.</div>
       <div id="otgTypeCharts" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;flex-shrink:0;">
         <div style="grid-column:1 / 5;color:#4a6a88;font-size:10px;text-align:center;">Загрузка...</div>
       </div>
-      <div id="otgHistChart" style="height:130px;flex-shrink:0;overflow:visible;margin-top:2px;">
+      <div id="otgHistChart" style="flex:1 0 130px;min-height:130px;overflow:visible;margin-top:2px;">
         <div style="color:#4a6a88;font-size:10px;text-align:center;padding-top:10px;">Загрузка истории...</div>
       </div>
     </div>
@@ -1429,6 +1429,9 @@ function renderOTG(rows) {
   let result = '';
   let i = 4;
   let rowNum = 0;
+  const pn = v => parseFloat(String(v == null ? '' : v).replace(/[\s\u00a0]/g,'').replace(',','.')) || 0;
+  const groups = [];
+  let curGroup = null;
   while (i < rows.length) {
     const r = rows[i];
     const num = String(r[0] || '').trim();
@@ -1438,6 +1441,8 @@ function renderOTG(rows) {
     if (num && name) {
       // Main product row — остаток в колонке L (индекс 11)
       rowNum++;
+      curGroup = { num, name, dayVag: 0, daySht: 0, monVag: 0, monSht: 0, yearVag: 0, yearSht: 0, buyers: [] };
+      groups.push(curGroup);
       const ostn = parseFloat(String(r[11] || '').replace(/\s/g,'').replace(',','.')) || 0;
       result += `<tr style="background:rgba(13,40,71,0.6); font-weight:600;">
         <td class="row-num" style="color:#4a8ab8;">${num}</td>
@@ -1448,6 +1453,12 @@ function renderOTG(rows) {
       // Sub-row ГАЖК/JMAR: C=2(день_ваг), D=3(день_маш), E=4(день_шт),
       // F=5(мес_ваг), G=6(мес_маш), H=7(мес_шт),
       // I=8(год_ваг), J=9(год_маш), K=10(год_шт)
+      if (curGroup) {
+        curGroup.dayVag += pn(r[2]);  curGroup.daySht += pn(r[4]);
+        curGroup.monVag += pn(r[5]);  curGroup.monSht += pn(r[7]);
+        curGroup.yearVag += pn(r[8]); curGroup.yearSht += pn(r[10]);
+        curGroup.buyers.push({ name, year: pn(r[10]) });
+      }
       result += `<tr style="background:rgba(5,12,24,0.3);">
         <td></td>
         <td style="color:#64b5f6; text-align:left; padding-left:20px; font-weight:500;">${name}</td>
@@ -1467,6 +1478,8 @@ function renderOTG(rows) {
   }
 
   body.innerHTML = result || '<tr><td colspan="12" class="empty">Нет данных</td></tr>';
+  otgTypeShipped = groups;
+  renderOtgTypeCharts();
 }
 
 function showOTGError(msgs) {
@@ -1618,18 +1631,7 @@ function renderRashod(rows) {
   const validCounts = items.map(i => i.count).filter(c => c !== null && c >= 0);
   const minCount = validCounts.length ? Math.min(...validCounts) : null;
 
-  let html = `
-    <div style="display:grid; grid-template-columns:1fr 60px 120px 130px 110px;
-      font-size:9px; font-weight:700; color:#ffffff; text-transform:uppercase;
-      letter-spacing:0.05em; padding:6px 10px; border-radius:8px;
-      flex-shrink:0; background:rgba(255,255,255,0.06); margin-bottom:2px;">
-      <div>Наименование сырья</div>
-      <div style="text-align:center;">Ед. изм.</div>
-      <div style="text-align:right;">Норма на 1 шпалу</div>
-      <div style="text-align:right;">Остаток на складе</div>
-      <div style="text-align:right;">Хватит шпал</div>
-    </div>
-    <div class="rashod-items-scroll">`;
+  let html = `<div class="rashod-items-scroll">`;
 
   items.forEach(item => {
     const ostStr   = item.ost   !== null ? item.ost.toLocaleString('ru-RU')   : '—';
@@ -1637,11 +1639,14 @@ function renderRashod(rows) {
     const normStr  = item.norm  !== null ? item.norm  : '—';
     const isMin = item.count !== null && item.count === minCount;
     html += `<div class="rashod-item${isMin ? ' is-limit' : ''}">
-      <div class="rashod-label">${item.name}</div>
-      <div style="text-align:center; font-size:11px; color:#5a8aaa;">${item.unit}</div>
-      <div class="rashod-norm" style="text-align:right;">${normStr} ${item.unit}</div>
-      <div class="rashod-ost" style="text-align:right;">${ostStr}</div>
-      <div class="rashod-count" style="text-align:right;">${countStr} <span class="rashod-unit">шт.</span></div>
+      <div class="rashod-top">
+        <div class="rashod-label" title="${item.name.replace(/"/g, '&quot;')}">${item.name}</div>
+        <div class="rashod-count">${countStr} <span class="rashod-unit">шт.</span></div>
+      </div>
+      <div class="rashod-meta">
+        <span>Норма: ${normStr} ${item.unit}</span>
+        <span>Остаток: <span class="rashod-ost">${ostStr}</span> ${item.unit}</span>
+      </div>
     </div>`;
   });
 
@@ -2243,6 +2248,7 @@ function renderBSUHistAll() {
 
 // ── ИСТОРИЯ ОТГРУЗКИ ──────────────────────────────────────────────────────────
 let otgHistData = [];
+var otgTypeShipped = [];
 
 async function fetchOtgruzkaHistory() {
   try {
@@ -2253,11 +2259,9 @@ async function fetchOtgruzkaHistory() {
 
     const chart = document.getElementById('otgHistChart');
     const statsEl = document.getElementById('otgHistStats');
-    const typeEl = document.getElementById('otgTypeCharts');
     if (!Array.isArray(rows) || rows.length === 0) {
       if (chart) chart.innerHTML = '<div style="color:#4a6a88;font-size:10px;text-align:center;padding-top:10px;">История пока пуста — появится после следующей отправки данных</div>';
       if (statsEl) statsEl.innerHTML = '';
-      if (typeEl) typeEl.innerHTML = '';
       dbg('История отгрузки: данных пока нет', 'warn');
       return;
     }
@@ -2265,7 +2269,6 @@ async function fetchOtgruzkaHistory() {
     otgHistData = rows.slice().sort((a, b) => parseRuDate(a.date) - parseRuDate(b.date));
     renderOtgHistStats();
     renderOtgHistChart();
-    renderOtgTypeCharts();
     dbg('История отгрузки: загружено ' + rows.length + ' дней', 'ok');
   } catch(e) {
     dbg('История отгрузки: ошибка — ' + e.message, 'err');
@@ -2284,20 +2287,25 @@ const OTG_TYPE_FIELDS = [
 function renderOtgTypeCharts() {
   const el = document.getElementById('otgTypeCharts');
   if (!el) return;
-  const data = otgHistData;
-  if (!data || data.length === 0) {
-    el.innerHTML = '<div style="grid-column:1/5;color:#4a6a88;font-size:10px;text-align:center;">Нет данных истории</div>';
+  const groups = otgTypeShipped;
+  if (!groups || groups.length === 0) {
+    el.innerHTML = '<div style="grid-column:1/5;color:#4a6a88;font-size:10px;text-align:center;">Загрузка...</div>';
     return;
   }
-  const last = data[data.length - 1];
-  const fmt = v => Number(v || 0).toLocaleString('ru-RU', {maximumFractionDigits: 1});
+  const fmt = v => Number(v || 0).toLocaleString('ru-RU', {maximumFractionDigits: 0});
 
-  el.innerHTML = OTG_TYPE_FIELDS.map(f => `
-    <div style="background:#0f1e30;border:1px solid #1e3a52;border-radius:8px;padding:7px 10px;">
+  el.innerHTML = groups.slice(0, 4).map((g, i) => {
+    const f = OTG_TYPE_FIELDS[i] || { label: g.name.replace(/^шпала\s+/i, ''), color: '#93c5fd' };
+    const has = g.yearSht > 0;
+    const buyers = g.buyers.filter(b => b.year > 0).map(b => b.name + ': ' + fmt(b.year) + ' шт.').join(', ');
+    const tip = (g.name + (buyers ? ' — за год: ' + buyers : ' — отгрузок нет')).replace(/"/g, '&quot;');
+    return `
+    <div title="${tip}" style="background:#0f1e30;border:1px solid #1e3a52;border-radius:8px;padding:7px 10px;">
       <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${f.label}</div>
-      <div style="font-size:18px;font-weight:700;color:${f.color};line-height:1.35;">${fmt(last[f.key])} <span style="font-size:10px;font-weight:600;color:#7aacc8;">шт.</span></div>
-    </div>
-  `).join('');
+      <div style="font-size:18px;font-weight:700;color:${has ? f.color : '#3a5a78'};line-height:1.35;">${has ? fmt(g.yearSht) : '—'} <span style="font-size:10px;font-weight:600;color:#7aacc8;">шт. за год</span></div>
+      <div style="font-size:9.5px;color:#93c5fd;white-space:nowrap;">мес. ${fmt(g.monSht)} · день ${fmt(g.daySht)}</div>
+    </div>`;
+  }).join('');
 }
 
 function renderOtgHistStats() {
@@ -2574,11 +2582,11 @@ function showTab(n) {
     var el = document.querySelector('.' + cls);
     if (el) el.style.setProperty('display', 'none', 'important');
   });
-  var s1 = [{cls:'section-pc',col:'1',row:'1'},{cls:'section-bsu',col:'1',row:'2 / 4'},{cls:'section-otg',col:'2',row:'1 / 3'},{cls:'section-rashod',col:'2',row:'3'},{cls:'section-ok',col:'3',row:'1'},{cls:'section-1c',col:'3',row:'2 / 4'}];
+  var s1 = [{cls:'section-pc',col:'1',row:'1'},{cls:'section-bsu',col:'1',row:'2 / 4'},{cls:'section-otg',col:'2',row:'1 / 3'},{cls:'section-rashod',col:'2',row:'3'},{cls:'section-ok',col:'3',row:'1 / 3'},{cls:'section-1c',col:'3',row:'3'}];
   var s2 = [{cls:'section-solar',col:'1',row:'1'},{cls:'section-iqair',col:'2',row:'1'},{cls:'section-power',col:'3',row:'1'}];
   var s3 = [{cls:'section-personnel',col:'1',row:'1'}];
   var show = n===1 ? s1 : (n===2 ? s2 : s3);
-  if (n===1) { grid.style.gridTemplateColumns='minmax(0,1fr) minmax(0,1.5fr) minmax(0,1.2fr)'; grid.style.gridTemplateRows='minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)'; }
+  if (n===1) { grid.style.gridTemplateColumns='minmax(0,1fr) minmax(0,1.5fr) minmax(0,1.2fr)'; grid.style.gridTemplateRows='minmax(0,1.1fr) minmax(0,1.1fr) minmax(0,0.8fr)'; }
   else if (n===2) { grid.style.gridTemplateColumns='minmax(0,1.6fr) minmax(0,1fr) minmax(0,0.6fr)'; grid.style.gridTemplateRows='1fr'; }
   else { grid.style.gridTemplateColumns='1fr'; grid.style.gridTemplateRows='1fr'; }
   show.forEach(function(s) {
