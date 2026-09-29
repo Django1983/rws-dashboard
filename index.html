@@ -115,6 +115,7 @@
   .section-ok .cards { padding: 6px; gap: 5px; }
   .section-ok .card { padding: 4px 7px; }
   .section-ok .card-value { font-size: 15px; }
+  .section-ok .table-wrap table { height: 100%; }
 
   /* Компактный режим для узких колонок, где текст перестаёт помещаться */
   .section-pc .section-header,
@@ -617,7 +618,7 @@
       <h4>⚠ Не удалось загрузить данные Отгрузки</h4>
       <ul id="otgErrorList"></ul>
     </div>
-    <div class="table-wrap" style="flex-shrink:0;">
+    <div class="table-wrap" style="flex:0 0 auto;">
     <table style="min-width:500px;">
       <thead>
         <tr>
@@ -647,14 +648,14 @@
     </div>
 
     <!-- История отгрузки — статистика продаж по дням -->
-    <div id="otgHistWrap" style="flex:1;min-height:0;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:6px;border-top:1px solid rgba(255,255,255,0.06);">
+    <div id="otgHistWrap" style="flex:1;min-height:0;overflow-y:auto;padding:6px 8px;display:flex;flex-direction:column;gap:4px;border-top:1px solid rgba(255,255,255,0.06);">
       <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0;">📊 Отгружено шпал по дням, шт.</div>
       <div id="otgHistStats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;flex-shrink:0;"></div>
       <div style="font-size:9px;color:#7aacc8;text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0;margin-top:2px;">🚚 Отгружено по типам шпал, шт.</div>
       <div id="otgTypeCharts" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;flex-shrink:0;">
         <div style="grid-column:1 / 5;color:#4a6a88;font-size:10px;text-align:center;">Загрузка...</div>
       </div>
-      <div id="otgHistChart" style="flex:1 0 130px;min-height:130px;overflow:visible;margin-top:2px;">
+      <div id="otgHistChart" style="flex:1 0 110px;min-height:110px;overflow:visible;margin-top:2px;">
         <div style="color:#4a6a88;font-size:10px;text-align:center;padding-top:10px;">Загрузка истории...</div>
       </div>
     </div>
@@ -2354,7 +2355,7 @@ function renderOtgHistChart() {
   }
 
   const W = 1000, H = 200, padT = 20, padB = 22, padL = 4, padR = 4;
-  const maxVal = Math.max(...data.map(d => Number(d.sht) || 0), 1) * 1.15;
+  const maxVal = Math.max(...data.map(d => Number(d.sht) || 0), 1) * 1.06;
   const n = data.length;
   const xStep = n > 1 ? (W - padL - padR) / (n - 1) : 0;
   const avg = data.reduce((s, d) => s + (Number(d.sht) || 0), 0) / n;
