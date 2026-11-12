@@ -1663,6 +1663,121 @@ function renderRashod(rows) {
 }
 
 // ── ЗАГРУЗКА ДАННЫХ ───────────────────────────────────────────────────────────
+// ── ЖУРНАЛ: новый источник для блоков «Производственный цех» и «Отгрузка» ──────
+// Данные вводятся на странице vvod.html и лежат в листах Журнал_* (Journal.gs).
+// Если журнал недоступен или пуст — блоки рисуются по-старому из листов «ПЦ» и «Отгрузка».
+let journalData = null;
+async function fetchJournal() {
+  const { url } = getConfig();
+  const key = localStorage.getItem('rws_journal_key') || '';
+  const r = await fetch(url + '?sheet=Journal&key=' + encodeURIComponent(key) + '&t=' + Date.now());
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  const j = await r.json();
+  if (j.error) throw new Error(j.error);
+  if (!Array.isArray(j.types) || !j.types.length) throw new Error('журнал пуст — загрузите справочники на vvod.html');
+  return j;
+}
+function jIsoToRu(iso) { const p = String(iso).split('-'); return p.length === 3 ? p[2] + '.' + p[1] + '.' + p[0] : iso; }
+function jAddDay(iso, n) { const d = new Date(iso + 'T12:00:00'); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); }
+function jLatest(j) {
+  let m = '';
+  [].concat(j.production, j.shipments, j.adjustments).forEach(r => { if (r.date > m) m = r.date; });
+  return m;
+}
+function jBalance(j, typeId, iso) {          // остаток на конец дня iso
+  let b = +((j.opening && j.opening.balances || {})[typeId]) || 0;
+  const od = (j.opening && j.opening.date) || '0000-00-00';
+  j.production.forEach(r => { if (r.type === typeId && r.date > od && r.date <= iso) b += r.qty; });
+  j.shipments.forEach(r => { if (r.type === typeId && r.date > od && r.date <= iso) b -= r.qty; });
+  j.adjustments.forEach(r => { if (r.type === typeId && r.date > od && r.date <= iso) b += r.delta; });
+  return b;
+}
+function jTypesShown(j, iso) {
+  return j.types.filter(t => t.active !== false || jBalance(j, t.id, iso) !== 0);
+}
+
+function renderPCJournal(j) {
+  const iso = jLatest(j) || ((j.opening && j.opening.date) || '');
+  const types = jTypesShown(j, iso);
+  document.getElementById('pcError').classList.remove('visible');
+  document.getElementById('pcDate').textContent = jIsoToRu(jAddDay(iso, 1)) + ' остаток шт.';
+  let html = '', total = 0;
+  types.forEach((t, i) => {
+    const b = jBalance(j, t.id, iso); total += b;
+    html += `<tr><td class="row-num">${i + 1}</td><td style="text-align:left">${t.name}</td><td class="num">${fNum(b)}</td></tr>`;
+  });
+  document.getElementById('pcBody').innerHTML = html || '<tr><td colspan="3" class="empty">Нет видов шпал</td></tr>';
+  document.getElementById('pcTotal').innerHTML = total.toLocaleString('ru-RU') + ' <span class="card-unit">шт.</span>';
+  document.getElementById('pcTypes').innerHTML = types.length + ' <span class="card-unit">типов</span>';
+  document.getElementById('pcCards').style.display = 'grid';
+  dbg(`ПЦ (журнал): ${types.length} видов, итого ${total.toLocaleString('ru-RU')} шт. на ${iso}`, 'ok');
+}
+
+function renderOTGJournal(j) {
+  const iso = jLatest(j) || ((j.opening && j.opening.date) || '');
+  const ym = iso.slice(0, 7), yy = iso.slice(0, 4);
+  const baseYear = yy === String((j.opening && j.opening.date) || '').slice(0, 4);
+  const types = jTypesShown(j, iso);
+  const buyerBy = n => j.buyers.find(b => b.name === n) || { name: n, unit: 'ваг' };
+  const fmt = v => (!v ? '<span style="color:#bbb">—</span>' : Number(v).toLocaleString('ru-RU', { maximumFractionDigits: 2 }));
+  const dateEl = document.getElementById('otgDate');
+  if (dateEl) dateEl.textContent = jIsoToRu(iso);
+  const errEl = document.getElementById('otgError'); if (errEl) errEl.classList.remove('visible');
+
+  let html = '';
+  const groups = [];
+  types.forEach((t, gi) => {
+    const rows = {};            // покупатель -> {dv,dm,ds, mv,mm,ms, yv,ym,ys}
+    const row = n => rows[n] || (rows[n] = { dv: 0, dm: 0, ds: 0, mv: 0, mm: 0, ms: 0, yv: 0, ym: 0, ys: 0 });
+    j.shipments.forEach(r => {
+      if (r.type !== t.id || r.date > iso || r.date.slice(0, 4) !== yy) return;
+      const o = row(r.buyer), u = r.unit, n = r.n || 0;
+      const add = (pv, pm, ps, q) => { if (u === 'ваг') o[pv] += n; else if (u === 'маш') o[pm] += n; o[ps] += q; };
+      add('yv', 'ym', 'ys', r.qty);
+      if (r.date.slice(0, 7) === ym) add('mv', 'mm', 'ms', r.qty);
+      if (r.date === iso) add('dv', 'dm', 'ds', r.qty);
+    });
+    if (baseYear) j.buyers.forEach(b => {          // накоплено с 1 января до начала журнала
+      if (b.defType === t.id && ((+b.yearQty) || (+b.yearN))) {
+        const o = row(b.name);
+        if (b.unit === 'ваг') o.yv += +b.yearN || 0; else if (b.unit === 'маш') o.ym += +b.yearN || 0;
+        o.ys += +b.yearQty || 0;
+      }
+    });
+    const g = { num: String(gi + 1), name: t.name, label: t.short, color: t.color, dayVag: 0, daySht: 0, monVag: 0, monSht: 0, yearVag: 0, yearSht: 0, buyers: [] };
+    groups.push(g);
+    const ost = jBalance(j, t.id, iso);
+    html += `<tr style="background:rgba(13,40,71,0.6); font-weight:600;">
+        <td class="row-num" style="color:#4a8ab8;">${gi + 1}</td>
+        <td colspan="10" style="text-align:left; color:#90c8e8;">${t.name}</td>
+        <td class="num n-num">${ost ? ost.toLocaleString('ru-RU') : '<span style="color:#2a5a78">—</span>'}</td>
+      </tr>`;
+    Object.keys(rows).filter(n => rows[n].ys > 0 || rows[n].yv || rows[n].ym).forEach(n => {
+      const o = rows[n];
+      g.dayVag += o.dv + o.dm; g.daySht += o.ds; g.monVag += o.mv + o.mm; g.monSht += o.ms; g.yearVag += o.yv + o.ym; g.yearSht += o.ys;
+      g.buyers.push({ name: n, year: o.ys });
+      html += `<tr style="background:rgba(5,12,24,0.3);">
+        <td></td>
+        <td style="color:#64b5f6; text-align:left; padding-left:20px; font-weight:500;">${n}</td>
+        <td class="num" style="color:#c8dde8;">${fmt(o.dv)}</td>
+        <td class="num" style="color:#c8dde8;">${fmt(o.dm)}</td>
+        <td class="num" style="color:#c8dde8;">${fmt(o.ds)}</td>
+        <td class="num" style="border-left:1px solid rgba(100,181,246,0.1); color:#c8dde8;">${fmt(o.mv)}</td>
+        <td class="num" style="color:#c8dde8;">${fmt(o.mm)}</td>
+        <td class="num" style="color:#c8dde8;">${fmt(o.ms)}</td>
+        <td class="num" style="border-left:1px solid rgba(100,181,246,0.1); color:#c8dde8;">${fmt(o.yv)}</td>
+        <td class="num" style="color:#c8dde8;">${fmt(o.ym)}</td>
+        <td class="num" style="color:#c8dde8;">${fmt(o.ys)}</td>
+        <td class="num"></td>
+      </tr>`;
+    });
+  });
+  document.getElementById('otgBody').innerHTML = html || '<tr><td colspan="12" class="empty">Нет данных</td></tr>';
+  otgTypeShipped = groups;
+  renderOtgTypeCharts();
+  dbg(`Отгрузка (журнал): ${groups.length} видов шпал на ${iso}`, 'ok');
+}
+
 async function loadData() {
   const cfg = getConfig();
   status('Загрузка данных через Apps Script...', 'loading');
@@ -1672,8 +1787,13 @@ async function loadData() {
 
   let pcOk = false, bsuOk = false;
 
+  // Журнал (новый источник для ПЦ и Отгрузки)
+  let jr = null;
+  try { jr = await fetchJournal(); journalData = jr; dbg('Журнал: загружен', 'ok'); }
+  catch(e) { dbg('Журнал: ' + e.message + ' — ПЦ и Отгрузка берутся из старых листов', 'warn'); }
+
   // ПЦ
-  try {
+  if (jr) { renderPCJournal(jr); pcOk = true; } else try {
     const pc = await fetchSheet(cfg.pc, 'ПЦ');
     renderPC(pc);
     pcOk = true;
@@ -1704,7 +1824,7 @@ async function loadData() {
 
   // Отгрузка
   let otgOk = false;
-  try {
+  if (jr) { renderOTGJournal(jr); otgOk = true; } else try {
     const otg = await fetchSheet(cfg.otg, 'Отгрузка');
     renderOTG(otg);
     otgOk = true;
@@ -2295,8 +2415,10 @@ function renderOtgTypeCharts() {
   }
   const fmt = v => Number(v || 0).toLocaleString('ru-RU', {maximumFractionDigits: 0});
 
-  el.innerHTML = groups.slice(0, 4).map((g, i) => {
-    const f = OTG_TYPE_FIELDS[i] || { label: g.name.replace(/^шпала\s+/i, ''), color: '#93c5fd' };
+  const shown = groups.slice(0, 6);
+  el.style.gridTemplateColumns = 'repeat(' + Math.max(4, Math.min(shown.length, 6)) + ',1fr)';
+  el.innerHTML = shown.map((g, i) => {
+    const f = g.label ? { label: g.label, color: g.color || '#93c5fd' } : (OTG_TYPE_FIELDS[i] || { label: g.name.replace(/^шпала\s+/i, ''), color: '#93c5fd' });
     const has = g.yearSht > 0;
     const buyers = g.buyers.filter(b => b.year > 0).map(b => b.name + ': ' + fmt(b.year) + ' шт.').join(', ');
     const tip = (g.name + (buyers ? ' — за год: ' + buyers : ' — отгрузок нет')).replace(/"/g, '&quot;');
