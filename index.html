@@ -1682,10 +1682,11 @@ async function fetchJournal() {
   } finally { clearTimeout(timer); }
   if (j.error) throw new Error(j.error);
   if (!Array.isArray(j.types) || !j.types.length) throw new Error('журнал пуст — загрузите справочники на vvod.html');
+  if (!(j.production || []).length && !(j.shipments || []).length && !(j.opening && j.opening.date)) throw new Error('история в журнале ещё не загружена (vvod.html → Импорт)');
   return j;
 }
 function jIsoToRu(iso) { const p = String(iso).split('-'); return p.length === 3 ? p[2] + '.' + p[1] + '.' + p[0] : iso; }
-function jAddDay(iso, n) { const d = new Date(iso + 'T12:00:00'); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); }
+function jAddDay(iso, n) { if (!iso) return ''; const d = new Date(iso + 'T12:00:00'); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); }
 function jLatest(j) {
   let m = '';
   [].concat(j.production, j.shipments, j.adjustments).forEach(r => { if (r.date > m) m = r.date; });
@@ -1800,7 +1801,9 @@ async function loadData() {
   catch(e) { dbg('Журнал: ' + e.message + ' — ПЦ и Отгрузка берутся из старых листов', 'warn'); }
 
   // ПЦ
-  if (jr) { renderPCJournal(jr); pcOk = true; } else try {
+  let jrPcOk = false;
+  if (jr) { try { renderPCJournal(jr); jrPcOk = true; pcOk = true; } catch (e) { dbg('ПЦ (журнал): ' + e.message + ' — берём старый лист', 'err'); } }
+  if (!jrPcOk) try {
     const pc = await fetchSheet(cfg.pc, 'ПЦ');
     renderPC(pc);
     pcOk = true;
@@ -1831,7 +1834,9 @@ async function loadData() {
 
   // Отгрузка
   let otgOk = false;
-  if (jr) { renderOTGJournal(jr); otgOk = true; } else try {
+  let jrOtgOk = false;
+  if (jr) { try { renderOTGJournal(jr); jrOtgOk = true; otgOk = true; } catch (e) { dbg('Отгрузка (журнал): ' + e.message + ' — берём старый лист', 'err'); } }
+  if (!jrOtgOk) try {
     const otg = await fetchSheet(cfg.otg, 'Отгрузка');
     renderOTG(otg);
     otgOk = true;
