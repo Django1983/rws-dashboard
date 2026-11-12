@@ -1670,9 +1670,16 @@ let journalData = null;
 async function fetchJournal() {
   const { url } = getConfig();
   const key = localStorage.getItem('rws_journal_key') || '';
-  const r = await fetch(url + '?sheet=Journal&key=' + encodeURIComponent(key) + '&t=' + Date.now());
-  if (!r.ok) throw new Error('HTTP ' + r.status);
-  const j = await r.json();
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), 8000);      // не ждём журнал дольше 8 секунд — иначе весь дашборд «висит»
+  let j;
+  try {
+    const r = await fetch(url + '?sheet=Journal&key=' + encodeURIComponent(key) + '&t=' + Date.now(), { signal: ctl.signal });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    j = await r.json();
+  } catch (e) {
+    throw new Error(e.name === 'AbortError' ? 'нет ответа за 8 секунд' : e.message);
+  } finally { clearTimeout(timer); }
   if (j.error) throw new Error(j.error);
   if (!Array.isArray(j.types) || !j.types.length) throw new Error('журнал пуст — загрузите справочники на vvod.html');
   return j;
