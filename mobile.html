@@ -1196,14 +1196,93 @@ function renderOnec(rows) {
 }
 
 // ── LOAD ──────────────────────────────────────────────────────────────────────
+// ── ЖУРНАЛ: новый источник для «ПЦ» и «Отгрузка» (данные вводятся на vvod.html) ──
+// Если журнал недоступен или пуст — блоки рисуются по-старому из листов «ПЦ» и «Отгрузка».
+async function fetchJournal() {
+  const key = (function(){ try { return localStorage.getItem('rws_journal_key') || ''; } catch(e) { return ''; } })();
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), 8000);
+  let j;
+  try {
+    const r = await fetch(DEFAULT_APPS_SCRIPT_URL + '?sheet=Journal&key=' + encodeURIComponent(key) + '&t=' + Date.now(), { signal: ctl.signal });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const text = await r.text();
+    if (text.trim().startsWith('<!')) throw new Error('Получен HTML вместо данных');
+    j = JSON.parse(text);
+  } finally { clearTimeout(timer); }
+  if (j.error) throw new Error(j.error);
+  if (!Array.isArray(j.types) || !j.types.length) throw new Error('журнал пуст');
+  if (!(j.production || []).length && !(j.shipments || []).length && !(j.opening && j.opening.date)) throw new Error('история в журнале не загружена');
+  return j;
+}
+function jIsoToRu(iso) { const p = String(iso).split('-'); return p.length === 3 ? p[2] + '.' + p[1] + '.' + p[0] : iso; }
+function jAddDay(iso, n) { if (!iso) return ''; const d = new Date(iso + 'T12:00:00'); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); }
+function jLatest(j) { let m = ''; [].concat(j.production, j.shipments, j.adjustments).forEach(r => { if (r.date > m) m = r.date; }); return m; }
+function jBalance(j, typeId, iso) {
+  let b = +((j.opening && j.opening.balances || {})[typeId]) || 0;
+  const od = (j.opening && j.opening.date) || '0000-00-00';
+  j.production.forEach(r => { if (r.type === typeId && r.date > od && r.date <= iso) b += r.qty; });
+  j.shipments.forEach(r => { if (r.type === typeId && r.date > od && r.date <= iso) b -= r.qty; });
+  j.adjustments.forEach(r => { if (r.type === typeId && r.date > od && r.date <= iso) b += r.delta; });
+  return b;
+}
+function jTypesShown(j, iso) { return j.types.filter(t => t.active !== false || jBalance(j, t.id, iso) !== 0); }
+
+function renderPCJournal(j) {
+  const iso = jLatest(j) || ((j.opening && j.opening.date) || '');
+  const types = jTypesShown(j, iso);
+  document.getElementById('pcDate').textContent = jIsoToRu(jAddDay(iso, 1)) + ' остаток шт.';
+  let html = '', total = 0;
+  types.forEach(t => {
+    const b = jBalance(j, t.id, iso); total += b;
+    html += `<tr><td class="name-col">${t.name}</td><td class="num">${b ? b.toLocaleString('ru-RU') : '<span class="neutral">—</span>'}</td></tr>`;
+  });
+  document.getElementById('pcBody').innerHTML = html || '<tr><td colspan="2" class="empty">Нет видов шпал</td></tr>';
+  document.getElementById('pcTotal').innerHTML = total.toLocaleString('ru-RU') + ' <span class="kpi-unit">шт.</span>';
+  document.getElementById('pcTypes').innerHTML = types.length + ' <span class="kpi-unit">типов</span>';
+  document.getElementById('pcCards').style.display = 'grid';
+}
+
+function renderOTGJournal(j) {
+  const iso = jLatest(j) || ((j.opening && j.opening.date) || '');
+  const ym = iso.slice(0, 7), yy = iso.slice(0, 4);
+  const baseYear = yy === String((j.opening && j.opening.date) || '').slice(0, 4);
+  const types = jTypesShown(j, iso);
+  const f = v => (!v ? '<span class="neutral">—</span>' : Number(v).toLocaleString('ru-RU', { maximumFractionDigits: 2 }));
+  const dateEl = document.getElementById('otgDate'); if (dateEl) dateEl.textContent = jIsoToRu(iso);
+  let html = '';
+  types.forEach(t => {
+    const rows = {};
+    const row = n => rows[n] || (rows[n] = { d: 0, m: 0, y: 0 });
+    j.shipments.forEach(r => {
+      if (r.type !== t.id || r.date > iso || r.date.slice(0, 4) !== yy) return;
+      const o = row(r.buyer); o.y += r.qty;
+      if (r.date.slice(0, 7) === ym) o.m += r.qty;
+      if (r.date === iso) o.d += r.qty;
+    });
+    if (baseYear) j.buyers.forEach(b => { if (b.defType === t.id && (+b.yearQty)) row(b.name).y += +b.yearQty; });
+    const ost = jBalance(j, t.id, iso);
+    html += `<tr style="background:#f0f6fb;font-weight:600;">
+        <td class="name-col" colspan="4" style="font-size:10px;">${t.name}</td>
+        <td class="num n-num">${ost ? ost.toLocaleString('ru-RU') : '<span class="neutral">—</span>'}</td></tr>`;
+    Object.keys(rows).filter(n => rows[n].y > 0).forEach(n => {
+      const o = rows[n];
+      html += `<tr><td class="name-col" style="color:#5a8aaa;font-size:10px;padding-left:14px;">${n}</td>
+        <td class="num">${f(o.d)}</td><td class="num">${f(o.m)}</td><td class="num">${f(o.y)}</td><td class="num"></td></tr>`;
+    });
+  });
+  document.getElementById('otgBody').innerHTML = html || '<tr><td colspan="5" class="empty">Нет данных</td></tr>';
+}
+
 async function loadData() {
   status('Загрузка...', 'loading');
   let ok = 0, fail = 0;
+  const journalP = fetchJournal().catch(e => { console.warn('Журнал:', e.message); return null; });
 
   const tasks = [
-    { sheet: 'ПЦ',        render: renderPC },
+    { sheet: 'ПЦ',        render: renderPC,  journal: renderPCJournal },
     { sheet: 'БСУ',       render: renderBSU },
-    { sheet: 'Отгрузка',  render: renderOTG },
+    { sheet: 'Отгрузка',  render: renderOTG, journal: renderOTGJournal },
     { sheet: 'Расход',    render: renderRashod },
     { sheet: 'ОК',        render: renderOK },
     { sheet: 'Солнечные',  render: renderSolar },
@@ -1214,6 +1293,10 @@ async function loadData() {
 
   await Promise.allSettled(tasks.map(async t => {
     try {
+      if (t.journal) {
+        const jr = await journalP;
+        if (jr) { try { t.journal(jr); ok++; return; } catch(e) { console.warn('Журнал', t.sheet, e.message); } }
+      }
       const data = await fetchSheet(t.sheet);
       t.render(data);
       ok++;
