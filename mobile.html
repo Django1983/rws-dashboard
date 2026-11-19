@@ -257,7 +257,8 @@ td[style*="#5a8aaa"],td[style*="#4a8aaa"],td[style*="#4a6a88"],td[style*="#9ab4c
 /* сквозные вертикальные линии колонок: от шапки до конца таблицы, в том числе через строки видов шпал */
 #page-otg table{background:linear-gradient(#CFCBC2,#CFCBC2) 31% 0/1px 100% no-repeat,linear-gradient(#CFCBC2,#CFCBC2) 46% 0/1px 100% no-repeat,linear-gradient(#CFCBC2,#CFCBC2) 63% 0/1px 100% no-repeat,linear-gradient(#CFCBC2,#CFCBC2) 81% 0/1px 100% no-repeat,#fff}
 #page-otg table:has(td.empty){background:#fff}
-#page-otg tr[style*="#f0f6fb"]{background:rgba(255,196,0,.15)!important}
+#page-otg tr[style*="#f0f6fb"],#page-otg tr[style*="#f0f6fb"] td{background:#FFF6D9!important}
+#page-otg tr[style*="#f0f6fb"] td.n-num{border-left:1px solid #CFCBC2}
 #page-otg tbody tr:last-child td{border-bottom:0}
 /* поезд — только на вкладке «Отгрузка» */
 @keyframes rwsTrn{from{transform:translateX(-320px)}to{transform:translateX(420px)}}
