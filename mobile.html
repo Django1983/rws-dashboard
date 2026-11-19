@@ -232,12 +232,33 @@ td{border-bottom:1px solid #CFCBC2;color:#111}
 [style*="color:#1a5c8a"],[style*="color:#2277aa"],[style*="color:#0e7490"]{color:#111!important}
 [style*="#9ab4c4"]{color:#555!important}
 [style*="#4a6a88"],[style*="#4a8aaa"],[style*="#5a8aaa"]{color:#B8B4AB!important}
+td[style*="#5a8aaa"],td[style*="#4a8aaa"],td[style*="#4a6a88"],td[style*="#9ab4c4"]{color:#555!important}
+#page-otg td.name-col:not([colspan]){color:#333!important;font-size:11px!important;font-weight:600}
 /* ПЦ: жёлтый блок «Итого» */
 #pcCards{display:none!important}
 #rwsHero{background:#FFC400;color:#111;padding:18px 20px;margin:-12px -16px 14px}
 #rwsHero .rh-l{font-size:12px;font-weight:800;letter-spacing:.12em}
 #rwsHero .rh-n{font-size:64px;font-weight:800;letter-spacing:-.03em;line-height:1.05}
 #rwsHero .rh-s{font-size:13px;font-weight:700;text-transform:uppercase}
+/* Отгрузка: ровные колонки — заголовки и цифры строго друг под другом, тонкие вертикальные линии */
+#page-otg table{table-layout:fixed;width:100%;min-width:0}
+#page-otg th:nth-child(1){width:31%}
+#page-otg th:nth-child(2){width:15%}
+#page-otg th:nth-child(3){width:17%}
+#page-otg th:nth-child(4){width:18%}
+#page-otg th:nth-child(5){width:19%}
+#page-otg th{text-align:right;white-space:nowrap;padding:8px 7px 8px 3px;font-size:10px;letter-spacing:0;line-height:1.25}
+#page-otg th:first-child{text-align:left;padding-left:10px;white-space:normal}
+#page-otg th+th{border-left:1px solid #3A3A3A}
+#page-otg td.num{text-align:right;padding:9px 7px 9px 3px;font-size:12.5px;font-variant-numeric:tabular-nums;white-space:nowrap}
+#page-otg td.name-col{padding:9px 6px 9px 14px;word-break:break-word;line-height:1.25}
+#page-otg tbody tr:has(td.n-num) td.num{font-size:14px}
+#page-otg td.num:nth-child(3),#page-otg td.num:nth-child(5){background:rgba(17,17,17,.035)}
+/* сквозные вертикальные линии колонок: от шапки до конца таблицы, в том числе через строки видов шпал */
+#page-otg table{background:linear-gradient(#CFCBC2,#CFCBC2) 31% 0/1px 100% no-repeat,linear-gradient(#CFCBC2,#CFCBC2) 46% 0/1px 100% no-repeat,linear-gradient(#CFCBC2,#CFCBC2) 63% 0/1px 100% no-repeat,linear-gradient(#CFCBC2,#CFCBC2) 81% 0/1px 100% no-repeat,#fff}
+#page-otg table:has(td.empty){background:#fff}
+#page-otg tr[style*="#f0f6fb"]{background:rgba(255,196,0,.15)!important}
+#page-otg tbody tr:last-child td{border-bottom:0}
 /* поезд — только на вкладке «Отгрузка» */
 @keyframes rwsTrn{from{transform:translateX(-320px)}to{transform:translateX(420px)}}
 @keyframes rwsSlp{from{transform:translateX(0)}to{transform:translateX(-24px)}}
